@@ -1,6 +1,6 @@
 /* 10AR Final – offline service worker. Change VERSION after every update of index.html */
 const PREFIX = "ar10-final-";
-const VERSION = PREFIX + "v3";
+const VERSION = PREFIX + "v4";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {

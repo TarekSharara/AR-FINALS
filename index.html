@@ -586,7 +586,7 @@ function simulate(plan,names,quick){
     const nx=n===1?"FOR THE NEXT COMPETITION SERIES … LOAD":"FOR THE NEXT COMPETITION SHOT … LOAD";
     const stg3=[announcer(nx,n===2?{ar:"يوضح المعلّق أن الطلقات الفردية ستبدأ وأنه بعد كل طلقتين يُقصى صاحب أقل ترتيب.",en:"The Announcer explains that single shots begin and that after every second shot the lowest-ranked finalist is eliminated."}:null)];
     push({ph:1,tag:{ar:"نتيجة المجموعة "+n,en:"Series "+n+" result"},title:{ar:`انتهت المجموعة ${n}`,en:`End of series ${n}`},
-      desc:{ar:`الترتيب: ${rankLine()}. يعلّق المعلّق 15–20 ثانية على الترتيب الحالي والنتائج البارزة دون إعلان درجات الطلقات الفردية.`+(n===2?" ثم يوضح أن الطلقات الفردية ستبدأ، وأنه بعد كل طلقتين يُقصى صاحب أقل ترتيب.":""),en:`Ranking: ${rankLine()}. The Announcer comments for 15–20 seconds on the current ranking and notable scores; individual shot scores are not announced.`+(n===2?" Then explains that single shots begin and the lowest-ranked finalist is eliminated after every second shot.":"")},
+      desc:{ar:`يعلّق المعلّق 15–20 ثانية على الترتيب الحالي والنتائج البارزة دون إعلان درجات الطلقات الفردية.`+(n===2?" ثم يوضح أن الطلقات الفردية ستبدأ، وأنه بعد كل طلقتين يُقصى صاحب أقل ترتيب.":""),en:`The Announcer comments for 15–20 seconds on the current ranking and notable scores; individual shot scores are not announced.`+(n===2?" Then explains that single shots begin and the lowest-ranked finalist is eliminated after every second shot.":"")},
       ref:"6.17.2 e",ann:n===1?"In the lead after the first series … Only … points behind … At the moment in last place …":"Now, after the two 5-shot series, the following fourteen single shots will be fired on command. After every two single shots the lowest ranking Finalist will be eliminated.",pos:fpPos(),stages:stg3,cmds:cmdsFrom(stg3)});
   }
 
@@ -611,7 +611,7 @@ function simulate(plan,names,quick){
     if(elimAfter) results(k); else { if(inc.length) contStep(k); after(k); }
   }
   function contStep(k){ const stg=[announcer("FOR THE NEXT COMPETITION SHOT … LOAD")];
-    push({ph:2,tag:{ar:"متابعة",en:"Continue"},title:{ar:`متابعة بعد الطلقة ${k}`,en:`Continue after shot ${k}`},desc:{ar:`الترتيب: ${rankLine()}.`,en:`Ranking: ${rankLine()}.`},ref:"6.17.2 f",pos:fpPos(),stages:stg,cmds:cmdsFrom(stg)}); }
+    push({ph:2,tag:{ar:"متابعة",en:"Continue"},title:{ar:`متابعة بعد الطلقة ${k}`,en:`Continue after shot ${k}`},desc:{ar:"يعلّق المعلّق 15–20 ثانية على الترتيب الحالي دون إعلان درجات الطلقات، ثم يُصدر رئيس الميدان أمر الطلقة التالية.",en:"The Announcer comments for 15–20 seconds on the current ranking without shot scores; then the CRO commands the next shot."},ref:"6.17.2 f",pos:fpPos(),stages:stg,cmds:cmdsFrom(stg)}); }
   function compShot(k,p,val,title,desc,ref,firstLbl,firstSecs){
     const a=A[p]; a.shots[k]=val; a.last=[eff(p,k)]; a.lastKind="shot";
     const stg=[{lbl:firstLbl,secs:firstSecs,say:null,hint:{ar:"الآخرون في انتظار ويجوز لهم تمارين التصويب والرمي الجاف.",en:"The others stand by and may do aiming exercises and dry fire."}},
@@ -661,7 +661,7 @@ function simulate(plan,names,quick){
     if(k===24&&!tie) return finalStep(notes,rl);
     push({ph:2,elimFlash:k<=22?(tie?tied.slice():(outP?[outP]:[])):[],tag:{ar:"بعد الطلقة "+k,en:"After shot "+k},
       title:{ar:`بعد الطلقة ${k}`+(tie?": تعادل":notes.ar.length&&!/^لا/.test(notes.ar[0])?": إقصاء":""),en:`After shot ${k}`+(tie?": tie":notes.en.length&&!/^No/.test(notes.en[0])?": elimination":"")},
-      desc:{ar:`الترتيب: ${rl}. `+notes.ar.join(" ")+(tie?"":" يفرّغ اللاعب المُقصى بندقيته ويُدخل علم الأمان ويضعه ويتراجع عن نقطة الرمي، ويتحقق ضابط الميدان من ذلك."),en:`Ranking: ${rl}. `+notes.en.join(" ")+(tie?"":" The eliminated finalist unloads, inserts the safety flag, lays the rifle down and steps back; a Range Officer verifies it.")},
+      desc:{ar:notes.ar.join(" ")+(tie?"":" يفرّغ اللاعب المُقصى بندقيته ويُدخل علم الأمان ويضعه ويتراجع عن نقطة الرمي، ويتحقق ضابط الميدان من ذلك."),en:notes.en.join(" ")+(tie?"":" The eliminated finalist unloads, inserts the safety flag, lays the rifle down and steps back; a Range Officer verifies it.")},
       ref:"6.17.2 g, h · 6.17.1.14 n",ann:tie?"(Max. 10 seconds on the tie-break situation.)":(outP?`After the ${k===22?"22nd":k+"th"} shot, ${A[outP].place===3?"the Bronze medal":A[outP].place+"th place"} has been decided. Representing ${annName(outP).c}, it goes to ${annName(outP).n}.`:null),pos:fpPos(),stages:stg,cmds:cmdsFrom(stg)});
   }
   function after(k){ if(k<24) single(k+1); }
@@ -693,8 +693,8 @@ function simulate(plan,names,quick){
       .concat([{lbl:{ar:"إعلان النتائج",en:"Results"},secs:5,say:"RESULTS ARE FINAL",hint:{ar:"إذا لم يوجد تعادل أو احتجاج، وبعد التأكد مع غرفة التحكم. ثم تجمع لجنة الحكام الفائزين الثلاثة في منطقة اللعب.",en:"If there are no ties or protests, after checking with the Control Room. Then the Jury assembles the three medallists on the FOP."}}]);
     if(!afterTie && act().length===1){ const w=act()[0]; A[w].place=1; A[w].medal="g"; }
     push({ph:2,tag:{ar:"النهاية",en:"End"},title:{ar:"RESULTS ARE FINAL — تقديم الفائزين",en:"RESULTS ARE FINAL — medallists"},
-      desc:{ar:(rl?`الترتيب: ${rl}. `:"")+notes.ar.join(" ")+" بعد أن يُطلق اللاعبان المتبقيان الطلقة 24، وإذا لم يوجد تعادل أو احتجاج، يُصدر رئيس الميدان STOP … UNLOAD، وبعد التأكد مع غرفة التحكم يعلن RESULTS ARE FINAL. تجمع لجنة الحكام الفائزين الثلاثة في منطقة اللعب (FOP)، ويعلن المعلّق فوراً البرونزية ثم الفضية ثم الذهبية.",
-            en:(rl?`Ranking: ${rl}. `:"")+notes.en.join(" ")+" After the two remaining finalists fire shot 24, with no tie or protest, the CRO commands STOP … UNLOAD and, after checking with the Control Room, declares RESULTS ARE FINAL. The Jury assembles the three medallists on the FOP and the Announcer immediately recognises bronze, silver and gold."},
+      desc:{ar:notes.ar.join(" ")+" بعد أن يُطلق اللاعبان المتبقيان الطلقة 24، وإذا لم يوجد تعادل أو احتجاج، يُصدر رئيس الميدان STOP … UNLOAD، وبعد التأكد مع غرفة التحكم يعلن RESULTS ARE FINAL. تجمع لجنة الحكام الفائزين الثلاثة في منطقة اللعب (FOP)، ويعلن المعلّق فوراً البرونزية ثم الفضية ثم الذهبية.",
+            en:notes.en.join(" ")+" After the two remaining finalists fire shot 24, with no tie or protest, the CRO commands STOP … UNLOAD and, after checking with the Control Room, declares RESULTS ARE FINAL. The Jury assembles the three medallists on the FOP and the Announcer immediately recognises bronze, silver and gold."},
       ref:"6.17.2 i · 6.17.1.14 q",ann:(()=>{const m=x=>POS.find(p=>A[p].medal===x); const ln=(lbl,p)=>p?`${lbl}, REPRESENTING ${annName(p).c}, GOES TO ${annName(p).n}.`:""; return [ln("THE BRONZE MEDAL",m("b")),ln("THE SILVER MEDAL",m("s")),ln("AND THE GOLD MEDAL",m("g"))].join(" ");})(),pos:pm(p=>A[p].status==="dns"?"entry":A[p].medal?"fop":"fp"),stages:stg,cmds:cmdsFrom(stg)});
   }
   series(1); series(2); single(11);
