@@ -1,0 +1,1291 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="10AR Final">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>10m Air Rifle Final Simulator</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#17406A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Reem+Kufi:wght@600;700&display=swap">
+<style>
+/* Layout: field of play + step panel side by side; results card, rule cards and source note full width below. Same family as the 25m Rifle Women Final Simulator, recoloured in the teal and gold of the 10m Finals Manual. */
+:root{
+  --bg:#EEF2F1; --panel:#FFFFFF; --panel2:#F5F8F7; --ink:#14262A; --muted:#566B6E; --line:#D5DFDD;
+  --accent:#B9822A; --accent-ink:#FFFFFF; --navy:#17406A; --navy-ink:#FFFFFF;
+  --field:#2F5F8A; --field2:#285379; --fp:#17406A; --wait:#F2DDB0; --ammo:#D6E8E6; --ammo-ink:#0F4C4F; --target:#FFFFFF;
+  --hit:#2FB463; --miss:#D93B36; --good:#1E8E4E; --bad:#C2332E; --warn:#B86A00;
+  --f-body:"IBM Plex Sans Arabic", "SF Arabic", "Geeza Pro", "Noto Sans Arabic", Arial, "Segoe UI", sans-serif;
+  --f-disp:"Reem Kufi", "IBM Plex Sans Arabic", "SF Arabic", "Geeza Pro", "Noto Sans Arabic", Arial, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, "Roboto Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0D1716; --panel:#142321; --panel2:#1A2C2A; --ink:#E5EFED; --muted:#97ABA8; --line:#28403D;
+  --accent:#E0AE55; --accent-ink:#1A1206; --navy:#24578A; --navy-ink:#FFFFFF;
+  --field:#23476B; --field2:#1D3D5D; --fp:#132F4D; --wait:#C9A46A; --ammo:#B6D3CF; --ammo-ink:#0F3A3C; --target:#F1F4F8;
+  --hit:#3CCB75; --miss:#FF6A63; --good:#49C27E; --bad:#FF6A63; --warn:#E5A23A; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0D1716; --panel:#142321; --panel2:#1A2C2A; --ink:#E5EFED; --muted:#97ABA8; --line:#28403D;
+  --accent:#E0AE55; --accent-ink:#1A1206; --navy:#24578A; --navy-ink:#FFFFFF;
+  --field:#23476B; --field2:#1D3D5D; --fp:#132F4D; --wait:#C9A46A; --ammo:#B6D3CF; --ammo-ink:#0F3A3C; --target:#F1F4F8;
+  --hit:#3CCB75; --miss:#FF6A63; --good:#49C27E; --bad:#FF6A63; --warn:#E5A23A; color-scheme:dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--bg)}
+body{color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.6;
+  padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px)); padding-block:18px 36px}
+.wrap{max-width:1240px; margin:0 auto; display:flex; flex-direction:column; gap:16px}
+button,select,input{font:inherit; color:inherit}
+button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.hdr{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:flex-start}
+.eyebrow{font-size:13px; color:var(--muted); margin:0}
+h1{font-family:var(--f-disp); font-weight:700; font-size:clamp(28px,4vw,42px); line-height:1.15; margin:2px 0 4px; text-wrap:balance}
+.lead{margin:0; color:var(--muted); max-width:62ch}
+.hdr-side{display:flex; flex-direction:column; gap:10px; align-items:flex-end}
+.langbtn{border:1px solid var(--line); background:var(--panel); border-radius:999px; padding:6px 16px; font-weight:700; cursor:pointer}
+.phasechips{display:flex; gap:6px; flex-wrap:wrap}
+.pchip{border:1px solid var(--line); background:var(--panel); color:var(--muted); border-radius:999px; padding:4px 12px; font-size:13px; cursor:pointer}
+.pchip[aria-pressed="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+nav.tabs{display:flex; gap:4px; border-bottom:1px solid var(--line)}
+nav.tabs button{border:0; background:none; padding:9px 14px; color:var(--muted); cursor:pointer; border-bottom:3px solid transparent; font-weight:500}
+nav.tabs button[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--accent); font-weight:700}
+.main{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:16px; align-items:start}
+@media (max-width:960px){.main{grid-template-columns:minmax(0,1fr)}}
+.col{display:flex; flex-direction:column; gap:16px; min-width:0}
+.card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; min-width:0}
+.card h2{font-family:var(--f-disp); font-size:18px; margin:0 0 8px; font-weight:700}
+.fieldcard{padding:10px}
+#field{display:block; width:100%; height:auto; border-radius:10px}
+.tok{transition:transform .8s cubic-bezier(.4,.1,.2,1), opacity .4s}
+@media (prefers-reduced-motion:reduce){.tok{transition:none}}
+.timer{display:flex; align-items:center; gap:10px; padding:8px 6px 2px; font-size:13px; color:var(--muted)}
+.timer .t{font-family:var(--f-mono); font-weight:600; color:var(--ink); min-width:4.2ch; direction:ltr}
+.timer .bar{flex:1; height:8px; border-radius:6px; background:var(--panel2); border:1px solid var(--line); overflow:hidden}
+.timer .bar i{display:block; height:100%; width:0; background:var(--hit)}
+.legend{display:flex; flex-wrap:wrap; gap:4px 16px; font-size:12.5px; color:var(--muted); padding:6px}
+.legend span{display:inline-flex; gap:6px; align-items:center}
+.sw{width:12px; height:12px; border-radius:3px; display:inline-block}
+.sw.c{border-radius:50%}
+.stephead{display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:13px; color:var(--muted)}
+.tag{font-family:var(--f-mono); font-size:11.5px; border:1px dashed var(--line); padding:2px 8px; border-radius:6px; color:var(--muted)}
+.steptitle{font-family:var(--f-disp); font-size:22px; font-weight:700; margin:6px 0 10px; line-height:1.35}
+.cmdbox{background:var(--navy); color:var(--navy-ink); border-radius:10px; padding:10px 14px; margin-bottom:10px}
+.cmdbox .cap{font-size:12px; opacity:.8; margin-bottom:4px}
+.cmdrow{display:grid; grid-template-columns:1fr auto; gap:2px 12px; padding:5px 0; border-top:1px solid rgba(255,255,255,.12)}
+.cmdrow:first-of-type{border-top:0}
+.cmdrow .c{font-family:var(--f-mono); font-weight:600; font-size:14px; direction:ltr; text-align:start; overflow-wrap:anywhere}
+body[dir="rtl"] .cmdrow .c{text-align:right}
+.cmdrow .at{font-family:var(--f-mono); font-size:12.5px; opacity:.85; direction:ltr}
+.desc{margin:0 0 10px}
+.chip{display:inline-grid; place-items:center; width:22px; height:22px; border-radius:50%; font-size:12px; font-weight:700; border:1px solid rgba(0,0,0,.25); vertical-align:-5px; font-family:var(--f-mono)}
+.ref{font-size:12px; color:var(--muted); font-family:var(--f-mono)}
+.trainbtn{width:100%; border:1px solid var(--line); background:var(--panel); border-radius:10px; padding:9px 12px; cursor:pointer; font-weight:700}
+.trainbtn:hover{border-color:var(--accent)}
+.trainer{border:1.5px solid var(--field); border-radius:12px; padding:14px; margin-top:10px; background:var(--panel)}
+.trainer[hidden]{display:none!important}
+.trow{display:flex; justify-content:space-between; align-items:center; gap:10px}
+.tcount{font-family:var(--f-mono); font-weight:600; font-size:30px; line-height:1; direction:ltr}
+.tstage{display:flex; align-items:center; gap:8px; font-weight:700}
+.tdot{width:16px; height:16px; border-radius:50%; background:var(--line)}
+.tdot.red{background:var(--miss)} .tdot.green{background:var(--hit)}
+.saybox{background:var(--navy); color:var(--navy-ink); border-radius:10px; padding:10px 14px; margin:10px 0 6px; transition:background .2s}
+.saybox.now{background:var(--accent); color:var(--accent-ink)}
+.saybox.idle{background:color-mix(in srgb, var(--navy) 55%, var(--panel))}
+.saybox .cap{font-size:12px; opacity:.85}
+.saybox .say{font-family:var(--f-mono); font-weight:600; font-size:clamp(16px,2vw,20px); direction:ltr; text-align:start; overflow-wrap:anywhere; min-height:1.4em}
+body[dir="rtl"] .saybox .say{text-align:right}
+.thint{font-size:12.5px; color:var(--muted); margin:0 0 10px}
+.tbtns{display:flex; gap:8px; flex-wrap:wrap}
+.checks{display:flex; gap:14px; flex-wrap:wrap; margin-top:8px; font-size:13px}
+.checks label{display:inline-flex; gap:6px; align-items:center; cursor:pointer}
+.ctrls{display:flex; flex-direction:column; gap:12px}
+.navrow{display:grid; grid-template-columns:auto 1fr auto; gap:8px}
+.btn{border:1px solid var(--line); background:var(--panel); border-radius:10px; padding:9px 14px; cursor:pointer; font-weight:500}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn:disabled{opacity:.45; cursor:not-allowed}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:700}
+input[type="range"]{width:100%; accent-color:var(--accent)}
+.row{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.seg{display:inline-flex; border:1px solid var(--line); border-radius:8px; overflow:hidden}
+.seg button{border:0; background:var(--panel); padding:4px 10px; cursor:pointer; font-family:var(--f-mono); font-size:13px}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--bg)}
+select, input[type="text"]{border:1px solid var(--line); background:var(--panel); border-radius:8px; padding:7px 9px; min-width:0}
+.grow{flex:1; min-width:0}
+.small{font-size:12.5px; color:var(--muted)}
+details summary{cursor:pointer; font-weight:700}
+.names{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-top:4px}
+.names label{display:flex; gap:6px; align-items:center}
+.names .noc{flex:0 0 64px; width:64px; text-transform:uppercase; text-align:center; font-family:var(--f-mono)}
+.toggle{display:flex; gap:10px; align-items:center; font-weight:700; cursor:pointer; min-height:44px}
+.toggle input{width:22px; height:22px}
+#namespaste{width:100%; margin-top:10px; border:1px solid var(--line); background:var(--panel); border-radius:8px; padding:8px; font:inherit; font-size:16px; resize:vertical; unicode-bidi:plaintext; text-align:start}
+.namesopt{border-top:1px solid var(--line); padding-top:6px}
+.names input{width:100%}
+.gate{border:1.5px solid var(--accent); border-radius:12px; padding:12px; margin-top:10px; background:color-mix(in srgb, var(--accent) 6%, var(--panel))}
+.gate[hidden]{display:none!important}
+.gate h3{margin:0 0 8px; font-size:15px}
+.opts{display:flex; flex-direction:column; gap:6px}
+.opt{text-align:start; border:1px solid var(--line); background:var(--panel); border-radius:9px; padding:8px 11px; cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--good); background:color-mix(in srgb, var(--good) 14%, var(--panel))}
+.opt.wrong{border-color:var(--bad); background:color-mix(in srgb, var(--bad) 12%, var(--panel))}
+.tw{overflow-x:auto}
+table{border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums}
+th{font-size:12px; color:var(--muted); font-weight:500; padding:6px; border-bottom:1px solid var(--line); text-align:start; white-space:nowrap}
+td{padding:6px; border-bottom:1px solid var(--line); white-space:nowrap}
+tr.shoot td{background:color-mix(in srgb, var(--accent) 12%, transparent)}
+tr.out td{color:var(--muted)}
+.dots{display:inline-flex; gap:3px; direction:ltr}
+.dots i{width:10px; height:10px; border-radius:50%; border:1.5px solid var(--line); display:inline-block}
+.dots i.h{background:var(--hit); border-color:var(--hit)}
+.dots i.m{border-color:var(--miss)}
+.pill{display:inline-block; font-size:12px; border:1px solid var(--line); border-radius:999px; padding:1px 9px}
+.pill.shoot{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+.pill.g{border-color:#C9A227; color:#9A7A0E} .pill.s{border-color:#8E99A6} .pill.b{border-color:#B57A44; color:#9A5E2A}
+.pill.out{color:var(--muted)}
+.tot{font-weight:700}
+.rescard td,.rescard th{text-align:center}
+.rescard td:first-child,.rescard th:first-child{text-align:start}
+.cur{background:color-mix(in srgb, var(--accent) 10%, transparent)}
+.infos{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px}
+.info h3{font-family:var(--f-disp); font-size:17px; margin:0 0 6px}
+.info p{margin:0; font-size:13.5px; color:var(--muted)}
+.src{font-size:12.5px; color:var(--muted); margin:0}
+.langbtn[aria-pressed="false"]{color:var(--muted); border-style:dashed}
+.byline{margin:6px 0 0; font-size:13px; font-weight:700; color:var(--accent); letter-spacing:.02em}
+.byline-foot{font-weight:700}
+.designer{margin:2px 0 0; font-size:12.5px; color:var(--muted)}
+.casecard{max-width:760px; margin:0 auto; width:100%}
+.shots{display:flex; gap:10px; margin:10px 0; direction:ltr; justify-content:flex-start}
+body[dir="rtl"] .shots{justify-content:flex-end}
+.shot{display:flex; flex-direction:column; align-items:center; gap:2px; font-size:11px; color:var(--muted); font-family:var(--f-mono)}
+.shot b{width:30px; height:30px; border-radius:50%; border:2px solid #222; background:var(--target); display:block}
+.shot b.h{background:var(--hit); border-color:#145c32}
+.shot b.m{border-color:var(--miss); border-width:4px}
+.shot b.u{background:repeating-linear-gradient(45deg,#bbb 0 3px,#e4e4e4 3px 6px)}
+.shot b.z{background:var(--target);border:3px dashed #3E8FD8}
+.shot b.l{background:var(--warn); border-color:#6b3d00}
+.q{font-weight:700; margin:8px 0}
+.ex{margin-top:10px; font-size:14px}
+.casenav{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+.casenav .primary{flex:1}
+.score{font-family:var(--f-mono); font-size:13px; color:var(--muted)}
+/* computers */
+.kbd{display:none}
+@media (hover:hover) and (pointer:fine){ .kbd{display:block} }
+.kbd kbd{font-family:var(--f-mono); font-size:11.5px; border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; padding:0 5px; background:var(--panel2)}
+@media (min-width:1500px){ .wrap{max-width:1480px} .steptitle{font-size:24px} body{font-size:16px} }
+:fullscreen body, body.fs{padding-block:12px} 
+:fullscreen .wrap{max-width:none}
+/* touch + phones */
+button,select,summary,.opt,input[type="checkbox"]{touch-action:manipulation}
+.btn,.trainbtn,select,.langbtn,nav.tabs button{min-height:44px}
+.pchip,.seg button{min-height:36px}
+input[type="checkbox"]{width:20px; height:20px; accent-color:var(--accent)}
+.opt{min-height:44px}
+@media (max-width:640px){
+  body{font-size:15.5px; padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+  select,input[type="text"]{font-size:16px}
+  .hdr-side{align-items:stretch; width:100%}
+  .langbtn{align-self:flex-start}
+  .phasechips{flex-wrap:nowrap; overflow-x:auto; padding-bottom:2px}
+  .pchip{white-space:nowrap}
+  .steptitle{font-size:20px}
+  .card{padding:13px}
+  .fieldcard{padding:6px}
+  .navrow{position:fixed; z-index:30; left:0; right:0; bottom:0; margin:0; padding:10px max(12px, env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px, env(safe-area-inset-left,0px)); background:color-mix(in srgb, var(--panel) 94%, transparent); border-top:1px solid var(--line); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px)}
+  .navrow .btn{min-height:50px; font-size:16px}
+  th,td{padding:6px 5px; font-size:13.5px}
+  .names{grid-template-columns:minmax(0,1fr)}
+  .casenav .btn{flex:1 1 40%}
+  .tcount{font-size:36px}
+}
+ .annbox{border:1px dashed var(--accent);border-radius:10px;padding:8px 12px;margin-bottom:10px;background:color-mix(in srgb, var(--accent) 7%, var(--panel))}
+.annbox .cap{font-size:12px;color:var(--muted);margin-bottom:2px}
+.annbox .c{font-size:13.5px;direction:ltr;text-align:start;overflow-wrap:anywhere}
+body[dir="rtl"] .annbox .c{text-align:right}
+</style>
+
+<style>
+.byline{color:var(--accent)}
+.lights{display:inline-flex;gap:6px;align-items:center}
+.lights i{width:14px;height:14px;border-radius:50%;background:var(--line);display:inline-block}
+.lights i.r.on{background:var(--miss);box-shadow:0 0 8px var(--miss)}
+.lights i.g.on{background:var(--hit);box-shadow:0 0 8px var(--hit)}
+.tok{transition:transform .9s cubic-bezier(.4,.1,.2,1), opacity .4s}
+#field{direction:ltr}
+@media (max-width:640px){#bpause .plbl{display:none} #bpause{min-width:58px;font-size:18px} .navrow{grid-template-columns:auto 1fr auto auto}}
+#irrtable td{white-space:normal;vertical-align:top;line-height:1.5}
+#irrtable td:first-child{font-weight:700;min-width:160px}
+#irrtable td.ref{white-space:nowrap;direction:ltr;unicode-bidi:isolate}
+#irrtable .grp td{background:var(--panel2);font-family:var(--f-disp);font-size:15px;color:var(--ink)}
+#irrtable .btn{min-height:36px;padding:5px 10px;white-space:nowrap;font-size:13px}
+.navrow{grid-template-columns:auto 1fr auto auto}
+#bpause[aria-pressed="true"]{background:var(--navy);color:var(--navy-ink);border-color:var(--navy)}
+</style>
+
+<style>
+.dots{display:inline-flex;gap:6px;direction:ltr;font-family:var(--f-mono);font-size:13px}
+.val{font-family:var(--f-mono);font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
+.val.z{color:var(--bad);font-weight:700}
+#results td{font-family:var(--f-mono);font-size:13px}
+#results td:first-child{font-family:var(--f-body);font-size:14px}
+#results th.st1{color:var(--navy)} #results th.sep,#results td.sep{border-inline-start:2px solid var(--line)}
+.evseg{display:inline-flex}
+.shot b{width:auto;min-width:40px;height:30px;border-radius:15px;display:grid;place-items:center;font-family:var(--f-mono);font-size:12px;color:#111;padding:0 6px}
+.shot b.z{color:var(--bad);font-weight:700}
+@keyframes elimflash{0%,100%{background:color-mix(in srgb, var(--bad) 30%, var(--panel))}50%{background:transparent}}
+/* athletes already eliminated: shaded, no flashing */
+#results tr.out td,#board tr.out td{background:color-mix(in srgb, var(--muted) 20%, var(--panel));color:var(--muted)}
+#results tr.elim td,#board tr.elim td{animation:elimflash 1s ease-in-out infinite;color:var(--ink)}
+@media (prefers-reduced-motion:reduce){#results tr.elim td,#board tr.elim td{animation:none;background:color-mix(in srgb, var(--bad) 20%, var(--panel))}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="hdr">
+    <div>
+      <p class="eyebrow" id="eyebrow"></p>
+      <h1 id="h1"></h1>
+      <p class="lead" id="lead"></p>
+/* athlete just eliminated: red ring on the field */
+@keyframes elimring{0%,100%{opacity:1}50%{opacity:.1}}
+.tok.justout .ring{animation:elimring .7s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.tok.justout .ring{animation:none}}
+      <p class="byline" id="byline"></p>
+    </div>
+    <div class="hdr-side">
+      <div class="row"><div class="seg evseg" role="group" aria-label="Event"><button id="evm" aria-pressed="true"></button><button id="evw" aria-pressed="false"></button></div><button class="langbtn" id="sndbtn" aria-pressed="true"></button><button class="langbtn" id="fsbtn" hidden></button><button class="langbtn" id="langbtn"></button></div>
+      <div class="phasechips" id="phasechips"></div>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="tab-sim" aria-selected="true"></button>
+    <button role="tab" id="tab-cases" aria-selected="false"></button>
+    <button role="tab" id="tab-irr" aria-selected="false"></button>
+  </nav>
+
+  <section id="view-sim" class="col">
+    <div class="main">
+      <div class="col">
+        <div class="card fieldcard">
+          <svg id="field" viewBox="0 0 1000 420" role="img" aria-label="Field of play"></svg>
+          <div class="timer"><span id="timerlbl"></span><span class="bar"><i id="timerbar"></i></span><span class="t" id="timert">–</span></div>
+          <div class="legend" id="legend"></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card" id="stepcard">
+          <div class="stephead"><span id="stepno"></span><span class="tag" id="steptag"></span></div>
+          <div class="steptitle" id="steptitle"></div>
+          <div class="cmdbox" id="cmdbox"><div class="cap" id="cmdcap"></div><div id="cmdlist"></div></div>
+          <div class="annbox" id="annbox" hidden><div class="cap" id="anncap"></div><div class="c" id="anntext"></div></div>
+          <p class="desc" id="stepdesc"></p>
+          <p class="ref" id="stepref"></p>
+          <button class="trainbtn" id="trainbtn"></button>
+          <div class="trainer" id="trainer" hidden>
+            <div class="trow"><span class="tcount" id="tcount">0</span><span class="tstage"><span id="tstage"></span></span></div>
+            <div class="saybox" id="saybox"><div class="cap" id="saycap"></div><div class="say" id="say"></div></div>
+            <p class="thint" id="thint"></p>
+            <div class="tbtns"><button class="btn" id="tpause"></button><button class="btn" id="tnext"></button><button class="btn" id="tclose"></button></div>
+            <div class="checks"><label><input type="checkbox" id="tauto" checked><span id="tautol"></span></label><label><input type="checkbox" id="tbeep" checked><span id="tbeepl"></span></label></div>
+          </div>
+          <div class="gate" id="gate" hidden>
+            <h3 id="gateq"></h3>
+            <div class="opts" id="gateopts"></div>
+            <div class="row" style="margin-top:8px"><span class="small grow" id="gatefb"></span><button class="btn primary" id="gatego" hidden></button></div>
+          </div>
+        </div>
+        <div class="card ctrls">
+          <div class="navrow"><button class="btn" id="bprev"></button><button class="btn primary" id="bnext"></button><button class="btn" id="bplay"></button><button class="btn" id="bpause" aria-pressed="false"></button></div>
+          <input type="range" id="seek" min="0" max="1" value="0" aria-label="Step">
+          <div class="row"><span class="small" id="speedl"></span><div class="seg" role="group"><button id="sp1" aria-pressed="true">×1</button><button id="sp2" aria-pressed="false">×2</button><button id="sp4" aria-pressed="false">×4</button><button id="sp8" aria-pressed="false">×8</button></div>
+            <label class="row small" style="margin-inline-start:auto"><input type="checkbox" id="quizme"><span id="quizmel"></span></label></div>
+          <div class="row"><button class="btn" id="bvoice"></button><select class="grow" id="vmode" aria-label="Narration"></select></div>
+          <div class="row"><select class="grow" id="vrate" aria-label="Rate"></select><select class="grow" id="vvoice" aria-label="Voice"></select></div>
+          <div class="row"><select class="grow" id="scen" aria-label="Scenario"></select><button class="btn" id="bstart"></button></div>
+          <p class="small" id="scennote" style="margin:0"></p>
+          <p class="small kbd" id="kbdhint" style="margin:0"></p>
+          <div class="namesopt">
+            <label class="toggle"><input type="checkbox" id="usenames"><span id="usenamesl"></span></label>
+            <div id="namespanel" hidden>
+              <p class="small" id="nameshelp" style="margin:8px 0"></p>
+              <div class="names" id="names"></div>
+              <textarea id="namespaste" rows="4" aria-label="Paste names"></textarea>
+              <div class="row" style="margin-top:8px"><button class="btn" id="bfill"></button><button class="btn" id="bclear"></button></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="row" style="justify-content:space-between"><h2 id="boardh"></h2><span class="small" id="boardsub"></span></div>
+          <div class="tw"><table id="board"></table></div>
+        </div>
+      </div>
+    </div>
+    <div class="card rescard">
+      <div class="row" style="justify-content:space-between"><h2 id="resh"></h2><span class="small" id="ressub"></span></div>
+      <div class="tw"><table id="results"></table></div>
+    </div>
+  </section>
+
+  <section id="view-cases" hidden>
+    <div class="card casecard">
+      <div class="stephead"><span id="caseno"></span><span class="tag" id="casetag"></span></div>
+      <div class="steptitle" id="casetitle"></div>
+      <p class="desc" id="casetext"></p>
+      <div class="shots" id="caseshots"></div>
+      <div class="q" id="caseq"></div>
+      <div class="opts" id="caseopts"></div>
+      <div class="ex" id="caseex"></div>
+      <div class="casenav"><button class="btn" id="cprev"></button><button class="btn primary" id="cnext"></button><button class="btn" id="crestart"></button><button class="btn" id="clisten"></button></div>
+      <p class="score" id="cscore"></p>
+    </div>
+  </section>
+
+  <section id="view-irr" hidden>
+    <div class="card"><h2 id="irrh"></h2><p class="small" id="irrsub" style="margin:0 0 10px"></p>
+      <div class="tw"><table id="irrtable"></table></div></div>
+  </section>
+
+  <div class="infos" id="infos"></div>
+  <p class="src" id="src"></p>
+  <p class="src byline-foot" id="bylinefoot"></p>
+</div>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const POS="ABCDEFGH".split("");
+const COLORS={A:"#F2B630",B:"#E04848",C:"#3E8FD8",D:"#E0559A",E:"#B8BEC6",F:"#4CBB6A",G:"#EE8A3C",H:"#7A63E0"};
+const INK={A:"#1b1b1b",B:"#fff",C:"#fff",D:"#fff",E:"#1b1b1b",F:"#1b1b1b",G:"#1b1b1b",H:"#fff"};
+let lang="ar", EV="m";
+try{const v=localStorage.getItem("ar10-lang"); if(v==="en"||v==="ar") lang=v; const e=localStorage.getItem("ar10-ev"); if(e==="m"||e==="w") EV=e;}catch(e){}
+const L=o=>o==null?"":(typeof o==="string"?o:(o[lang]??o.en));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const chip=p=>`<span class="chip" style="background:${COLORS[p]};color:${INK[p]}">${p}</span>`;
+const f1=v=>v==null?"":(v/10).toFixed(1);   /* scores are kept in tenths (103 = 10.3) */
+
+/* ================= UI strings ================= */
+const T={
+ar:{eyebrow:"بندقية الهواء 10م · نهائي ISSF · مجموعتان × 5 طلقات ثم 14 طلقة فردية",h1:{m:"محاكي نهائي بندقية الهواء 10م رجال",w:"محاكي نهائي بندقية الهواء 10م سيدات"},ev:["رجال","سيدات"],
+ lead:"تابع النهائي خطوة بخطوة: ثمانية لاعبين على نقاط الرمي A–H، مع أوامر رئيس الميدان وتوقيتها، والدرجات بالكسور العشرية، والإقصاء بعد كل طلقتين من الطلقة 12، وفض التعادل حتى الميداليات.",
+ anncap:"المعلّق (Announcer) · بالإنجليزية",snd1:"🔊 الصوت: يعمل",snd0:"🔇 الصوت: مغلق",fs:"⛶ ملء الشاشة",fsx:"⛶ خروج من ملء الشاشة",
+ kbd:"لوحة المفاتيح: <kbd>←</kbd> التالي · <kbd>→</kbd> السابق · <kbd>مسافة</kbd> تشغيل/إيقاف · <kbd>K</kbd> إيقاف مؤقت · <kbd>T</kbd> تدريب رئيس الميدان · <kbd>F</kbd> ملء الشاشة · <kbd>L</kbd> اللغة · <kbd>M</kbd> الصوت · <kbd>Home</kbd> من البداية",
+ by:"إعداد: الحكم الدولي طارق شرارة",byf:"© T.SHARARA",
+ lang:"English",ph:["قبل النهائي والإعداد والاختبار","المرحلة الأولى · 2 × 5 طلقات","المرحلة الثانية · طلقات فردية والإقصاء"],tabSim:"المحاكي",tabCases:"حالات تحكيمية",tabIrr:"المخالفات والعقوبات",irrH:"المخالفات والعقوبات",irrSub:"المخالفة، العقوبة أو الإجراء، ورقم القاعدة. اضغط «عرض في المحاكي» لمشاهدتها أثناء النهائي.",irrCols:["المخالفة","العقوبة / الإجراء","القاعدة",""],show:"▶ عرض في المحاكي",
+ step:"الخطوة",of:"من",cmdcap:"أوامر رئيس الميدان (CRO) وتوقيتها",nocmd:"لا يوجد أمر في هذه الخطوة",train:"⏱ تدريب رئيس الميدان بالزمن الحقيقي من هنا",
+ sayAt:"عند الصفر قل:",sayNow:"قل الآن",wait:"انتظر",pause:"إيقاف مؤقت",resume:"استئناف",nextStage:"المرحلة التالية",close:"إغلاق",auto:"أكمل التالي تلقائياً",beep:"تنبيه صوتي",
+ prev:"→ السابق",next:"التالي ←",play:"▶ تشغيل",stop:"■ إيقاف",speed:"السرعة",quizme:"اختبرني قبل كل خطوة",
+ voiceOn:"🔊 تشغيل الشرح الصوتي",voiceOff:"🔇 إيقاف الشرح الصوتي",vmode:["الشرح والأوامر","الأوامر فقط"],vrate:["قراءة عادية","قراءة بطيئة","قراءة سريعة"],novoice:"الصوت الافتراضي للجهاز",
+ scen:["سيناريو نتائج جديد…","تعادل على المركز الثامن بعد الطلقة 12","تعادل على البرونزية بعد الطلقة 22","تعادل على الذهبية بعد الطلقة 24","مخالفة: حضور متأخر (أقل من 30 دقيقة)","مخالفة: عدم الحضور خلال 10 دقائق (DNS)","مخالفة: رمي جاف قبل أول طلقة مباراة","مخالفة: طلقة بعد STOP للإعداد والاختبار","مخالفة: طلقة بعد LOAD وقبل START","مخالفة: طلقة زائدة في مجموعة","مخالفة: عطل مسموح به في طلقة فردية","مخالفة: عطل مسموح به في مجموعة 5 طلقات","مخالفة: صفر غير متوقع","مخالفة: اعتراض على قيمة طلقة","مخالفة: احتجاج غير مقبول","مخالفة: تعمير ورمي قبل بدء الإعداد والاختبار","كل المخالفات في نهائي واحد"],fromStart:"من البداية",
+ usenames:"استخدام أسماء اللاعبين",nameshelp:"اكتب اسم العائلة لكل لاعب حسب نقطة الرمي التي حصل عليها بالقرعة (A–H). الدولة اختيارية. رئيس الميدان ينادي اسم العائلة عند التعادل، والاسم يظهر في الملعب ولوحة النتائج.",
+ pasteph:"أو الصق القائمة هنا، اسم في كل سطر بترتيب A إلى H:\nMORENO ESP\nFARID EGY\n…",fill:"تعبئة من القائمة",clearn:"مسح الأسماء",famph:"اسم العائلة",nocph:"الدولة",
+ board:"لوحة النتائج",boardsub:"آخر مجموعة أو طلقة · المجموع",res:"كارت النتائج الكامل",ressub:"المجموعتان ثم كل طلقة فردية، يتحدث مع كل خطوة",
+ col:{rk:"المركز",sh:"اللاعب",last:"الأخيرة",tot:"المجموع",st:"الحالة",so:"فض تعادل",s1:"م1",s2:"م2"},
+ st:{fp:"على نقطة الرمي",entry:"قبل الدخول",shoot:"يرمي",out:"خرج",g:"ذهبية",s:"فضية",b:"برونزية",fop:"منطقة اللعب"},
+ timer:"الزمن",lg:["نقطة الرمي","هدف احتياطي","طلقة مباراة","طلقة اختبار"],
+ f:{line:"خط الأهداف — 10م",fl:"خط الرمي",res:"احتياطي"},
+ gateQ:"قبل أن تكمل: ما الذي يحدث بعد ذلك؟",right:"صحيح.",wrong:"ليس هذا. الصحيح:",go:"تابع",
+ scenNote:{none:"نتائج عشوائية بدون تعادل يحتاج فض تعادل.",so:"في هذا السيناريو طلقة فض تعادل بعد الطلقة",irr:"مخالفات في هذا النهائي: "},
+ caseTag:"اختبر قرارك",caseNo:"الحالة",cprev:"→ السابقة",cnext:"التالية ←",crestart:"ابدأ من جديد",clisten:"🔊 اسمع الحالة",cscore:"إجاباتك الصحيحة:",notq:"ليست الإجابة الصحيحة.",
+ src:"المصدر: دليل نهائيات بندقية الهواء ومسدس الهواء 10م (إنجليزي/عربي) إعداد الحكم الدولي طارق شرارة، وقواعد ISSF 2026 الإصدار 2 (الترجمة العربية A-678)، القاعدة 6.17.2 وقواعد النهائيات العامة 6.17.1، ومستند ISSF «أوامر وإعلانات نهائيات بندقية الهواء 10م رجال – إصدار 2026». النتائج في المحاكي افتراضية. درجات فض التعادل تُسجل منفصلة ولا تُضاف إلى المجموع. اللاعب المستبعد (DSQ) يُدرج في آخر القائمة ويستمر جدول الإقصاء مع الباقين (افتراض في المحاكي)."},
+en:{eyebrow:"10m Air Rifle · ISSF Final · 2 × 5-shot series, then 14 single shots",h1:{m:"10m Air Rifle Men Final Simulator",w:"10m Air Rifle Women Final Simulator"},ev:["Men","Women"],
+ lead:"Follow the Final step by step: eight athletes on firing points A–H, every CRO command and its timing, decimal scores, an elimination every two shots from shot 12, and tie-breaking through to the medals.",
+ anncap:"Announcer",snd1:"🔊 Sound: on",snd0:"🔇 Sound: off",fs:"⛶ Full screen",fsx:"⛶ Exit full screen",
+ kbd:"Keyboard: <kbd>→</kbd> next · <kbd>←</kbd> back · <kbd>Space</kbd> play/stop · <kbd>K</kbd> pause · <kbd>T</kbd> CRO trainer · <kbd>F</kbd> full screen · <kbd>L</kbd> language · <kbd>M</kbd> sound · <kbd>Home</kbd> from the start",
+ by:"Prepared by: International Judge Tarek Sharara",byf:"© T.SHARARA",
+ lang:"العربية",ph:["Before the Final, preparation & sighting","Stage 1 · 2 × 5 shots","Stage 2 · single shots & eliminations"],tabSim:"Simulator",tabCases:"Judging cases",tabIrr:"Irregularities & penalties",irrH:"Irregularities & penalties",irrSub:"Each irregularity, its penalty or procedure, and the rule. Use Show in simulator to watch it happen in a Final.",irrCols:["Irregularity","Penalty / procedure","Rule",""],show:"▶ Show in simulator",
+ step:"Step",of:"of",cmdcap:"CRO commands and timing",nocmd:"No command in this step",train:"⏱ Train as CRO in real time from here",
+ sayAt:"At zero, say:",sayNow:"Say now",wait:"Wait",pause:"Pause",resume:"Resume",nextStage:"Next stage",close:"Close",auto:"Continue automatically",beep:"Sound cue",
+ prev:"← Back",next:"Next →",play:"▶ Play",stop:"■ Stop",speed:"Speed",quizme:"Quiz me before each step",
+ voiceOn:"🔊 Play narration",voiceOff:"🔇 Stop narration",vmode:["Explanation and commands","Commands only"],vrate:["Normal speed","Slow","Fast"],novoice:"Device default voice",
+ scen:["New random results…","Tie for 8th place after shot 12","Tie for bronze after shot 22","Tie for gold after shot 24","Irregularity: late reporting (under 30 min)","Irregularity: not reporting within 10 min (DNS)","Irregularity: dry firing before the first MATCH shot","Irregularity: shot after sighting STOP","Irregularity: shot after LOAD, before START","Irregularity: extra shot in a series","Irregularity: allowable malfunction in a single shot","Irregularity: allowable malfunction in a 5-shot series","Irregularity: unexpected zero","Irregularity: claim of shot value","Irregularity: protest not upheld","Irregularity: loading and firing before sighting START","All irregularities in one Final"],fromStart:"From the start",
+ usenames:"Use athletes' names",nameshelp:"Enter each athlete's family name by the firing point drawn (A–H). Country code is optional. The CRO calls family names in a tie, and they show on the field and the scoreboard.",
+ pasteph:"Or paste the list here, one name per line from A to H:\nMORENO ESP\nFARID EGY\n…",fill:"Fill from list",clearn:"Clear names",famph:"Family name",nocph:"NOC",
+ board:"Scoreboard",boardsub:"Last series or shot · total",res:"Full results card",ressub:"Both series, then every single shot, updated at every step",
+ col:{rk:"Rank",sh:"Athlete",last:"Last",tot:"Total",st:"Status",so:"Tie-break",s1:"S1",s2:"S2"},
+ st:{fp:"At firing point",entry:"Not yet in",shoot:"Firing",out:"Out",g:"Gold",s:"Silver",b:"Bronze",fop:"On the FOP"},
+ timer:"Time",lg:["Firing point","Reserve target","MATCH shot","Sighting shot"],
+ f:{line:"Target line — 10 m",fl:"Firing line",res:"Reserve"},
+ gateQ:"Before you continue: what happens next?",right:"Correct.",wrong:"Not this one. Correct answer:",go:"Continue",
+ scenNote:{none:"Random results with no tie that needs a tie-breaking shot.",so:"This scenario has a tie-breaking shot after shot",irr:"Irregularities in this Final: "},
+ caseTag:"Test your call",caseNo:"Case",cprev:"← Previous",cnext:"Next →",crestart:"Start again",clisten:"🔊 Read the case",cscore:"Correct answers:",notq:"Not quite.",
+ src:"Source: 10m Air Rifle & Air Pistol Finals Manual (English/Arabic) by International Judge Tarek Sharara, and ISSF Rules 2026 Edition 2 (Arabic translation A-678), Rule 6.17.2 with the general Finals rules 6.17.1, and the ISSF “Commands and Announcements for Finals 2026 – 10m Air Rifle Men”. Results in the simulator are hypothetical. Tie-breaking shots are recorded separately and are not added to the total. A disqualified athlete is listed as DSQ and the elimination schedule continues with the remaining finalists (a simulator assumption)."}
+};
+const t=()=>T[lang];
+
+/* ================= results plans ================= */
+function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function shotVal(skill){ let v=Math.round(skill+gauss()*3.6); if(Math.random()<.03) v-=4+Math.floor(Math.random()*8); return Math.max(85,Math.min(109,v)); }
+function makePlan(){
+  const p={v:{},so:{},rep:{},sight:{}};
+  POS.forEach(x=>{ const skill=103.4+Math.random()*1.8;
+    p.v[x]=[null]; for(let k=1;k<=24;k++) p.v[x].push(shotVal(skill));
+    p.so[x]=[]; for(let r=0;r<12;r++) p.so[x].push(shotVal(skill));
+    p.rep[x]=[0,1,2,3,4].map(()=>shotVal(skill));
+    p.sight[x]=[0,1,2,3,4,5].map(()=>shotVal(skill-1)); });
+  return p;
+}
+const IRR={4:[{t:"late",p:"C"}],5:[{t:"dns",p:"F"}],6:[{t:"dry",p:"B"}],7:[{t:"afterStop",p:"G"}],8:[{t:"loadEarly",p:"E",k:15}],9:[{t:"extra",p:"A",s:1}],
+ 10:[{t:"malf1",p:"D",k:13}],11:[{t:"malfS",p:"H",s:2,shot:2}],12:[{t:"zero",p:"C",k:17}],13:[{t:"claim",p:"B",k:14}],14:[{t:"protest",p:"F",k:16}],15:[{t:"dsq",p:"A"}],
+ 16:[{t:"late",p:"C"},{t:"dry",p:"B"},{t:"extra",p:"A",s:1},{t:"malfS",p:"H",s:2,shot:3},{t:"loadEarly",p:"E",k:11},{t:"claim",p:"B",k:12},{t:"malf1",p:"D",k:13},{t:"zero",p:"G",k:14},{t:"protest",p:"F",k:15}]};
+function planFor(kind){
+  for(let i=0;i<9000;i++){
+    const p=makePlan(); if(IRR[kind]) p.irr=IRR[kind];
+    const r=simulate(p,NAMES,true); const ev=r.events; if(r.bad) continue;
+    if(kind===0 && !ev.length) return p;
+    if(kind===1 && ev.some(e=>e.s===12)) return p;
+    if(kind===2 && ev.some(e=>e.s===22)) return p;
+    if(kind===3 && ev.some(e=>e.s===24)) return p;
+    if(kind>=4 && !ev.length) return p;
+  }
+  const p=makePlan(); if(IRR[kind]) p.irr=IRR[kind]; return p;
+}
+
+/* ================= simulation → steps ================= */
+function simulate(plan,names,quick){
+  const A={}; POS.forEach(p=>A[p]={p,status:"active",shots:{},pen:{},so:[],place:null,medal:null,last:null,lastKind:null,elimOrder:null,malf:0,tslot:p});
+  const steps=[], events=[], irrNotes=[]; let elimCount=0, bad=false; const IRRS=plan.irr||[];
+  const nm=p=>names[POS.indexOf(p)];
+  const act=()=>POS.filter(p=>A[p].status==="active");
+  const eff=(p,k)=>A[p].shots[k]===undefined?null:Math.max(0,(A[p].shots[k]||0)+(A[p].pen[k]||0));
+  const total=p=>{let s=0; for(let k=1;k<=24;k++){const v=eff(p,k); if(v!=null) s+=v;} return s;};
+  const sumR=(p,a,b)=>{let s=0,any=false; for(let k=a;k<=b;k++){const v=eff(p,k); if(v!=null){s+=v;any=true;}} return any?s:null;};
+  const penR=(p,a,b)=>{let s=0; for(let k=a;k<=b;k++) s+=A[p].pen[k]||0; return s;};
+  const pm=f=>Object.fromEntries(POS.map(p=>[p,f(p)]));
+  const fpPos=()=>pm(p=>A[p].status==="dns"?"entry":"fp");
+  function push(o){
+    if(quick){steps.push(0);return}
+    const board={},res={};
+    POS.forEach(p=>{const a=A[p]; board[p]={status:a.status,place:a.place,medal:a.medal,last:a.last?a.last.slice():null,lastKind:a.lastKind,total:total(p),elimOrder:a.elimOrder,tslot:a.tslot};
+      const sh={}, pen={}; for(let k=11;k<=24;k++){ sh[k]=eff(p,k); if(a.pen[k]) pen[k]=a.pen[k]; }
+      res[p]={s1:sumR(p,1,5),s2:sumR(p,6,10),p1:penR(p,1,5),p2:penR(p,6,10),sh,pen,so:a.so.slice(),total:total(p),place:a.place,status:a.status};});
+    o.board=board; o.res=res; steps.push(o);
+  }
+  /* tie-breaking, as in "Commands and Announcements for Finals 2026": Announcer max 10 s after STOP, then the CRO:
+     tie … names and firing points … ONLY: … FOR THE SHOOT-OFF SHOT … LOAD (START 5 s later, STOP after 50 s) */
+  const famOn=p=>(hasName(p)?nm(p):"(Family Name)")+" on Firing Point "+A[p].tslot;
+  const andL=a=>a.length<3?a.join(" and "):a.slice(0,-1).join(", ")+" and "+a[a.length-1];
+  const tieStages=tied=>[
+    {lbl:{ar:"تعليق المعلّق على التعادل (10 ث كحد أقصى)",en:"Announcer: tie-break comments (max 10 s)"},secs:10,say:"There is a tie for the lowest ranking Finalist to be eliminated.",hint:{ar:"فور STOP يعلّق المعلّق 10 ثوانٍ كحد أقصى على موقف التعادل، ثم يعلن رئيس الميدان التعادل.",en:"Right after STOP the Announcer gives max. 10 seconds of comments on the tie-break situation; then the CRO announces the tie."}},
+    {lbl:{ar:"إعلان التعادل",en:"Tie announced"},secs:5,say:"The next Command is for "+andL(tied.map(famOn))+" … ONLY:",hint:{ar:"ثم ينادي رئيس الميدان أسماء العائلات ونقاط الرمي للمتعادلين فقط.",en:"Then the CRO calls the family names and firing points of the tied finalists ONLY."}},
+    {lbl:{ar:"نداء المتعادلين",en:"Tied finalists called"},secs:6,say:"FOR THE SHOOT-OFF SHOT … LOAD",hint:{ar:"ثم أمر التعمير لطلقة فض التعادل، وبعده بـ 5 ثوانٍ START، ثم STOP بعد 50 ثانية.",en:"Then LOAD for the shoot-off shot; START 5 seconds later, STOP after 50 seconds."}}];
+  const cmdsFrom=stages=>{let acc=0; return stages.filter(s=>{acc+=s.secs; s._at=acc; return !!s.say;}).map(s=>({c:s.say,at:s.at||("+"+Math.round(s._at)+"s")}));};
+  const annName=p=>{const i=POS.indexOf(p); const noc=(typeof USE_NAMES!=="undefined"&&USE_NAMES&&ENTRIES[i].noc)?ENTRIES[i].noc.toUpperCase():"(COUNTRY)"; return {n:nm(p),c:noc};};
+  const BEFORE={ar:"قبل النهائي",en:"Before the Final"};
+  const irrStep=(ph,p,color,title,desc,ref)=>push({ph,tag:{ar:"مخالفة",en:"Irregularity"},title,desc,ref,pos:fpPos(),flag:{p,color},
+    stages:[{lbl:{ar:"قرار لجنة الحكام",en:"Jury decision"},secs:8,say:null,hint:{ar:"تُسجّل لجنة الحكام المخالفة وتُطبّق العقوبة أو الإجراء.",en:"The Jury records the irregularity and applies the penalty or procedure."}}],cmds:[]});
+  const has=(t,p)=>IRRS.find(x=>x.t===t&&(!p||x.p===p));
+  const need=p=>{ if(A[p].status!=="active"){ bad=true; return false; } return true; };
+
+  /* ---- before the Final ---- */
+  push({ph:0,tag:BEFORE,title:{ar:"الحضور: 30 دقيقة قبل البداية",en:"Reporting: 30 min before the Start Time"},
+    desc:{ar:"وقت البداية هو اللحظة التي يبدأ فيها رئيس الميدان أوامر أول طلقة مباراة. يحضر اللاعبون إلى منطقة الإعداد قبل وقت البداية بثلاثين دقيقة على الأقل مع المعدات والذخيرة الكافية وملابس المنافسة وزي المنتخب للتتويج. تتأكد لجنة الحكام من حضور الجميع وصحة الأسماء والدول، وتفحص المعدات في أقرب وقت ممكن، وتُركّب أجهزة التصويب الحي (Live Aiming) على البنادق بمساعدة وإشراف مسؤولي RTS والعرض الرياضي.",en:"The Start Time is when the CRO begins the commands for the first MATCH shot. Athletes report to the Finals preparation area at least 30 minutes before, with equipment, enough pellets, competition clothing and national team uniform for the ceremony. The Jury confirms all finalists and their names and nations, and checks equipment as soon as possible. Live Aiming devices are fitted to the rifles, assisted and overseen by RTS and Sport Presentation officials."},
+    ref:"6.17.1.3",pos:pm(()=>"entry"),stages:[{lbl:{ar:"الحضور",en:"Reporting"},secs:10,say:null,hint:{ar:"30:00 قبل البداية.",en:"30:00 before the start."}}],cmds:[]});
+  IRRS.filter(x=>x.t==="late").forEach(x=>{ const p=x.p; A[p].pen[1]=(A[p].pen[1]||0)-20; irrNotes.push({ar:`حضور متأخر (${p})`,en:`late reporting (${p})`});
+    irrStep(0,p,"#E5A23A",{ar:`مخالفة: حضور متأخر (${p})`,en:`Irregularity: late reporting (${p})`},
+      {ar:`حضر {${p}} إلى منطقة الإعداد قبل البداية بـ 25 دقيقة فقط بدلاً من 30. العقوبة خصم نقطتين (2) من نتيجة أول طلقة مباراة.`,en:`{${p}} reports only 25 minutes before the Start Time instead of 30. The penalty is a 2-point deduction from the score of the first MATCH shot.`},"6.17.1.3"); });
+  IRRS.filter(x=>x.t==="dns").forEach(x=>{ const p=x.p, a=A[p]; a.status="dns"; a.place=8; a.elimOrder=elimCount++; irrNotes.push({ar:`لم يبدأ DNS (${p})`,en:`DNS (${p})`});
+    irrStep(0,p,"#D93B36",{ar:`لم يحضر خلال 10 دقائق: DNS (${p})`,en:`Not reported within 10 minutes: DNS (${p})`},
+      {ar:`لم يحضر {${p}} إلى منطقة الإعداد خلال 10 دقائق بعد وقت الحضور، فلا يُسمح له بالبدء ويُسجَّل أول المُقصَين (المركز الثامن) ويظهر DNS. لذلك يبدأ أول إقصاء بالمركز السابع.`,en:`{${p}} has not reported within 10 minutes after the Reporting Time, so may not start, is recorded as the first eliminated athlete (8th) and shown as DNS. The first elimination therefore begins with 7th place.`},"6.17.1.4"); });
+  push({ph:0,tag:BEFORE,title:{ar:"المعدات على نقاط الرمي: 20 دقيقة قبل البداية",en:"Equipment on the firing points: 20 min before"},
+    desc:{ar:"يُسمح للاعبين أو مدربيهم بوضع الأسلحة والمعدات على نقاط الرمي قبل وقت البداية بعشرين دقيقة على الأقل. لا تُترك حقائب الأسلحة في منطقة اللعب، ولا يُسمح بتمارين التصويب في هذا الوقت. يعود اللاعبون بعدها إلى منطقة الإعداد، ويجلس المدربون في أماكنهم.",en:"Athletes or coaches place guns and equipment on the firing points at least 20 minutes before the Start Time. Gun cases may not stay on the FOP and aiming exercises are not permitted now. Athletes then return to the preparation area and coaches take their seats."},
+    ref:"6.17.1.14 b",pos:pm(p=>A[p].status==="dns"?"entry":"entry"),equip:true,stages:[{lbl:{ar:"المعدات",en:"Equipment"},secs:10,say:null,hint:{ar:"20:00 قبل البداية.",en:"20:00 before the start."}}],cmds:[]});
+  {const stg=[{lbl:{ar:"النداء إلى الخط",en:"Call to the line"},secs:5,say:"ATHLETES TO THE LINE",at:"−10:00",hint:{ar:"قبل البداية بعشر دقائق (مثال: 11:50 لنهائي يبدأ 12:00). يتأكد مساعد من ترتيب اللاعبين ويعطي إشارة.",en:"10 minutes before the start (e.g. 11:50 for a 12:00 Final). An assistant lines the finalists up in order and gives a sign."}}];
+   push({ph:0,tag:BEFORE,title:{ar:"النداء إلى الخط وتقديم اللاعبين",en:"Call to the line and introductions"},
+    desc:{ar:"قبل وقت البداية بعشر (10) دقائق يُصدر رئيس الميدان ATHLETES TO THE LINE. يسير لاعبو البندقية إلى الخط بكامل ملابسهم والسراويل والسترات مغلقة (7.5.2.3). يدخل اللاعبون واحداً تلو الآخر ويتم تقديمهم أثناء توجههم إلى نقاط الرمي A–H المخصصة لهم بالقرعة، ويقفون أمام نقاط الرمي مواجهين للجمهور حتى انتهاء التقديم بالكامل. يقدّم المعلّق اللاعبين من A إلى H أو من H إلى A، ثم عضو لجنة الحكام المسؤول ورئيس الميدان. أعلام الأمان تبقى مُدخلة أثناء التقديم.",en:"Ten (10) minutes before the Start Time the CRO commands ATHLETES TO THE LINE. Rifle finalists walk to the line fully dressed, trousers and jackets closed (7.5.2.3). Athletes enter one at a time and are introduced as they walk to the firing points A–H they drew, and stand in front of their firing points facing the spectators until all introductions are done. The Announcer introduces them from A to H or H to A, then the Jury Member-in-Charge and the CRO. Safety flags stay inserted during the presentation."},
+    ref:"6.17.2 d · 6.17.1.12 · 6.17.1.14 c",pos:fpPos(),equip:true,walk:true,ann:"On firing point H, representing (Country), (Name) … On firing point A … The Jury Member-in-Charge is (Name) from (Country). The Chief Range Officer is (Name) from (Country).",stages:stg,cmds:cmdsFrom(stg)});}
+  {const stg=[{lbl:{ar:"بعد التقديم",en:"After introductions"},secs:15,say:"TAKE YOUR POSITIONS",at:"−06:35",hint:{ar:"بعد الانتهاء من جميع فقرات التقديم.",en:"After all introductions have been made."}},
+     {lbl:{ar:"30 ثانية (بندقية)",en:"30 seconds (rifle)"},secs:30,say:"FIVE MINUTES PREPARATION AND SIGHTING TIME … START",at:"−06:05",hint:{ar:"بعد 30 ثانية في البندقية (10 ثوانٍ في المسدس).",en:"After 30 seconds for rifle (10 seconds for pistol)."}}];
+   push({ph:0,tag:BEFORE,title:{ar:"اتخاذ المواقع وبدء الإعداد والاختبار",en:"Take positions and start preparation & sighting"},
+    desc:{ar:"بعد التقديم يُصدر رئيس الميدان TAKE YOUR POSITIONS. يجوز للاعبين تناول البنادق واتخاذ أوضاع الرمي وعمل تمارين الحمل والتصويب، ولا يجوز إزالة أعلام الأمان أو الرمي الجاف قبل أمر البدء. بعد 30 ثانية في البندقية يبدأ زمن الإعداد والاختبار المشترك (5 دقائق).",en:"After the introductions the CRO commands TAKE YOUR POSITIONS. Athletes may handle their rifles, get into position and do holding and aiming exercises, but may not remove safety flags or dry fire before the START command. After 30 seconds for rifle the combined 5-minute Preparation and Sighting Time starts."},
+    ref:"6.17.2 d · 6.17.1.14 d, g",pos:fpPos(),equip:true,stages:stg,cmds:cmdsFrom(stg)});}
+  IRRS.filter(x=>x.t==="dsq").forEach(x=>{ const p=x.p; if(!need(p)) return; A[p].status="dsq"; A[p].last=null; irrNotes.push({ar:`استبعاد (${p})`,en:`disqualification (${p})`});
+    irrStep(0,p,"#D93B36",{ar:`مخالفة: تعمير ورمي قبل أمر البدء (${p})`,en:`Irregularity: loading and firing before START (${p})`},
+      {ar:`بعد TAKE YOUR POSITIONS وقبل الأمر PREPARATION AND SIGHTING TIME … START قام {${p}} بتعمير البندقية وإطلاق طلقة. العقوبة الاستبعاد (DSQ).`,en:`After TAKE YOUR POSITIONS and before PREPARATION AND SIGHTING TIME … START, {${p}} loads and fires a shot. The penalty is disqualification (DSQ).`},"6.17.1.14 h"); });
+  const sightShooters=act();
+  {const stg=[{lbl:{ar:"الإعداد والاختبار",en:"Preparation & sighting"},secs:270,say:"30 SECONDS",at:"−01:35",hint:{ar:"طلقات اختبار بلا حدود، والرمي الجاف مسموح. عند −06:00 يرحّب المعلّق ويشرح النهائي.",en:"Unlimited sighting shots; dry firing is allowed. At −06:00 the Announcer welcomes and explains the Final."}},
+     {lbl:{ar:"آخر 30 ثانية",en:"Last 30 seconds"},secs:30,say:"STOP … UNLOAD",at:"−01:05",hint:{ar:"بعد انقضاء الدقائق الخمس. يفرّغ اللاعبون بنادقهم.",en:"When the five minutes are over. Finalists unload their rifles."}}];
+   sightShooters.forEach(p=>{A[p].last=plan.sight[p].slice(); A[p].lastKind="sight";});
+   push({ph:0,tag:{ar:"اختبار",en:"Sighting"},title:{ar:"5 دقائق إعداد واختبار",en:"5 minutes preparation and sighting"},
+    desc:{ar:"خلال هذا الزمن يُسمح بعدد غير محدود من طلقات الاختبار (Sighting shots)، والرمي الجاف مسموح فقط في هذا الزمن. قبل النهاية بثلاثين ثانية يُعلن رئيس الميدان 30 SECONDS، وبعد خمس دقائق STOP … UNLOAD. لا يُعلن عن أي نتائج أثناء طلقات الاختبار.",en:"Finalists may fire unlimited sighting shots, and dry firing is allowed only in this time. 30 seconds before the end the CRO announces 30 SECONDS, and after five minutes STOP … UNLOAD. No scores are announced during sighting shots."},
+    ref:"6.17.2 d · 6.17.1.14 e",ann:`The Final of the 10m Air Rifle ${EV==="w"?"Women":"Men"} Event consists of two series of five shots, each fired in 250 seconds, followed by fourteen single shots, each fired on command in 50 seconds. Eliminations begin after the 12th shot and continue after every two single shots until the Bronze medal (after 22 shots) and the Silver and Gold medals (after 24 shots) are decided.`,pos:fpPos(),fire:{shooters:sightShooters,vals:Object.fromEntries(sightShooters.map(p=>[p,plan.sight[p].slice()])),kind:"sight",dur:300,base:0},stages:stg,cmds:cmdsFrom(stg)});}
+  POS.forEach(p=>{A[p].last=null; A[p].lastKind=null;});
+  IRRS.filter(x=>x.t==="dry").forEach(x=>{ const p=x.p; if(!need(p)) return; A[p].pen[1]=(A[p].pen[1]||0)-10; irrNotes.push({ar:`رمي جاف (${p})`,en:`dry firing (${p})`});
+    irrStep(0,p,"#E5A23A",{ar:`مخالفة: رمي جاف خارج زمن الإعداد والاختبار (${p})`,en:`Irregularity: dry firing outside preparation & sighting (${p})`},
+      {ar:`بعد STOP … UNLOAD وقبل أول مجموعة مباراة قام {${p}} برمي جاف. العقوبة خصم نقطة واحدة (1). ولأن المخالفة قبل أول طلقة مباراة، يُطبّق الخصم على نتيجة أول طلقة مباراة.`,en:`After STOP … UNLOAD and before the first MATCH series {${p}} dry fires. The penalty is a 1-point deduction. Because it happened before the first MATCH shot, it is applied to the score of the first MATCH shot.`},"6.17.1.14 e · 6.17.2 c"); });
+  IRRS.filter(x=>x.t==="afterStop").forEach(x=>{ const p=x.p; if(!need(p)) return; A[p].pen[1]=(A[p].pen[1]||0)-20; irrNotes.push({ar:`طلقة بعد STOP (${p})`,en:`shot after STOP (${p})`});
+    irrStep(0,p,"#E5A23A",{ar:`مخالفة: طلقة بعد STOP للإعداد والاختبار (${p})`,en:`Irregularity: shot after the sighting STOP (${p})`},
+      {ar:`أطلق {${p}} طلقة بعد الأمر PREPARATION AND SIGHTING TIME … STOP وقبل START لأول مجموعة مباراة. لا تُحتسب طلقة مباراة، ويُخصم نقطتان (2) من نتيجة أول طلقة مباراة.`,en:`{${p}} fires a shot after PREPARATION AND SIGHTING TIME … STOP and before the START of the first competition series. It is not counted as a MATCH shot and 2 points are deducted from the first MATCH shot.`},"6.17.1.14 i"); });
+  {const stg=[{lbl:{ar:"مسح الأهداف",en:"Clearing targets"},secs:60,say:"FOR THE FIRST COMPETITION SERIES … LOAD",at:"−00:05",hint:{ar:"60 ثانية بعد STOP … UNLOAD. عند −01:00 يقدّم المعلّق شرحاً موجزاً.",en:"60 seconds after STOP … UNLOAD. At −01:00 the Announcer gives a brief explanation."}}];
+   push({ph:1,tag:{ar:"المباراة",en:"Match"},title:{ar:"مسح الأهداف ولوحة النتائج لطلقات المباراة",en:"Targets and scoreboard cleared for MATCH shots"},
+    desc:{ar:"تُمسح الأهداف ولوحة النتائج استعداداً لطلقات المباراة، ويبدأ النهائي من الصفر (نتيجة التأهيل لا تُحمل). بعد 60 ثانية يبدأ رئيس الميدان أوامر المجموعة الأولى، وهذا هو وقت البداية؛ رمي المباراة يبدأ عند 0:00.",en:"Targets and scoreboard are cleared for MATCH shots and the Final starts from zero (qualification scores do not carry forward). After 60 seconds the CRO begins the commands for the first series; this is the Start Time, and competition firing starts at 0:00."},
+    ref:"6.17.2 d, e · 6.17.1.5",ann:"All Finalists will now shoot two series of five shots, each in 250 seconds, followed by fourteen single shots, each on command in 50 seconds. Eliminations begin after the 12th shot.",pos:fpPos(),stages:stg,cmds:cmdsFrom(stg)});}
+
+  /* ---- match ---- */
+  const PLACE={1:{ar:"الذهبية",en:"gold"},2:{ar:"الفضية",en:"silver"},3:{ar:"البرونزية",en:"bronze"}};
+  const ORD={4:"الرابع",5:"الخامس",6:"السادس",7:"السابع",8:"الثامن"};
+  const placeName=pl=>PLACE[pl]||{ar:"المركز "+ORD[pl],en:pl+"th place"};
+  function elim(p){const a=A[p]; a.place=act().length; a.status="out"; a.elimOrder=elimCount++; if(a.place===2)a.medal="s"; if(a.place===3)a.medal="b"; return a.place;}
+  const rankLine=()=>act().sort((x,y)=>total(y)-total(x)||x.localeCompare(y)).map(p=>`${p}: ${f1(total(p))}`).join(" · ");
+  const announcer=(say,hint)=>({lbl:{ar:"تعليق المعلّق",en:"Announcer"},secs:20,say,hint:hint||{ar:"فور STOP يعلّق المعلّق 15–20 ثانية على الترتيب والنتائج البارزة.",en:"Right after STOP the Announcer comments for 15–20 seconds on the ranking and notable scores."}});
+
+  function series(n){
+    const k0=(n-1)*5+1, inc=IRRS.filter(x=>x.t!=="claim"&&x.s===n);
+    inc.forEach(x=>need(x.p));
+    const sh=act(), vals={};
+    sh.forEach(p=>{ const v=[]; for(let j=0;j<5;j++){ const k=k0+j; let val=plan.v[p][k];
+        const ms=inc.find(x=>x.p===p&&x.t==="malfS"); if(ms&&j>=ms.shot) val=null;
+        if(val!=null) A[p].shots[k]=val; v.push(val==null?null:val); }
+      const ex=inc.find(x=>x.p===p&&x.t==="extra"); if(ex) v.push(plan.rep[p][0]);
+      vals[p]=v; A[p].last=v.slice(0,5).map((x,j)=>x==null?null:eff(p,k0+j)); A[p].lastKind="series"; });
+    const ms=inc.find(x=>x.t==="malfS");
+    const stg=[{lbl:{ar:"التعمير",en:"Loading"},secs:5,say:"START",at:n===1?"00:00":undefined,hint:{ar:n===1?"وقت البداية 00:00 (مثال: 12:00).":"بعد 5 ثوانٍ من أمر LOAD.",en:n===1?"Start Time 00:00 (e.g. 12:00).":"5 seconds after the LOAD command."}},
+      {lbl:{ar:"250 ثانية · 5 طلقات",en:"250 seconds · 5 shots"},secs:250,say:ms?null:"STOP",hint:ms?{ar:"لاعب يصلح عطلاً، والباقون انتهوا من الرمي.",en:"One athlete is repairing a malfunction; the others have finished."}:{ar:"عند انقضاء 250 ثانية أو بعد انتهاء الجميع من 5 طلقات.",en:"At 250 seconds, or when all finalists have fired five shots."}}];
+    push({ph:1,tag:{ar:"المجموعة "+n,en:"Series "+n},title:{ar:`المجموعة ${n}: خمس طلقات في 250 ثانية`,en:`Series ${n}: five shots in 250 seconds`},
+      desc:{ar:`${sh.map(p=>"{"+p+"}").join(" ")} يرمون خمس (5) طلقات مباراة في زمن 250 ثانية (الطلقات ${k0}–${k0+4}). تُحتسب الدرجات بالكسور العشرية وأقصى درجة للطلقة 10.9. عند انقضاء 250 ثانية أو بعد انتهاء الجميع يُصدر رئيس الميدان STOP. لا إقصاء في المرحلة الأولى.`,
+            en:`${sh.map(p=>"{"+p+"}").join(" ")} fire five (5) MATCH shots in 250 seconds (shots ${k0}–${k0+4}). Decimal scoring, maximum 10.9 per shot. At 250 seconds or when all have fired five shots, the CRO commands STOP. No eliminations in stage 1.`},
+      ref:"6.17.2 a, b, e",pos:fpPos(),fire:{shooters:sh,vals,kind:"series",dur:250,base:k0},stages:stg,cmds:cmdsFrom(stg)});
+    inc.forEach(x=>{ const p=x.p, a=A[p];
+      if(x.t==="extra"){ a.pen[k0+4]=(a.pen[k0+4]||0)-20; a.last=[0,1,2,3,4].map(j=>eff(p,k0+j)); irrNotes.push({ar:`طلقة زائدة (${p}، المجموعة ${n})`,en:`extra shot (${p}, series ${n})`});
+        irrStep(1,p,"#E5A23A",{ar:`مخالفة: طلقة زائدة في المجموعة ${n} (${p})`,en:`Irregularity: extra shot in series ${n} (${p})`},
+          {ar:`أطلق {${p}} ست طلقات في المجموعة ${n} بدلاً من خمس. تُلغى الطلقة الزائدة، ويُخصم نقطتان (2) من آخر طلقة صحيحة (الطلقة ${k0+4}).`,en:`{${p}} fires six shots in series ${n} instead of five. The extra shot is nullified and 2 points are deducted from the last correct shot (shot ${k0+4}).`},"6.17.1.14 l"); }
+      if(x.t==="malfS"){ a.malf++; irrNotes.push({ar:`عطل في مجموعة (${p}، المجموعة ${n})`,en:`malfunction in a series (${p}, series ${n})`});
+        irrStep(1,p,"#E5A23A",{ar:`عطل مسموح به في المجموعة ${n} (${p})`,en:`ALLOWABLE malfunction in series ${n} (${p})`},
+          {ar:`توقفت بندقية {${p}} بعد الطلقة ${x.shot} من المجموعة ${n}، وقرر ضابط الميدان أن العطل مسموح به وتم إصلاحه في أقل من دقيقة. الطلقات التي أُطلقت تُحتسب، ويستكمل اللاعب المجموعة في الزمن المتبقي عند الادعاء بالعطل مضافاً إليه زمن الإصلاح (بحد أقصى دقيقة واحدة). يُسمح بعطل مسموح به واحد فقط في النهائي.`,en:`{${p}}'s rifle stops after shot ${x.shot} of series ${n}. The Range Officer rules it ALLOWABLE and it is repaired in under one minute. Shots already fired count; the athlete completes the series within the time remaining when the malfunction was claimed plus the repair time (not more than one minute). Only one ALLOWABLE malfunction per Final.`},"6.17.1.6");
+        const v=[]; for(let j=0;j<5;j++){ const k=k0+j; if(j>=x.shot){ a.shots[k]=plan.v[p][k]; } v.push(j>=x.shot?plan.v[p][k]:null);} a.last=[0,1,2,3,4].map(j=>eff(p,k0+j));
+        const stg2=[{lbl:{ar:"الإصلاح (حد أقصى دقيقة)",en:"Repair (max 1 minute)"},secs:40,say:null,hint:{ar:"إصلاح العطل أو استبدال البندقية.",en:"Repair the malfunction or replace the rifle."}},
+          {lbl:{ar:"الزمن المتبقي + زمن الإصلاح",en:"Remaining time + repair time"},secs:150,say:"STOP",hint:{ar:"بعد انتهاء اللاعب من الطلقات المتبقية يُصدر رئيس الميدان STOP.",en:"When the athlete has fired the remaining shots, the CRO commands STOP."}}];
+        push({ph:1,tag:{ar:"استكمال المجموعة",en:"Series completion"},title:{ar:`استكمال المجموعة ${n}: ${p} (${5-x.shot} طلقات)`,en:`Series ${n} completion: ${p} (${5-x.shot} shots)`},
+          desc:{ar:`{${p}} يطلق الطلقات المتبقية فقط، والآخرون في انتظار ويجوز لهم تمارين التصويب والرمي الجاف.`,en:`{${p}} fires only the remaining shots while the others stand by; they may do aiming exercises and dry fire.`},
+          ref:"6.17.1.6 · 6.17.1.8 d",pos:fpPos(),fire:{shooters:[p],vals:{[p]:v},kind:"series",dur:150,base:k0},stages:stg2,cmds:cmdsFrom(stg2)}); }
+    });
+    const nx=n===1?"FOR THE NEXT COMPETITION SERIES … LOAD":"FOR THE NEXT COMPETITION SHOT … LOAD";
+    const stg3=[announcer(nx,n===2?{ar:"يوضح المعلّق أن الطلقات الفردية ستبدأ وأنه بعد كل طلقتين يُقصى صاحب أقل ترتيب.",en:"The Announcer explains that single shots begin and that after every second shot the lowest-ranked finalist is eliminated."}:null)];
+    push({ph:1,tag:{ar:"نتيجة المجموعة "+n,en:"Series "+n+" result"},title:{ar:`انتهت المجموعة ${n}`,en:`End of series ${n}`},
+      desc:{ar:`الترتيب: ${rankLine()}. يعلّق المعلّق 15–20 ثانية على الترتيب الحالي والنتائج البارزة دون إعلان درجات الطلقات الفردية.`+(n===2?" ثم يوضح أن الطلقات الفردية ستبدأ، وأنه بعد كل طلقتين يُقصى صاحب أقل ترتيب.":""),en:`Ranking: ${rankLine()}. The Announcer comments for 15–20 seconds on the current ranking and notable scores; individual shot scores are not announced.`+(n===2?" Then explains that single shots begin and the lowest-ranked finalist is eliminated after every second shot.":"")},
+      ref:"6.17.2 e",ann:n===1?"In the lead after the first series … Only … points behind … At the moment in last place …":"Now, after the two 5-shot series, the following fourteen single shots will be fired on command. After every two single shots the lowest ranking Finalist will be eliminated.",pos:fpPos(),stages:stg3,cmds:cmdsFrom(stg3)});
+  }
+
+  const keepAfter=k=>(24-k)/2+1;
+  function single(k){
+    const inc=IRRS.filter(x=>x.k===k); inc.forEach(x=>need(x.p));
+    const sh=act(), vals={};
+    sh.forEach(p=>{ let val=plan.v[p][k];
+      if(inc.find(x=>x.p===p&&x.t==="malf1")) val=null;
+      if(inc.find(x=>x.p===p&&(x.t==="loadEarly"||x.t==="zero"))) val=0;
+      if(val!=null) A[p].shots[k]=val; vals[p]=[val]; A[p].last=[val==null?null:eff(p,k)]; A[p].lastKind="shot"; });
+    const elimAfter=k%2===0&&k>=12;
+    const stopSay=k===24?"STOP … UNLOAD":"STOP";
+    const stg=[{lbl:{ar:"التعمير",en:"Loading"},secs:5,say:"START",hint:{ar:"بعد 5 ثوانٍ من أمر LOAD.",en:"5 seconds after the LOAD command."}},
+      {lbl:{ar:"50 ثانية للطلقة",en:"50 seconds for the shot"},secs:50,say:stopSay,hint:k===24?{ar:"في نهاية الطلقة 24: STOP … UNLOAD، ويتحقق ضابط الميدان من فتح الأجزاء وإدخال أعلام الأمان.",en:"At the end of shot 24: STOP … UNLOAD; a Range Officer verifies actions open and safety flags inserted."}:{ar:"عند انقضاء 50 ثانية أو بعد إطلاق الجميع.",en:"At 50 seconds, or when all athletes have fired."}}];
+    if(!elimAfter && !inc.length) stg.push(announcer("FOR THE NEXT COMPETITION SHOT … LOAD",{ar:"15–20 ثانية تعليق على الترتيب دون درجات الطلقات، ويشير المعلّق إلى من قد يُقصى بعد الطلقة التالية.",en:"15–20 seconds on the ranking without shot scores; the Announcer indicates who will probably be eliminated after the next shot."}));
+    const elimTxt=elimAfter?(k===24?{ar:" بعد هذه الطلقة تتحدد الفضية والذهبية.",en:" After this shot silver and gold are decided."}:k===22?{ar:" بعد هذه الطلقة تتحدد البرونزية.",en:" After this shot the bronze medal is decided."}:{ar:` بعد هذه الطلقة يُقصى صاحب أقل مجموع (${placeName(keepAfter(k)+1).ar}).`,en:` After this shot the lowest total is eliminated (${placeName(keepAfter(k)+1).en}).`}):{ar:" لا إقصاء بعد هذه الطلقة.",en:" No elimination after this shot."};
+    push({ph:2,tag:{ar:"الطلقة "+k,en:"Shot "+k},title:{ar:`الطلقة ${k}: ${sh.length} لاعبين · 50 ثانية`,en:`Shot ${k}: ${sh.length} athletes · 50 seconds`},
+      desc:{ar:`${sh.map(p=>"{"+p+"}").join(" ")} يطلقون طلقة مباراة فردية باستخدام الأمر في زمن 50 ثانية.`+elimTxt.ar,en:`${sh.map(p=>"{"+p+"}").join(" ")} fire a single MATCH shot on command in 50 seconds.`+elimTxt.en},
+      ref:"6.17.2 a, f",ann:(!elimAfter&&k<24)?"In last place, and facing elimination after the next single shot, is …":null,pos:fpPos(),fire:{shooters:sh,vals,kind:"shot",dur:50,base:k},stages:stg,cmds:cmdsFrom(stg)});
+    incidents(k,inc);
+    if(elimAfter) results(k); else { if(inc.length) contStep(k); after(k); }
+  }
+  function contStep(k){ const stg=[announcer("FOR THE NEXT COMPETITION SHOT … LOAD")];
+    push({ph:2,tag:{ar:"متابعة",en:"Continue"},title:{ar:`متابعة بعد الطلقة ${k}`,en:`Continue after shot ${k}`},desc:{ar:`الترتيب: ${rankLine()}.`,en:`Ranking: ${rankLine()}.`},ref:"6.17.2 f",pos:fpPos(),stages:stg,cmds:cmdsFrom(stg)}); }
+  function compShot(k,p,val,title,desc,ref,firstLbl,firstSecs){
+    const a=A[p]; a.shots[k]=val; a.last=[eff(p,k)]; a.lastKind="shot";
+    const stg=[{lbl:firstLbl,secs:firstSecs,say:null,hint:{ar:"الآخرون في انتظار ويجوز لهم تمارين التصويب والرمي الجاف.",en:"The others stand by and may do aiming exercises and dry fire."}},
+      {lbl:{ar:"50 ثانية للطلقة",en:"50 seconds for the shot"},secs:50,say:"STOP",hint:{ar:"بعد إطلاق الطلقة.",en:"After the shot is fired."}}];
+    push({ph:2,tag:{ar:"إعادة الطلقة",en:"Repeat shot"},title,desc,ref,pos:fpPos(),fire:{shooters:[p],vals:{[p]:[val]},kind:"shot",dur:50,base:k},stages:stg,cmds:cmdsFrom(stg)});
+  }
+  function incidents(k,inc){
+    inc.forEach(x=>{ const p=x.p, a=A[p]; if(a.status!=="active"){ bad=true; return; }
+      if(x.t==="loadEarly"){ irrNotes.push({ar:`طلقة بعد LOAD وقبل START (${p}، الطلقة ${k})`,en:`shot after LOAD before START (${p}, shot ${k})`});
+        irrStep(2,p,"#E5A23A",{ar:`مخالفة: طلقة بعد LOAD وقبل START (${p})`,en:`Irregularity: shot after LOAD, before START (${p})`},
+          {ar:`في الطلقة ${k} أطلق {${p}} طلقته بعد أمر LOAD وقبل أمر START. تُحتسب الطلقة صفراً (Miss).`,en:`On shot ${k} {${p}} fires after the LOAD command but before START. The shot is scored as a miss (0).`},"6.17.1.14 k"); }
+      else if(x.t==="claim"){ irrNotes.push({ar:`اعتراض على قيمة طلقة (${p}، الطلقة ${k})`,en:`claim of shot value (${p}, shot ${k})`});
+        irrStep(2,p,"#7A63E0",{ar:`اعتراض على قيمة طلقة: غير مسموح (${p})`,en:`Claim of shot value: not permitted (${p})`},
+          {ar:`سجّلت الطلقة ${k} للاعب {${p}} الدرجة ${f1(a.shots[k])}، ويطلب مدربه مراجعة القيمة لأنه يراها ${f1(a.shots[k]+1)}. الاحتجاجات على قيمة الطلقات أو عددها غير مسموح بها في النهائيات، وتبقى النتيجة كما هي.`,en:`Shot ${k} of {${p}} scores ${f1(a.shots[k])}, and the coach asks for it to be checked as ${f1(a.shots[k]+1)}. Score protests on the value or number of shots are not permitted in Finals, so the result stands.`},"6.17.1.7"); }
+      else if(x.t==="protest"){ a.pen[k]=(a.pen[k]||0)-20; a.last=[eff(p,k)]; irrNotes.push({ar:`احتجاج غير مقبول (${p}، الطلقة ${k})`,en:`protest not upheld (${p}, shot ${k})`});
+        irrStep(2,p,"#7A63E0",{ar:`احتجاج غير مقبول: خصم نقطتين (${p})`,en:`Protest not upheld: 2 points (${p})`},
+          {ar:`في الطلقة ${k} احتج {${p}} بأن رئيس الميدان أصدر STOP قبل انقضاء 50 ثانية. قررت لجنة احتجاجات النهائيات فوراً أن الزمن كان صحيحاً ولم تقبل الاحتجاج، وقرارها نهائي. يُخصم نقطتان (2) من نتيجة الطلقة المرتبطة بالاحتجاج.`,en:`On shot ${k} {${p}} protests that the CRO commanded STOP before 50 seconds. The Finals Protest Jury decides at once that the timing was correct and does not uphold it; its decision is final. 2 points are deducted from the shot relating to the protest.`},"6.17.1.13 c, d"); }
+      else if(x.t==="malf1"){ a.malf++; irrNotes.push({ar:`عطل مسموح به (${p}، الطلقة ${k})`,en:`allowable malfunction (${p}, shot ${k})`});
+        irrStep(2,p,"#E5A23A",{ar:`عطل مسموح به في الطلقة ${k} (${p})`,en:`ALLOWABLE malfunction on shot ${k} (${p})`},
+          {ar:`لم تنطلق بندقية {${p}} في الطلقة ${k}، وقرر ضابط الميدان أن العطل مسموح به (6.13.2). يُعطى اللاعب دقيقة واحدة كحد أقصى لإصلاح العطل أو استبدال البندقية، ثم يُوجَّه لإعادة الطلقة. يُسمح بعطل مسموح به واحد فقط في النهائي. إذا لم يتمكن اللاعب من إطلاق الطلقة (عطل أو تجاوز الزمن) يستخدم رئيس الميدان أسطوانة تفريغ الكُريات (PDC).`,en:`{${p}}'s rifle does not fire on shot ${k} and the Range Officer rules the malfunction ALLOWABLE (6.13.2). The athlete gets a maximum of one minute to repair it or replace the rifle, and is then directed to repeat the shot. Only one ALLOWABLE malfunction per Final. If a finalist is unable to fire a shot (malfunction or overtime), the CRO uses the Pellet Discharge Cylinder (PDC).`},"6.17.1.6");
+        const v=plan.rep[p][1];
+        compShot(k,p,v,{ar:`إعادة الطلقة ${k}: ${p}`,en:`Shot ${k} repeated: ${p}`},{ar:`بعد الإصلاح يطلق {${p}} الطلقة ${k} من جديد، وتُسجَّل ${f1(v)}.`,en:`After the repair {${p}} fires shot ${k} again; it scores ${f1(v)}.`},"6.17.1.6",{ar:"الإصلاح (حد أقصى دقيقة)",en:"Repair (max 1 minute)"},60); }
+      else if(x.t==="zero"){ irrNotes.push({ar:`صفر غير متوقع (${p}، الطلقة ${k})`,en:`unexpected zero (${p}, shot ${k})`});
+        irrStep(2,p,"#3E8FD8",{ar:`شكوى صفر غير متوقع (${p})`,en:`Unexpected zero complaint (${p})`},
+          {ar:`أظهر هدف {${p}} صفراً (طلقة مفقودة) في الطلقة ${k}. تحدد لجنة الحكام (العضو المسؤول، والعضو الثاني، وعضو من RTS) هل كانت الطلقة خارج الهدف فعلاً أم أن الهدف تعطل، ويجوز لها أن تطلب من رئيس الميدان إيقاف الرمي لفحص الهدف. ما لم تجد دليلاً موثوقاً على أن الطلقة لم تصب الهدف، توجّه اللاعب لإطلاق طلقة مباراة أخرى. إذا زاد التأخير عن 5 دقائق يُعطى جميع اللاعبين دقيقتين اختبار قبل الاستئناف. في أي عطل للأهداف الإلكترونية ينتظر رئيس الميدان توجيه مسؤول لجنة RTS، ولا إعلان حتى تُحل المشكلة.`,en:`{${p}}'s target shows a zero (missing shot) on shot ${k}. The Jury (Member-in-Charge, second Competition Jury Member and one RTS) decides whether it really missed or the target malfunctioned, and may direct the CRO to stop firing to examine the target. Unless there is credible evidence the shot missed, the athlete is directed to fire another competition shot. If the delay exceeds 5 minutes, all athletes get 2 minutes of sighting before firing resumes. In any EST malfunction the CRO waits for the RTS Jury-in-Charge, and nothing is announced until it is resolved.`},"6.17.1.8 · d");
+        const v=plan.rep[p][2];
+        compShot(k,p,v,{ar:`طلقة مباراة إضافية: ${p}`,en:`Extra competition shot: ${p}`},{ar:`سُجلت الطلقة الإضافية ${f1(v)}، وتُحتسب قيمتها بدلاً من الصفر غير المتوقع ويستمر النهائي.`,en:`The extra shot registers ${f1(v)}; its value counts in lieu of the unexpected zero and the Final continues.`},"6.17.1.8",{ar:"فحص لجنة الحكام",en:"Jury check"},60); }
+    });
+  }
+  function results(k){
+    const keep=keepAfter(k); const notes={ar:[],en:[]}; const rl=rankLine();
+    if(act().length>keep){
+      const AA=act().sort((x,y)=>total(x)-total(y)); const low=total(AA[0]); const tied=AA.filter(p=>total(p)===low);
+      if(tied.length===1){ const pl=elim(tied[0]); notes.ar.push(`أقل مجموع: {${tied[0]}} (${f1(low)}) يخرج في ${placeName(pl).ar}.`); notes.en.push(`Lowest total: {${tied[0]}} (${f1(low)}) is out in ${placeName(pl).en}.`); }
+      else { const pl=act().length; events.push({s:k,place:pl,n:tied.length});
+        notes.ar.push(`تعادل عند ${f1(low)} بين ${tied.map(p=>"{"+p+"}").join(" و")} على ${placeName(pl).ar}: يعلن رئيس الميدان أسماء عائلات المتعادلين ونقاط رميهم (… ONLY) ويأمرهم بطلقة فض التعادل FOR THE SHOOT-OFF SHOT بإجراءات الرمي العادية.`);
+        notes.en.push(`Tie on ${f1(low)} between ${tied.map(p=>"{"+p+"}").join(" and ")} for ${placeName(pl).en}: the CRO announces the tied finalists' family names and firing points (… ONLY) and commands FOR THE SHOOT-OFF SHOT with the normal firing procedure.`);
+        pushResults(k,notes,rl,true,tied); shootoff(k,tied,pl); return; }
+    } else if(k<24){ notes.ar.push("لا إقصاء: العدد المطلوب من اللاعبين باقٍ بالفعل (DNS أو DSQ)."); notes.en.push("No elimination: the required number of finalists is already left (DNS or DSQ)."); }
+    if(k===24 && act().length===1){ const w=act()[0]; A[w].place=1; A[w].medal="g"; }
+    pushResults(k,notes,rl,false,null); after(k);
+  }
+  function pushResults(k,notes,rl,tie,tied){
+    const stg=tie?tieStages(tied)
+            :(k<24?[announcer("FOR THE NEXT COMPETITION SHOT … LOAD",{ar:"يهنئ المعلّق اللاعب المُقصى بمركزه، ثم 15–20 ثانية على ترتيب الباقين، ويشير إلى من قد يُقصى بعده.",en:"The Announcer congratulates the eliminated finalist on the place, gives 15–20 seconds on the remaining ranking and indicates who will probably be eliminated next."})]:[]);
+    const outP=POS.find(p=>A[p].status==="out"&&A[p].elimOrder===elimCount-1);
+    if(k===24&&!tie) return finalStep(notes,rl);
+    push({ph:2,elimFlash:k<=22?(tie?tied.slice():(outP?[outP]:[])):[],tag:{ar:"بعد الطلقة "+k,en:"After shot "+k},
+      title:{ar:`بعد الطلقة ${k}`+(tie?": تعادل":notes.ar.length&&!/^لا/.test(notes.ar[0])?": إقصاء":""),en:`After shot ${k}`+(tie?": tie":notes.en.length&&!/^No/.test(notes.en[0])?": elimination":"")},
+      desc:{ar:`الترتيب: ${rl}. `+notes.ar.join(" ")+(tie?"":" يفرّغ اللاعب المُقصى بندقيته ويُدخل علم الأمان ويضعه ويتراجع عن نقطة الرمي، ويتحقق ضابط الميدان من ذلك."),en:`Ranking: ${rl}. `+notes.en.join(" ")+(tie?"":" The eliminated finalist unloads, inserts the safety flag, lays the rifle down and steps back; a Range Officer verifies it.")},
+      ref:"6.17.2 g, h · 6.17.1.14 n",ann:tie?"(Max. 10 seconds on the tie-break situation.)":(outP?`After the ${k===22?"22nd":k+"th"} shot, ${A[outP].place===3?"the Bronze medal":A[outP].place+"th place"} has been decided. Representing ${annName(outP).c}, it goes to ${annName(outP).n}.`:null),pos:fpPos(),stages:stg,cmds:cmdsFrom(stg)});
+  }
+  function after(k){ if(k<24) single(k+1); }
+  function shootoff(k,tied,pl){
+    tied.forEach(p=>{const v=plan.so[p][A[p].so.length]??100; A[p].so.push(v); A[p].last=[v]; A[p].lastKind="so";});
+    const stg=[{lbl:{ar:"التعمير",en:"Loading"},secs:5,say:"START",hint:{ar:"بعد 5 ثوانٍ من LOAD.",en:"5 seconds after LOAD."}},{lbl:{ar:"50 ثانية",en:"50 seconds"},secs:50,say:"STOP",hint:{ar:"إجراءات الرمي العادية.",en:"Normal firing procedure."}}];
+    const n=A[tied[0]].so.length;
+    push({ph:2,tag:{ar:"فض التعادل",en:"Tie-breaking"},title:{ar:`طلقة فض التعادل (Shoot-off) ${n}: ${tied.join(" و")}`,en:`Shoot-off shot ${n}: ${tied.join(" & ")}`},
+      desc:{ar:`المتعادلون على ${placeName(pl).ar} يطلقون طلقة فردية إضافية لفض التعادل حتى يُكسر. لا تُضاف درجة فض التعادل إلى المجموع. اللاعب غير المشارك الذي يطلق طلقة تُلغى طلقته دون عقوبة.`,en:`The athletes tied for ${placeName(pl).en} fire an additional single tie-breaking shot until the tie is broken. The tie-breaking score is not added to the total. A finalist not involved who fires has that shot nullified, with no penalty.`},
+      ref:"6.17.2 h · 6.17.1.14 m",pos:fpPos(),fire:{shooters:tied,vals:Object.fromEntries(tied.map(p=>[p,[A[p].so[A[p].so.length-1]]])),kind:"so",dur:50,base:30+n},stages:stg,cmds:cmdsFrom(stg)});
+    const sc=p=>A[p].so[A[p].so.length-1];
+    const lo=Math.min(...tied.map(sc)); const bottom=tied.filter(p=>sc(p)===lo);
+    const notes={ar:[`فض التعادل: ${tied.map(p=>`{${p}} ${f1(sc(p))}`).join(" · ")}.`],en:[`Tie-breaking: ${tied.map(p=>`{${p}} ${f1(sc(p))}`).join(" · ")}.`]};
+    if(bottom.length>1){
+      notes.ar.push(`ما زال التعادل قائماً بين ${bottom.map(p=>"{"+p+"}").join(" و")}: طلقة فض تعادل أخرى.`); notes.en.push(`Still tied between ${bottom.map(p=>"{"+p+"}").join(" and ")}: another tie-breaking shot.`);
+      const stg2=tieStages(bottom);
+      push({ph:2,elimFlash:k<=22?bottom.slice():[],tag:{ar:"فض التعادل",en:"Tie-breaking"},title:{ar:"ما زال التعادل قائماً",en:"Still tied"},desc:{ar:notes.ar.join(" "),en:notes.en.join(" ")},ref:"6.17.2 h",pos:fpPos(),stages:stg2,cmds:cmdsFrom(stg2)});
+      shootoff(k,bottom,pl); return;
+    }
+    const pPl=elim(bottom[0]);
+    notes.ar.push(`{${bottom[0]}} في ${placeName(pPl).ar}.`); notes.en.push(`{${bottom[0]}} takes ${placeName(pPl).en}.`);
+    if(k===24){ const w=act()[0]; if(w){A[w].place=1;A[w].medal="g"; notes.ar.push(`{${w}} الذهبية.`); notes.en.push(`{${w}} wins gold.`);} return finalStep(notes,null,true); }
+    const stg3=[announcer("FOR THE NEXT COMPETITION SHOT … LOAD")];
+    push({ph:2,elimFlash:[bottom[0]],tag:{ar:"فض التعادل",en:"Tie-breaking"},title:{ar:"نتيجة فض التعادل",en:"Tie-breaking result"},desc:{ar:notes.ar.join(" "),en:notes.en.join(" ")},ref:"6.17.2 g, h",ann:`After the ${k===22?"22nd":k+"th"} shot, ${pPl===3?"the Bronze medal":pPl+"th place"} has been decided. Representing ${annName(bottom[0]).c}, it goes to ${annName(bottom[0]).n}.`,pos:fpPos(),stages:stg3,cmds:cmdsFrom(stg3)});
+    after(k);
+  }
+  function finalStep(notes,rl,afterTie){
+    const stg=(afterTie?[{lbl:{ar:"انتهاء فض التعادل",en:"Tie broken"},secs:3,say:"STOP … UNLOAD",hint:{ar:"بعد كسر التعادل على الذهبية.",en:"After the tie for gold is broken."}}]:[])
+      .concat([{lbl:{ar:"إعلان النتائج",en:"Results"},secs:5,say:"RESULTS ARE FINAL",hint:{ar:"إذا لم يوجد تعادل أو احتجاج، وبعد التأكد مع غرفة التحكم. ثم تجمع لجنة الحكام الفائزين الثلاثة في منطقة اللعب.",en:"If there are no ties or protests, after checking with the Control Room. Then the Jury assembles the three medallists on the FOP."}}]);
+    if(!afterTie && act().length===1){ const w=act()[0]; A[w].place=1; A[w].medal="g"; }
+    push({ph:2,tag:{ar:"النهاية",en:"End"},title:{ar:"RESULTS ARE FINAL — تقديم الفائزين",en:"RESULTS ARE FINAL — medallists"},
+      desc:{ar:(rl?`الترتيب: ${rl}. `:"")+notes.ar.join(" ")+" بعد أن يُطلق اللاعبان المتبقيان الطلقة 24، وإذا لم يوجد تعادل أو احتجاج، يُصدر رئيس الميدان STOP … UNLOAD، وبعد التأكد مع غرفة التحكم يعلن RESULTS ARE FINAL. تجمع لجنة الحكام الفائزين الثلاثة في منطقة اللعب (FOP)، ويعلن المعلّق فوراً البرونزية ثم الفضية ثم الذهبية.",
+            en:(rl?`Ranking: ${rl}. `:"")+notes.en.join(" ")+" After the two remaining finalists fire shot 24, with no tie or protest, the CRO commands STOP … UNLOAD and, after checking with the Control Room, declares RESULTS ARE FINAL. The Jury assembles the three medallists on the FOP and the Announcer immediately recognises bronze, silver and gold."},
+      ref:"6.17.2 i · 6.17.1.14 q",ann:(()=>{const m=x=>POS.find(p=>A[p].medal===x); const ln=(lbl,p)=>p?`${lbl}, REPRESENTING ${annName(p).c}, GOES TO ${annName(p).n}.`:""; return [ln("THE BRONZE MEDAL",m("b")),ln("THE SILVER MEDAL",m("s")),ln("AND THE GOLD MEDAL",m("g"))].join(" ");})(),pos:pm(p=>A[p].status==="dns"?"entry":A[p].medal?"fop":"fp"),stages:stg,cmds:cmdsFrom(stg)});
+  }
+  series(1); series(2); single(11);
+  return {steps,events,bad,irrNotes};
+}
+
+/* ================= state ================= */
+let NAMES=POS.map(p=>"ATHLETE "+p);
+let ENTRIES=POS.map(()=>({name:"",noc:""})), USE_NAMES=false;
+try{ const sv=JSON.parse(localStorage.getItem("ar10-names")||"null"); if(sv&&Array.isArray(sv.e)&&sv.e.length===8){ ENTRIES=sv.e.map(x=>({name:String(x.name||"").slice(0,24),noc:String(x.noc||"").slice(0,3)})); USE_NAMES=!!sv.on; } }catch(e){}
+function saveNames(){ try{ localStorage.setItem("ar10-names",JSON.stringify({on:USE_NAMES,e:ENTRIES})); }catch(e){} }
+function hasName(p){ const i=POS.indexOf(p); return USE_NAMES && ENTRIES[i].name.trim()!==""; }
+function computeNames(){ NAMES=POS.map(p=>hasName(p)?ENTRIES[POS.indexOf(p)].name.trim().toUpperCase():"ATHLETE "+p); }
+computeNames();
+let IRRN=[], SCEN=0, PLAN=null, STEPS=[], EVENTS=[], I=0, SPEED=1, playT=null, PLAYING=false, PAUSED=false, playDue=0, playLeft=0;
+function rebuild(keepI){ const r=simulate(PLAN,NAMES,false); STEPS=r.steps; EVENTS=r.events; IRRN=r.irrNotes; if(!keepI) I=0; I=Math.min(I,STEPS.length-1); $("seek").max=STEPS.length-1; }
+function newScenario(k){ SCEN=k; PLAN=planFor(k); rebuild(false); stopPlay(); closeTrainer(); $("gate").hidden=true; render(false); }
+
+/* ================= field ================= */
+const NS="http://www.w3.org/2000/svg";
+const el=(tag,at,p,tx)=>{const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(tx!=null)e.textContent=tx;if(p)p.appendChild(e);return e};
+const SLOTS=["R1","A","B","C","D","E","F","G","H","R2"], SX=SLOTS.map((s,i)=>59+i*98);
+const X=Object.fromEntries(SLOTS.map((s,i)=>[s,SX[i]]));
+const FPY=336;
+let TOK={}, TGT={}, IMP={}, EQ={}, LBL={}, CMDG=null, CMDR=null, CMDT=null, FIRE_SHOW=null, LIVE=null, ANIM_DONE=0, SNDN={i:-1,n:0};
+function drawField(){
+  const s=$("field"); s.innerHTML=""; TOK={}; TGT={}; IMP={}; EQ={}; LBL={};
+  el("rect",{x:0,y:0,width:1000,height:420,rx:12,fill:"var(--field)"},s);
+  el("rect",{x:12,y:24,width:976,height:122,rx:10,fill:"#08201f",opacity:.5},s);
+  SLOTS.forEach(sl=>{ const x=X[sl], res=sl[0]==="R";
+    el("rect",{x:x-38,y:34,width:76,height:84,rx:4,fill:"#f4f1e8",opacity:res?.45:1},s);
+    [38,32,26,20,14].forEach((r,i)=>el("circle",{cx:x,cy:74,r:r*.8,fill:i>=2?"#111":"none",stroke:i>=2?"#f4f1e8":"#111","stroke-width":.8,opacity:res?.45:1},s));
+    el("circle",{cx:x,cy:74,r:2.2,fill:"#f4f1e8",opacity:res?.45:1},s);
+    TGT[sl]=el("rect",{x:x-41,y:31,width:82,height:90,rx:6,fill:"none",stroke:"transparent","stroke-width":3},s);
+    IMP[sl]=el("g",{},s);
+    LBL["v"+sl]=el("text",{x,y:139,"text-anchor":"middle","font-size":15,"font-weight":700,fill:"#fff","font-family":"ui-monospace, Menlo, Consolas, monospace"},s,"");
+    if(res) LBL["t"+sl]=el("text",{x,y:16,"text-anchor":"middle","font-size":11,fill:"#fff",opacity:.7},s,sl);
+  });
+  el("rect",{x:0,y:152,width:1000,height:22,fill:"var(--field2)"},s);
+  LBL.line=el("text",{x:500,y:167,"text-anchor":"middle","font-size":12,fill:"#fff",opacity:.85},s,"");
+  el("line",{x1:30,y1:292,x2:970,y2:292,stroke:"#fff","stroke-width":2,opacity:.8},s);
+  LBL.fl=el("text",{x:965,y:286,"text-anchor":"end","font-size":11,fill:"#fff",opacity:.8},s,"");
+  el("line",{x1:20,y1:180,x2:20,y2:288,stroke:"#FFD84D","stroke-width":2},s); el("path",{d:"M14 188 L20 178 L26 188",fill:"none",stroke:"#FFD84D","stroke-width":2},s); el("path",{d:"M14 280 L20 290 L26 280",fill:"none",stroke:"#FFD84D","stroke-width":2},s);
+  LBL.dist=el("text",{x:30,y:238,"font-size":13,"font-weight":700,fill:"#FFD84D"},s,"10 m");
+  CMDG=el("g",{opacity:0},s); CMDR=el("rect",{x:300,y:200,width:400,height:56,rx:10,fill:"#0b2b2c",stroke:"#FFD84D","stroke-width":2.5},CMDG);
+  CMDT=el("text",{x:500,y:237,"text-anchor":"middle","font-size":24,"font-weight":800,fill:"#FFD84D","letter-spacing":1,"font-family":"ui-monospace, Menlo, monospace"},CMDG,"");
+  SLOTS.forEach(sl=>{ const x=X[sl], res=sl[0]==="R";
+    el("rect",{x:x-36,y:300,width:72,height:72,rx:4,fill:res?"none":"var(--fp)",stroke:"#fff","stroke-width":1.2,"stroke-dasharray":res?"4 4":"",opacity:res?.6:1},s);
+    el("text",{x,y:394,"text-anchor":"middle","font-size":15,"font-weight":700,fill:"#fff",opacity:res?.6:1},s,res?"":sl);
+    if(!res){ EQ[sl]=el("rect",{x:x+14,y:304,width:18,height:12,rx:2,fill:"var(--ammo)",opacity:0},s); }
+    else LBL["r"+sl]=el("text",{x,y:340,"text-anchor":"middle","font-size":10,fill:"#fff",opacity:.6},s,"");
+  });
+  POS.forEach(p=>{
+    const g=el("g",{class:"tok"},s);
+    el("circle",{r:23,fill:"none",stroke:"#FFD84D","stroke-width":3,opacity:0,class:"ring"},g);
+    el("circle",{r:17,fill:COLORS[p],stroke:"rgba(0,0,0,.35)","stroke-width":1.5,class:"disc"},g);
+    el("text",{"text-anchor":"middle",dy:5.5,"font-size":15,"font-weight":700,fill:INK[p],"font-family":"ui-monospace, Menlo, monospace",class:"num"},g,p);
+    el("text",{"text-anchor":"middle",y:36,"font-size":11,"font-weight":700,fill:"#fff",stroke:"#0b2b2c","stroke-width":3,"paint-order":"stroke",class:"tname"},g,"");
+    g.style.transition="none"; TOK[p]=g;
+  });
+}
+function tokXY(p,zone,b){ if(zone==="entry") return [X[p],FPY+110]; return [X[b.tslot||p],FPY]; }
+/* each athlete fires at a slightly different moment */
+function fireAt(p,j,n){ const jit=(((p.charCodeAt(0)*7+j*13)%10)/10-.5)*.5; return Math.min(.97,Math.max(.03,(j+.5+jit)/n)); }
+function impXY(x,v,seed){ const d=Math.min(36,Math.max(0,(109-v))*1.05); const a=((seed*137.5)%360)*Math.PI/180; return [x+Math.cos(a)*d,74+Math.sin(a)*d]; }
+let anim=null;
+function fieldCmd(txt){ if(!CMDG) return; const narrow=($("field").getBoundingClientRect().width||1000)<600; const fs=narrow?30:22;
+  CMDT.textContent=txt||""; CMDT.setAttribute("font-size",fs); CMDT.setAttribute("y",narrow?241:236);
+  let w=0; try{ w=CMDT.getComputedTextLength(); }catch(e){} w=Math.min(960,Math.max(narrow?300:240,(w||String(txt||"").length*fs*.62)+44));
+  CMDR.setAttribute("width",w); CMDR.setAttribute("x",500-w/2); CMDR.setAttribute("height",narrow?66:54); CMDR.setAttribute("y",narrow?196:202);
+  CMDG.setAttribute("opacity",txt?1:0); }
+/* the command given at the end of the previous step (e.g. FOR THE NEXT COMPETITION SHOT … LOAD) */
+function prevCmd(i){ const p=STEPS[i-1]; return p&&p.cmds&&p.cmds.length?p.cmds[p.cmds.length-1].c:""; }
+/* firing window of a step: the stage(s) whose time is the 250 s / 50 s firing time (sighting: the whole 5 minutes) */
+function fireWin(st){ const sg=st.stages; if(st.fire.kind==="sight") return {a:0,b:sg.length-1}; let i=-1; sg.forEach((s,j)=>{ if(s.secs===st.fire.dur) i=j; }); if(i<0) i=sg.length-1; return {a:i,b:i}; }
+function progAt(st,k,e){ const w=fireWin(st), sg=st.stages; if(k<w.a) return 0; if(k>w.b) return 1; let t=e; for(let j=w.a;j<k;j++) t+=sg[j].secs; return Math.min(1,t/st.fire.dur); }
+function landedN(st,prog){ let n=0; const f=st.fire; f.shooters.forEach(p=>{ const v=f.vals[p]||[]; v.forEach((x,j)=>{ if(x!=null&&prog>=fireAt(p,j,v.length)) n++; }); }); return n; }
+/* field at a moment inside a firing step: stage k, e seconds into it */
+function fieldAt(st,k,e){ const sg=st.stages, cur=sg[k]; if(!cur||!FIRE_SHOW) return;
+  const prog=progAt(st,k,e); FIRE_SHOW(prog);
+  let say=""; for(let j=k-1;j>=0;j--) if(sg[j].say){ say=sg[j].say; break; } fieldCmd(say||prevCmd(I));
+  $("timert").textContent=Math.max(0,Math.ceil(cur.secs-e))+"s";
+  const n=landedN(st,prog);
+  if(SNDN.i!==I||n<SNDN.n){ SNDN={i:I,n}; } else if(n>SNDN.n){ SNDN.n=n; shotSound(); }
+  if(!(LIVE&&LIVE.i===I&&LIVE.stop)&&(!LIVE||LIVE.i!==I||LIVE.n!==n)){ LIVE={i:I,prog,n}; renderResults(); renderBoard(); } else if(LIVE&&LIVE.i===I&&!LIVE.stop) LIVE.prog=prog; }
+/* firing progress shown in the tables (null = the step's final results) */
+function liveProg(){ const st=STEPS[I]; if(!st||!st.fire||I===0) return null; if(LIVE&&LIVE.i===I) return LIVE.stop?null:LIVE.prog; if(TR) return 0; return null; }
+/* at STOP of a deciding shot, the athlete to be eliminated is shown at once */
+function stopOut(){ const st=STEPS[I], nx=STEPS[I+1]; if(!st||!st.fire||!nx||nx.fire||nx.flag||!(nx.elimFlash&&nx.elimFlash.length)) return null; if(liveProg()!=null||anim) return null; return nx; }
+function liveView(){ const st=STEPS[I], pr=liveProg();
+  if(pr==null){ const nx=stopOut(); return nx?Object.assign({},st,{res:nx.res,board:nx.board,elimFlash:nx.elimFlash}):st; }
+  const pv=STEPS[I-1], f=st.fire, res={}, board={};
+  POS.forEach(p=>{ const r=st.res[p], b=st.board[p], q=pv.res[p], qb=pv.board[p];
+    res[p]=Object.assign({},r,{sh:Object.assign({},r.sh),so:r.so.slice()}); board[p]=Object.assign({},b);
+    if(!f.shooters.includes(p)){ return; }
+    const v=f.vals[p]||[]; const got=v.map((x,j)=>x!=null&&pr>=fireAt(p,j,v.length)?x:null); const sum=got.slice(0,5).reduce((a,x)=>a+(x||0),0);
+    if(f.kind==="sight"){ res[p]=q; board[p]=Object.assign({},b,{last:got,lastKind:"sight",total:qb.total}); return; }
+    if(f.kind==="series"){ const key=f.base===1?"s1":"s2", any=got.some(x=>x!=null);
+      res[p][key]=q[key]==null&&!any?null:(q[key]||0)+sum; res[p].total=q.total+sum; board[p].last=got.slice(0,5); board[p].lastKind="series"; board[p].total=res[p].total; return; }
+    if(f.kind==="shot"){ const k=f.base, x=got[0], old=q.sh[k]; res[p].sh[k]=x!=null?x:old; res[p].total=q.total-(old||0)+(x!=null?x:(old||0)); board[p].last=[x]; board[p].lastKind="shot"; board[p].total=res[p].total; return; }
+    if(f.kind==="so"){ const x=got[0]; res[p].so=x!=null?q.so.concat([x]):q.so.slice(); res[p].total=q.total; board[p].last=[x]; board[p].lastKind="so"; board[p].total=qb.total; return; } });
+  return Object.assign({},st,{res,board}); }
+function markOut(){ const v=liveView(), L=v.elimFlash||[];
+  POS.forEach(p=>{ const g=TOK[p]; if(!g) return; const jo=L.includes(p); g.classList.toggle("justout",jo); const rg=g.querySelector(".ring");
+    if(jo){ rg.setAttribute("stroke","#FF4A42"); rg.setAttribute("opacity",1); g.style.opacity=1; }
+    else if(rg.getAttribute("stroke")==="#FF4A42"){ const st=STEPS[I], b=st.board[p]; rg.setAttribute("stroke","#FFD84D"); rg.setAttribute("opacity",st.fire&&st.fire.shooters.includes(p)?1:0); g.style.opacity=st.pos[p]==="entry"?0:(b.status==="active"||b.medal?1:.45); } }); }
+function renderField(animate){
+  const st=STEPS[I]; const tt=t();
+  const W=$("field").getBoundingClientRect().width||1000; const narrow=W<600; const k=narrow?Math.min(2,560/W*1.15):1.15;
+  for(const key in LBL){const e=LBL[key]; if(!e.dataset.fs) e.dataset.fs=e.getAttribute("font-size"); e.setAttribute("font-size",(+e.dataset.fs*(key[0]==="v"?Math.min(k,1.45):k)).toFixed(1));}
+  LBL.line.textContent=narrow?(lang==="ar"?"10م":"10 m"):tt.f.line; LBL.fl.textContent=narrow?"":tt.f.fl;
+  LBL.rR1.textContent=narrow?"":tt.f.res; LBL.rR2.textContent=narrow?"":tt.f.res;
+  POS.forEach(p=>{ const g=TOK[p]; g.querySelector(".disc").setAttribute("r",narrow?22:17); g.querySelector(".ring").setAttribute("r",narrow?28:23); const tx=g.querySelector(".num"); tx.setAttribute("font-size",narrow?20:15); tx.setAttribute("dy",narrow?7:5.5);
+    const tn=g.querySelector(".tname"); const nmv=hasName(p)?NAMES[POS.indexOf(p)]:""; tn.textContent=nmv.length>10?nmv.slice(0,9)+"…":nmv; tn.setAttribute("font-size",narrow?17:11); tn.setAttribute("y",narrow?42:35); });
+  const sh=st.fire?st.fire.shooters:[];
+  POS.forEach((p,i)=>{ const b=st.board[p]; const [x,y]=tokXY(p,st.pos[p],b); const g=TOK[p];
+    g.style.transitionDelay=(animate&&st.walk)?(i*0.35)+"s":"0s";
+    g.style.transform=`translate(${x}px,${y}px)`; g.style.opacity=st.pos[p]==="entry"?0:(b.status==="active"||b.medal?1:.45); const rg=g.querySelector(".ring"); const mc={g:"#E3B13A",s:"#C3CBD4",b:"#C9884E"}[st.pos[p]==="fop"?b.medal:""]; const fc=st.flag&&st.flag.p===p?st.flag.color:null; const outL=(animate&&st.fire)?[]:((stopOut()||st).elimFlash||[]); const jo=outL.includes(p); g.classList.toggle("justout",jo); if(jo) g.style.opacity=1;
+    rg.setAttribute("stroke",jo?"#FF4A42":(fc||mc||"#FFD84D")); rg.setAttribute("opacity",sh.includes(p)||mc||fc||jo?1:0);
+    EQ[p].setAttribute("opacity",st.equip||st.pos[p]==="fp"?1:0); });
+  if(anim){cancelAnimationFrame(anim);anim=null}
+  ["R1","R2"].forEach(r=>{ LBL["t"+r].setAttribute("opacity",.7); });
+  const show=FIRE_SHOW=(prog)=>{
+    SLOTS.forEach(sl=>{ IMP[sl].innerHTML=""; LBL["v"+sl].textContent=""; TGT[sl].setAttribute("stroke","transparent"); });
+    POS.forEach(p=>{ const b=st.board[p]; const inFire=sh.includes(p); const ts=b.tslot||p; const x=X[ts];
+      if(b.status==="dns") return;
+      let vals=null, kind=null;
+      if(inFire){ vals=st.fire.vals[p]; kind=st.fire.kind; } else if(!st.fire && b.last && b.status==="active"){ vals=b.last; kind=b.lastKind; }
+      if(!vals) return;
+      if(inFire && prog<1) TGT[ts].setAttribute("stroke","var(--accent)");
+      const n=vals.length; let sum=0, any=false, lastV=null; const sight=kind==="sight";
+      vals.forEach((v,j)=>{ if(v==null) return; if(inFire && prog<fireAt(p,j,n)) return;
+        const [ix,iy]=impXY(x,v,(st.fire?st.fire.base:0)*11+j*7+p.charCodeAt(0));
+        el("circle",{cx:ix.toFixed(1),cy:iy.toFixed(1),r:4.2,fill:sight?"#9aa7a6":(v===0?"var(--miss)":"var(--accent)"),stroke:"#fff","stroke-width":1.2},IMP[ts]);
+        if(j<5){ sum+=v; any=true; } lastV=v; });
+      if(!any) return;
+      LBL["v"+ts].textContent=sight?"•":(kind==="series"?f1(sum):f1(lastV));
+    });
+    $("timerbar").style.width=(prog*100)+"%";
+  };
+  const dur=st.fire?st.fire.dur:0;
+  if(st.fire && animate){
+    /* real time, as commanded: LOAD … 5 s … START … 250 s (series) / 50 s (single shot) … STOP; ×2 ×4 ×8 shorten every time */
+    const sg=st.stages; let e=0, last=performance.now(), k=0; fieldAt(st,0,0);
+    const loop=now=>{ if(!PAUSED) e+=(now-last)/1000*SPEED; last=now;
+      while(k<sg.length&&e>=sg[k].secs){ e-=sg[k].secs; if(sg[k].say&&VOICE_ON&&SOUND) speak(sg[k].say); k++; }
+      if(k<sg.length){ fieldAt(st,k,e); anim=requestAnimationFrame(loop); }
+      else { show(1); let s2=""; for(let j=sg.length-1;j>=0;j--) if(sg[j].say){ s2=sg[j].say; break; } fieldCmd(s2); $("timert").textContent="STOP"; $("timerbar").style.width="100%";
+        anim=null; ANIM_DONE=performance.now(); LIVE=null; renderResults(); renderBoard(); markOut(); } };
+    anim=requestAnimationFrame(loop);
+  } else { show(st.fire?1:0); fieldCmd(""); $("timert").textContent=st.fire?"STOP":"–"; }
+}
+
+/* ================= render ================= */
+function chipify(s){return esc(s).replace(/\{([A-H])\}/g,(m,p)=>chip(p))}
+function render(animate){
+  const tt=t(); const st=STEPS[I];
+  document.documentElement.lang=lang; document.documentElement.dir=document.body.dir=(lang==="ar"?"rtl":"ltr");
+  $("eyebrow").textContent=tt.eyebrow; $("h1").textContent=tt.h1[EV]; $("lead").textContent=tt.lead; $("byline").textContent=tt.by; $("bylinefoot").textContent=tt.byf; $("langbtn").textContent=tt.lang;
+  $("evm").textContent=tt.ev[0]; $("evw").textContent=tt.ev[1]; $("evm").setAttribute("aria-pressed",EV==="m"); $("evw").setAttribute("aria-pressed",EV==="w");
+  $("tab-sim").textContent=tt.tabSim; $("tab-cases").textContent=tt.tabCases;
+  const pc=$("phasechips"); pc.innerHTML="";
+  tt.ph.forEach((p,k)=>{const b=document.createElement("button");b.className="pchip";b.textContent=p;b.setAttribute("aria-pressed",st.ph===k);b.onclick=()=>{const j=STEPS.findIndex(x=>x.ph===k);if(j>=0){stopPlay();$("gate").hidden=true;go(j,true);}};pc.appendChild(b);});
+  $("stepno").innerHTML=`${tt.step} <b>${I+1}</b> ${tt.of} ${STEPS.length}`;
+  $("steptag").textContent=L(st.tag); $("steptitle").textContent=L(st.title);
+  $("cmdcap").textContent=tt.cmdcap;
+  const cl=$("cmdlist"); cl.innerHTML="";
+  if(st.cmds&&st.cmds.length) st.cmds.forEach(c=>{const d=document.createElement("div");d.className="cmdrow";d.innerHTML=`<span class="c">${esc(c.c)}</span><span class="at">${esc(c.at)}</span>`;cl.appendChild(d);});
+  else cl.innerHTML=`<div class="cmdrow"><span class="c" style="font-family:var(--f-body);font-weight:500;opacity:.85">${esc(tt.nocmd)}</span></div>`;
+  const ab=$("annbox"); ab.hidden=!st.ann; if(st.ann){ $("anncap").textContent=tt.anncap; $("anntext").textContent=st.ann; }
+  $("stepdesc").innerHTML=chipify(L(st.desc)); $("stepref").textContent="ISSF "+st.ref;
+  $("trainbtn").textContent=tt.train;
+  $("bprev").textContent=tt.prev; $("bnext").textContent=tt.next; $("bplay").textContent=PLAYING?tt.stop:tt.play; updPause();
+  $("bprev").disabled=I===0; $("bnext").disabled=I>=STEPS.length-1;
+  $("seek").value=I; $("speedl").textContent=tt.speed; $("quizmel").textContent=tt.quizme;
+  [1,2,4,8].forEach(v=>$("sp"+v).setAttribute("aria-pressed",SPEED===v));
+  fillSelect($("vmode"),tt.vmode); fillSelect($("vrate"),tt.vrate); fillSelect($("scen"),tt.scen,SCEN);
+  $("bvoice").textContent=VOICE_ON?tt.voiceOff:tt.voiceOn; fillVoices();
+  $("bstart").textContent=tt.fromStart; $("kbdhint").innerHTML=tt.kbd; $("sndbtn").textContent=SOUND?tt.snd1:tt.snd0; $("sndbtn").setAttribute("aria-pressed",SOUND); $("bvoice").disabled=!synth; $("tbeep").disabled=!SOUND; $("clisten").disabled=!synth; $("fsbtn").textContent=document.fullscreenElement?tt.fsx:tt.fs;
+  const PL={1:{ar:"الذهبية",en:"gold"},2:{ar:"الفضية",en:"silver"},3:{ar:"البرونزية",en:"bronze"}};
+  $("scennote").textContent=(((!EVENTS.length&&!IRRN.length)?tt.scenNote.none:EVENTS.map(e=>`${tt.scenNote.so} ${e.s} (${L(PL[e.s===24?1:e.place])||(lang==="ar"?"المركز "+e.place:e.place+"th")}).`).join(" "))+(IRRN.length?" "+tt.scenNote.irr+IRRN.map(L).join(lang==="ar"?"، ":", ")+".":"")).trim();
+  $("tautol").textContent=tt.auto; $("tbeepl").textContent=tt.beep; $("tnext").textContent=tt.nextStage; $("tclose").textContent=tt.close;
+  $("tpause").textContent=TR&&TR.paused?tt.resume:tt.pause;
+  $("timerlbl").textContent=tt.timer;
+  $("legend").innerHTML=`<span><i class="sw" style="background:var(--fp)"></i>${tt.lg[0]}</span><span><i class="sw" style="border:1.5px dashed var(--muted)"></i>${tt.lg[1]}</span><span><i class="sw c" style="background:var(--accent)"></i>${tt.lg[2]}</span><span><i class="sw c" style="background:#9aa7a6"></i>${tt.lg[3]}</span>`;
+  $("boardh").textContent=tt.board; $("boardsub").textContent=tt.boardsub; $("resh").textContent=tt.res; $("ressub").textContent=tt.ressub;
+  renderBoard(); renderResults(); renderField(animate); renderInfos(); $("src").textContent=tt.src;
+  if(TR) renderTrainer();
+}
+function fillSelect(sel,opts,val){const v=val!=null?val:sel.selectedIndex; sel.innerHTML=opts.map((o,i)=>`<option value="${i}">${esc(o)}</option>`).join(""); sel.selectedIndex=Math.max(0,v);}
+function statusOf(st,p){const b=st.board[p];
+  if(b.medal) return {k:b.medal,txt:t().st[b.medal]};
+  if(b.status==="dsq") return {k:"out",txt:"DSQ"};
+  if(b.status==="dns") return {k:"out",txt:"DNS"};
+  if(b.status!=="active") return {k:"out",txt:`${t().st.out} (${b.place})`};
+  if(st.fire&&st.fire.shooters.includes(p)&&(anim||liveProg()!=null)) return {k:"shoot",txt:t().st.shoot};
+  return {k:"",txt:t().st[st.pos[p]]||""};
+}
+const nameTag=p=>hasName(p)?" "+esc(NAMES[POS.indexOf(p)])+(ENTRIES[POS.indexOf(p)].noc?` <span class="small">${esc(ENTRIES[POS.indexOf(p)].noc.toUpperCase())}</span>`:""):"";
+const vcell=v=>v==null?"":`<span class="val${v===0?" z":""}">${f1(v)}</span>`;
+function renderBoard(){
+  const st=liveView(); const tt=t();
+  const rows=POS.map(p=>({p,b:st.board[p]}));
+  const started=STEPS.slice(0,I+1).some(x=>x.fire&&x.fire.kind==="series");
+  rows.sort((x,y)=>{const ax=x.b.status==="active",ay=y.b.status==="active"; if(ax!==ay) return ax?-1:1; if(!ax) return (x.b.place||99)-(y.b.place||99); return started?(y.b.total-x.b.total||x.p.localeCompare(y.p)):x.p.localeCompare(y.p);});
+  let h=`<thead><tr><th>${tt.col.rk}</th><th>${tt.col.sh}</th><th>${tt.col.last}</th><th>${tt.col.tot}</th><th>${tt.col.st}</th></tr></thead><tbody>`;
+  rows.forEach(r=>{const s=statusOf(st,r.p);
+    const rk=r.b.status==="dsq"?"DSQ":r.b.status==="dns"?"DNS":r.b.status!=="active"?r.b.place:(started?1+rows.filter(o=>o.b.status==="active"&&o.b.total>r.b.total).length:"–");
+    let last="–"; const L5=r.b.last;
+    if(L5&&r.b.lastKind!=="sight"){ const vv=L5.filter(v=>v!=null); if(vv.length) last=r.b.lastKind==="series"?vcell(vv.reduce((a,b)=>a+b,0)):vcell(vv[vv.length-1]); }
+    h+=`<tr class="${s.k==="shoot"?"shoot":""} ${r.b.status!=="active"&&!r.b.medal?"out":""} ${(st.elimFlash||[]).includes(r.p)?"elim":""}"><td>${rk}</td><td>${chip(r.p)}${nameTag(r.p)}</td><td>${last}</td><td class="tot"><span class="val">${started&&r.b.status!=="dns"&&r.b.status!=="dsq"?f1(r.b.total):"–"}</span></td><td><span class="pill ${s.k}">${esc(s.txt)}</span></td></tr>`;});
+  $("board").innerHTML=h+"</tbody>";
+}
+function renderResults(){
+  const st=liveView(); const tt=t(); const f=st.fire; const cur=f?(f.kind==="series"?(f.base===1?"s1":"s2"):f.kind==="shot"?f.base:null):null;
+  const sup=v=>v?`<sup style="color:var(--bad)">${(v/10).toFixed(0)}</sup>`:"";
+  let h=`<thead><tr><th>${tt.col.sh}</th><th class="st1 ${cur==="s1"?"cur":""}">${tt.col.s1}</th><th class="st1 ${cur==="s2"?"cur":""}">${tt.col.s2}</th>`;
+  for(let k=11;k<=24;k++) h+=`<th class="${k===11?"sep ":""}${cur===k?"cur":""}">${k}</th>`; h+=`<th class="sep">${tt.col.so}</th><th>${tt.col.tot}</th><th>${tt.col.rk}</th></tr></thead><tbody>`;
+  const started=STEPS.slice(0,I+1).some(x=>x.fire&&x.fire.kind==="series");
+  const order=[...POS].sort((a,b)=>{const x=st.res[a],y=st.res[b],ax=x.status==="active",ay=y.status==="active"; if(ax!==ay) return ax?-1:1; if(!ax) return (x.place||99)-(y.place||99); return started?(y.total-x.total||a.localeCompare(b)):a.localeCompare(b);});
+  order.forEach(p=>{const r=st.res[p];
+    const rk=r.status==="dsq"?"DSQ":r.status==="dns"?"DNS":r.status!=="active"?r.place:(started?1+POS.filter(q=>st.res[q].status==="active"&&st.res[q].total>r.total).length:"–");
+    h+=`<tr class="${r.status!=="active"&&!st.board[p].medal?"out":""} ${(st.elimFlash||[]).includes(p)?"elim":""}"><td>${chip(p)}${nameTag(p)}</td><td class="${cur==="s1"?"cur":""}">${vcell(r.s1)}${r.s1!=null?sup(r.p1):""}</td><td class="${cur==="s2"?"cur":""}">${vcell(r.s2)}${r.s2!=null?sup(r.p2):""}</td>`;
+    for(let k=11;k<=24;k++) h+=`<td class="${k===11?"sep ":""}${cur===k?"cur":""}">${vcell(r.sh[k])}${r.sh[k]!=null?sup(r.pen[k]):""}</td>`;
+    h+=`<td class="sep">${r.so.map(f1).join(" / ")}</td><td class="tot">${r.s1!=null?f1(r.total):"–"}</td><td>${rk}</td></tr>`;});
+  $("results").innerHTML=h+"</tbody>";
+}
+
+/* ================= navigation ================= */
+function go(j,animate){ if(PAUSED&&!PLAYING){ PAUSED=false; try{synth&&synth.resume()}catch(e){} } I=Math.max(0,Math.min(STEPS.length-1,j)); render(animate); speakStep(); }
+function nextStep(){ if(I>=STEPS.length-1){stopPlay();return false;}
+  if($("quizme").checked && !GATE_OK){ openGate(); return false; }
+  GATE_OK=false; go(I+1,true); return true; }
+function stopPlay(){ PLAYING=false; if(playT){clearTimeout(playT);playT=null;} $("bplay").textContent=t().play; }
+function schedPlay(ms){ clearTimeout(playT); playDue=performance.now()+ms; playT=setTimeout(playTick,ms); }
+function playTick(){ playT=null; if(anim||performance.now()-ANIM_DONE<1500/SPEED){ schedPlay(300); return; } if(!nextStep()){stopPlay();return} const st=STEPS[I]; schedPlay((st.fire?(st.fire.kind==="series"||st.fire.kind==="sight"?8600:5200):st.walk?5200:4200)/SPEED); }
+function play(){ if(PLAYING){stopPlay();return} PAUSED=false; updPause(); PLAYING=true; schedPlay(300); $("bplay").textContent=t().stop; }
+function updPause(){ const b=$("bpause"); if(!b) return; b.innerHTML=(PAUSED?"▶":"❚❚")+'<span class="plbl"> '+(PAUSED?t().resume:t().pause)+"</span>"; b.title=PAUSED?t().resume:t().pause; b.setAttribute("aria-label",b.title); b.setAttribute("aria-pressed",PAUSED); }
+function setPaused(v){ if(PAUSED===v) return; PAUSED=v;
+  if(v){ if(PLAYING&&playT){ clearTimeout(playT); playT=null; playLeft=Math.max(300,playDue-performance.now()); }
+    try{ if(synth&&synth.speaking) synth.pause(); }catch(e){}
+    if(TR&&!TR.paused){ TR.paused=true; renderTrainer(); } }
+  else { if(PLAYING) schedPlay(playLeft||300);
+    try{ synth&&synth.resume(); }catch(e){}
+    if(TR&&TR.paused){ TR.paused=false; TR.last=performance.now(); renderTrainer(); } }
+  updPause(); }
+
+/* ================= quiz gate ================= */
+let GATE_OK=false;
+function openGate(){
+  stopPlay(); const tt=t(); const nx=STEPS[I+1];
+  const right=L(nx.title);
+  const pool=[...new Set(STEPS.filter((x,j)=>Math.abs(j-(I+1))>1).map(x=>L(x.title)))].filter(x=>x!==right);
+  const opts=[right]; while(opts.length<3&&pool.length){opts.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);}
+  opts.sort(()=>Math.random()-.5);
+  $("gate").hidden=false; $("gateq").textContent=tt.gateQ; $("gatefb").textContent=""; $("gatego").hidden=true; $("gatego").textContent=tt.go;
+  const box=$("gateopts"); box.innerHTML="";
+  opts.forEach(o=>{const b=document.createElement("button");b.className="opt";b.textContent=o;b.onclick=()=>{
+    [...box.children].forEach(c=>{c.disabled=true; if(c.textContent===right)c.classList.add("right");});
+    if(o!==right){b.classList.add("wrong");$("gatefb").textContent=tt.wrong+" "+right;} else $("gatefb").textContent=tt.right;
+    $("gatego").hidden=false;};box.appendChild(b);});
+}
+$("gatego").onclick=()=>{$("gate").hidden=true; GATE_OK=true; nextStep();};
+
+/* ================= CRO trainer ================= */
+let TR=null, actx=null, TRID=0, WAKE=null;
+async function keepAwake(on){ try{ if(on&&navigator.wakeLock&&!WAKE){ WAKE=await navigator.wakeLock.request("screen"); } else if(!on&&WAKE){ await WAKE.release(); WAKE=null; } }catch(e){WAKE=null} }
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"&&TR) keepAwake(true); });
+try{ if(navigator.audioSession) navigator.audioSession.type="playback"; }catch(e){}
+function unlockAudio(){ try{ actx=actx||new (window.AudioContext||window.webkitAudioContext)(); if(actx.state!=="running") actx.resume(); const b=actx.createBuffer(1,1,22050), s=actx.createBufferSource(); s.buffer=b; s.connect(actx.destination); s.start(0); if(actx.state==="running") ["pointerdown","touchend","keydown","click"].forEach(ev=>document.removeEventListener(ev,unlockAudio,true)); }catch(e){} }
+["pointerdown","touchend","keydown","click"].forEach(ev=>document.addEventListener(ev,unlockAudio,true));
+/* shot sound: a short "crack", played from small audio files made here (reliable on iPhone), Web Audio as a backup */
+function makeWav(){ const sr=22050, n=Math.floor(sr*.2), d=new Float32Array(n), cl=Math.floor(sr*.12); let lp=0;
+  for(let i=0;i<cl;i++){ const w=Math.random()*2-1; const hp=w-lp; lp=lp*.85+w*.15; d[i]=hp*Math.pow(1-i/cl,4)*.9; }
+  const buf=new ArrayBuffer(44+n*2), v=new DataView(buf); const ws=(o,s)=>{for(let i=0;i<s.length;i++) v.setUint8(o+i,s.charCodeAt(i));};
+  ws(0,"RIFF"); v.setUint32(4,36+n*2,true); ws(8,"WAVE"); ws(12,"fmt "); v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true); v.setUint32(24,sr,true); v.setUint32(28,sr*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true); ws(36,"data"); v.setUint32(40,n*2,true);
+  for(let i=0;i<n;i++){ const s=Math.max(-1,Math.min(1,d[i])); v.setInt16(44+i*2,s*32767,true); }
+  return URL.createObjectURL(new Blob([buf],{type:"audio/wav"})); }
+let SHOT_URL=null, SHOT_POOL=[], SHOT_K=0, SHOT_READY=false;
+function shotPool(){ if(SHOT_URL) return; try{ SHOT_URL=makeWav(); SHOT_POOL=[0,1,2,3,4,5].map(()=>{ const a=new Audio(); a.preload="auto"; a.setAttribute("playsinline",""); return a; }); }catch(e){ SHOT_URL=null; } }
+function unlockShots(){ shotPool(); if(!SHOT_URL||SHOT_READY) return; SHOT_READY=true;
+  SHOT_POOL.forEach(a=>{ try{ a.src=SHOT_URL; a.muted=true; const pr=a.play(); if(pr&&pr.then) pr.then(()=>{a.pause();a.currentTime=0;a.muted=false;}).catch(()=>{a.muted=false;SHOT_READY=false;}); else { a.pause(); a.muted=false; } }catch(e){ SHOT_READY=false; } }); }
+["pointerdown","touchend","click"].forEach(ev=>document.addEventListener(ev,unlockShots,true));
+function shotWebAudio(){ try{ actx=actx||new (window.AudioContext||window.webkitAudioContext)(); if(actx.state!=="running") actx.resume(); const c=actx, len=Math.floor(c.sampleRate*.12), buf=c.createBuffer(1,len,c.sampleRate), d=buf.getChannelData(0);
+    for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,4);
+    const s=c.createBufferSource(), f=c.createBiquadFilter(), g=c.createGain(); s.buffer=buf; f.type="highpass"; f.frequency.value=900; g.gain.value=.6; s.connect(f); f.connect(g); g.connect(c.destination); s.start(); }catch(e){} }
+function shotSound(){ if(!SOUND) return; shotPool();
+  if(SHOT_URL&&SHOT_POOL.length){ const a=SHOT_POOL[SHOT_K++%SHOT_POOL.length]; try{ a.muted=false; a.src=SHOT_URL; a.currentTime=0; a.volume=1; const pr=a.play(); if(pr&&pr.catch) pr.catch(()=>shotWebAudio()); return; }catch(e){} }
+  shotWebAudio(); }
+function beep(f,d){ if(!SOUND||!$("tbeep").checked) return; try{ actx=actx||new (window.AudioContext||window.webkitAudioContext)(); if(actx.state!=="running") actx.resume(); const o=actx.createOscillator(), g=actx.createGain(); o.frequency.value=f||880; g.gain.value=.15; o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime+(d||.18)); }catch(e){} }
+function openTrainer(){ keepAwake(true); stopPlay(); if(anim){cancelAnimationFrame(anim);anim=null;} LIVE=null; $("gate").hidden=true; $("trainer").hidden=false; const id=++TRID; TR={id,k:0,left:STEPS[I].stages[0].secs,paused:false,said:false,last:performance.now(),hold:0}; beep(660,.08); renderTrainer(); trainerField(); renderResults(); renderBoard(); markOut(); requestAnimationFrame(()=>loopTrainer(id)); }
+function closeTrainer(){ const was=!!TR; TR=null; $("trainer").hidden=true; keepAwake(false); LIVE=null; if(was&&STEPS[I]){ renderField(false); renderResults(); renderBoard(); markOut(); } }
+function fmtT(s){ s=Math.max(0,Math.ceil(s)); return s>=60?Math.floor(s/60)+":"+String(s%60).padStart(2,"0"):String(s); }
+function trainerField(){ if(!TR) return; const st=STEPS[I], sg=st.stages[TR.k]; if(!sg) return;
+  if(!st.fire){ fieldCmd(TR.said&&sg.say?sg.say:""); return; }
+  const w=fireWin(st);
+  if(TR.k>w.b||(TR.k===w.b&&TR.said)){ if(FIRE_SHOW) FIRE_SHOW(1); let s2=""; for(let j=TR.k-(TR.said?0:1);j>=0;j--) if(st.stages[j]&&st.stages[j].say){ s2=st.stages[j].say; break; } fieldCmd(s2);
+    if(!(LIVE&&LIVE.i===I&&LIVE.stop)){ LIVE={i:I,stop:true}; renderResults(); renderBoard(); markOut(); } return; }
+  fieldAt(st,TR.k,TR.left<=0?sg.secs:sg.secs-TR.left); if(TR.said&&sg.say) fieldCmd(sg.say); }
+function renderTrainer(){
+  if(!TR) return; const tt=t(); const st=STEPS[I]; const sg=st.stages[TR.k];
+  $("tcount").textContent=fmtT(TR.left);
+  $("tstage").textContent=`${TR.k+1}/${st.stages.length} · ${L(sg.lbl)}`;
+  const box=$("saybox");
+  if(sg.say){ box.className="saybox"+(TR.said?" now":""); $("saycap").textContent=TR.said?tt.sayNow:tt.sayAt; $("say").textContent=sg.say; }
+  else { box.className="saybox idle"; $("saycap").textContent=tt.wait; $("say").textContent="—"; }
+  $("thint").textContent=L(sg.hint)||""; $("tpause").textContent=TR.paused?tt.resume:tt.pause;
+}
+function advanceStage(){
+  const st=STEPS[I];
+  if(TR.k<st.stages.length-1){ TR.k++; TR.left=st.stages[TR.k].secs; TR.said=false; TR.hold=0; renderTrainer(); return; }
+  if($("tauto").checked && I<STEPS.length-1){ TR.k=0; TR.left=STEPS[I+1].stages[0].secs; TR.said=false; TR.hold=0; LIVE=null; go(I+1,false); renderTrainer(); trainerField(); renderResults(); renderBoard(); markOut(); }
+  else { TR.paused=true; TR.left=0; renderTrainer(); }
+}
+function loopTrainer(id){
+  if(!TR||TR.id!==id) return; const now=performance.now(); const dt=Math.min(.5,(now-TR.last)/1000); TR.last=now;
+  if(!TR.paused){
+    const sg=STEPS[I].stages[TR.k];
+    if(TR.left>0){ const before=Math.ceil(TR.left); TR.left-=dt; if(TR.left<=3&&TR.left>0&&Math.ceil(TR.left)<before) beep(520,.06);
+      if(TR.left<=0){ TR.left=0; if(sg.say){TR.said=true; beep(990,.25); TR.hold=2.2; if(VOICE_ON&&SOUND) speak(sg.say);} else TR.hold=0.05; renderTrainer(); } }
+    else { TR.hold-=dt; if(TR.hold<=0) advanceStage(); }
+    $("tcount").textContent=fmtT(TR.left);
+    trainerField();
+  }
+  requestAnimationFrame(()=>loopTrainer(id));
+}
+$("trainbtn").onclick=openTrainer; $("tclose").onclick=closeTrainer;
+$("tpause").onclick=()=>{ if(!TR)return; TR.paused=!TR.paused; TR.last=performance.now(); renderTrainer(); };
+$("tnext").onclick=()=>{ if(!TR)return; TR.paused=false; TR.left=0; TR.hold=0; TR.said=false; TR.last=performance.now(); advanceStage(); };
+
+/* ================= voice ================= */
+let VOICE_ON=false, VOICES=[];
+let SOUND=false; try{ if(localStorage.getItem("ar10-sound")==="1") SOUND=true; }catch(e){}
+const synth=("speechSynthesis" in window)?window.speechSynthesis:null;
+function voicesNow(){ try{ const v=synth?synth.getVoices():[]; if(v&&v.length) VOICES=v; }catch(e){} return VOICES; }
+function loadVoices(){ voicesNow(); fillVoices(); }
+let VOICE_PREF=null; try{ VOICE_PREF=localStorage.getItem("ar10-voice"); }catch(e){}
+const isEn=v=>(v.lang||"").toLowerCase().startsWith("en"), isAr=v=>(v.lang||"").toLowerCase().startsWith("ar");
+function defaultEn(){ const en=VOICES.filter(isEn);
+  return en.find(v=>v.name==="Daniel"&&/en-GB/i.test(v.lang)) || en.find(v=>/^daniel\b/i.test(v.name)) || en.find(v=>/en-GB/i.test(v.lang)&&v.localService) || en.find(v=>/en-GB/i.test(v.lang)) || en.find(v=>v.localService) || en[0] || null; }
+function defaultAr(){ const ar=VOICES.filter(isAr); return ar.find(v=>v.localService)||ar[0]||null; }
+function fillVoices(){ const sel=$("vvoice"); const en=VOICES.filter(isEn);
+  const keep=VOICE_PREF||sel.value; const d=defaultEn();
+  sel.innerHTML=en.length?en.map(v=>`<option value="${esc(v.name)}">${esc(v.name)} (${esc(v.lang)})${d&&v.name===d.name?" ★":""}</option>`).join(""):`<option value="">${esc(t().novoice)}</option>`;
+  sel.value=en.some(v=>v.name===keep)?keep:(d?d.name:""); }
+if(synth){ loadVoices(); try{ synth.addEventListener?synth.addEventListener("voiceschanged",loadVoices):(synth.onvoiceschanged=loadVoices); }catch(e){}
+  let tries=0; const poll=setInterval(()=>{ const had=VOICES.length; voicesNow(); if(VOICES.length!==had) fillVoices(); if(VOICES.length||++tries>60) clearInterval(poll); },250); }
+function pickVoice(arabic){ voicesNow(); if(arabic) return defaultAr(); const want=$("vvoice").value; return VOICES.find(x=>x.name===want&&isEn(x)) || defaultEn(); }
+function speak(text){
+  if(!synth||!SOUND||!text) return;
+  const parts=String(text).split(/(?<=[.!?؟…])\s+/).map(x=>x.trim()).filter(Boolean);
+  const rate=[1,.8,1.2][$("vrate").selectedIndex]||1;
+  const run=()=>{ try{ window.__arU=[]; parts.forEach(pt=>{ const arabic=/[؀-ۿ]/.test(pt); const v=pickVoice(arabic); const u=new SpeechSynthesisUtterance(pt);
+      if(v){u.voice=v;u.lang=v.lang;} else u.lang=arabic?"ar":"en-GB"; u.rate=rate; u.volume=1; window.__arU.push(u); synth.speak(u); }); if(synth.paused&&synth.resume) synth.resume(); }catch(e){} };
+  try{ if(synth.speaking||synth.pending){ synth.cancel(); setTimeout(run,80); } else run(); }catch(e){}
+}
+function speakStep(){ if(!VOICE_ON||!SOUND) return; const st=STEPS[I]; const cmds=st.fire?"":(st.cmds||[]).map(c=>c.c).join(". "); if(st.fire&&$("vmode").selectedIndex===1) return;
+  const txt=$("vmode").selectedIndex===1?(cmds||L(st.title)):(L(st.title)+". "+L(st.desc).replace(/\{([A-H])\}/g,"$1")+(cmds?". "+cmds:"")); speak(txt); }
+$("bvoice").onclick=()=>{ if(!SOUND){ toggleSound(); return; } VOICE_ON=!VOICE_ON; if(VOICE_ON) speakStep(); else {try{synth&&synth.cancel()}catch(e){}} render(false); };
+if(!synth){ $("bvoice").disabled=true; }
+
+/* ================= info cards ================= */
+const INFOS=[
+ {h:{ar:"قبل النهائي",en:"Before the Final"},p:{ar:"الحضور قبل البداية بـ 30 دقيقة، والمعدات على نقاط الرمي قبلها بـ 20 دقيقة على الأقل، والنداء إلى الخط قبلها بـ 10 دقائق. بعد TAKE YOUR POSITIONS بثلاثين ثانية (بندقية) تبدأ 5 دقائق إعداد واختبار مشتركة.",en:"Report 30 minutes before the start, equipment on the points at least 20 minutes before, call to the line 10 minutes before. 30 seconds after TAKE YOUR POSITIONS (rifle), 5 minutes of combined preparation and sighting start."}},
+ {h:{ar:"نقاط الرمي",en:"Firing points"},p:{ar:"نقاط الرمي في نهائيات 10م مرقمة R1-A-B-C-D-E-F-G-H-R2. يوزع اللاعبون الثمانية على A–H بالقرعة العشوائية التي يجريها الحاسب، وR1 وR2 احتياطي.",en:"10m finals firing points are labelled R1-A-B-C-D-E-F-G-H-R2. The eight finalists are placed on A–H by a random computer draw; R1 and R2 are reserves."}},
+ {h:{ar:"الشكل والدرجات",en:"Format & scoring"},p:{ar:"مجموعتان × 5 طلقات (250 ثانية لكل مجموعة)، ثم 14 طلقة فردية (50 ثانية لكل طلقة): 24 طلقة. الدرجات بالكسور العشرية وأقصاها 10.9، ويبدأ النهائي من الصفر والمجموع تراكمي.",en:"2 series of 5 shots (250 seconds each), then 14 single shots (50 seconds each): 24 shots. Decimal scoring, maximum 10.9; the Final starts from zero and totals are cumulative."}},
+ {h:{ar:"الإقصاء وفض التعادل",en:"Eliminations & ties"},p:{ar:"بعد الطلقة 12 يخرج الثامن، ثم واحد بعد كل طلقتين: البرونزية بعد 22، والفضية والذهبية بعد 24. التعادل على مركز إقصاء يُفض بطلقات فردية إضافية حتى يُكسر، ولا تُضاف إلى المجموع.",en:"After shot 12 the 8th place goes, then one every two shots: bronze after 22, silver and gold after 24. A tie for an elimination place is broken by additional single shots, not added to the total."}},
+ {h:{ar:"الخصومات",en:"Deductions"},p:{ar:"الحضور المتأخر: −2. الرمي الجاف خارج الإعداد والاختبار: −1. طلقة بعد STOP للاختبار: لا تُحتسب و−2. طلقة بعد LOAD وقبل START: صفر. طلقة زائدة: تُلغى و−2. لا تُسجل درجة أقل من صفر.",en:"Late reporting: −2. Dry firing outside preparation and sighting: −1. Shot after the sighting STOP: not counted and −2. Shot after LOAD before START: zero. Extra shot: nullified and −2. No score below zero is recorded."}},
+ {h:{ar:"شكاوى الأهداف والاحتجاجات",en:"Target complaints & protests"},p:{ar:"صفر غير متوقع: تفحص لجنة الحكام الهدف، وما لم يوجد دليل موثوق يطلق اللاعب طلقة مباراة أخرى تُحتسب بدلاً منه. الاعتراض على قيمة الطلقات أو عددها غير مسموح. الاحتجاج غير المقبول: −2 من الطلقة المرتبطة.",en:"Unexpected zero: the Jury examines the target; unless there is credible evidence, the athlete fires another competition shot that counts instead. Claims on the value or number of shots are not permitted. A protest not upheld: −2 on the related shot."}},
+ {h:{ar:"الأعطال",en:"Malfunctions"},p:{ar:"عطل مسموح به واحد فقط في النهائي. في طلقة فردية: دقيقة كحد أقصى للإصلاح ثم إعادة الطلقة. في مجموعة 5 طلقات: تُحتسب الطلقات المُطلقة ويُستكمل الباقي في الزمن المتبقي مضافاً إليه زمن الإصلاح (حتى دقيقة).",en:"Only one ALLOWABLE malfunction per Final. In a single shot: up to one minute to repair, then the shot is repeated. In a 5-shot series: shots fired count and the rest are completed in the remaining time plus the repair time (up to one minute)."}}
+];
+function renderInfos(){ $("infos").innerHTML=INFOS.map(x=>`<div class="card info"><h3>${esc(L(x.h))}</h3><p>${esc(L(x.p))}</p></div>`).join(""); }
+
+/* ================= irregularities & penalties ================= */
+const IRRT=[
+ {g:{ar:"الحضور",en:"Reporting"}},
+ {h:{ar:"عدم الحضور في الموعد (30 دقيقة قبل البداية)",en:"Not reporting on time (30 min before the start)"},p:{ar:"خصم نقطتين (2) من نتيجة أول طلقة مباراة.",en:"2 points from the score of the first MATCH shot."},r:"6.17.1.3",sc:4},
+ {h:{ar:"عدم الحضور خلال 10 دقائق بعد وقت الحضور",en:"Not reporting within 10 min after the Reporting Time"},p:{ar:"لا يُسمح له بالبدء، ويُسجَّل أول المُقصَين ويظهر DNS. يبدأ أول إقصاء بالمركز السابع.",en:"May not start; recorded as the first eliminated and shown as DNS. The first elimination begins with 7th place."},r:"6.17.1.4",sc:5},
+ {g:{ar:"التعمير والرمي الجاف",en:"Loading and dry firing"}},
+ {h:{ar:"تعمير وإطلاق طلقة قبل PREPARATION AND SIGHTING TIME … START",en:"Loading and firing before PREPARATION AND SIGHTING TIME … START"},p:{ar:"الاستبعاد.",en:"Disqualification."},r:"6.17.1.14 h",sc:15},
+ {h:{ar:"الرمي الجاف خارج زمن الإعداد والاختبار",en:"Dry firing outside Preparation and Sighting Time"},p:{ar:"خصم نقطة واحدة (1).",en:"1 point."},r:"6.17.1.14 e",sc:6},
+ {h:{ar:"إطلاق طلقة بعد PREPARATION AND SIGHTING TIME … STOP وقبل START لأول مجموعة",en:"Firing after PREPARATION AND SIGHTING TIME … STOP and before the first series START"},p:{ar:"لا تُحتسب الطلقة + خصم نقطتين (2) من أول طلقة مباراة.",en:"Shot not counted + 2 points on the first MATCH shot."},r:"6.17.1.14 i",sc:7},
+ {h:{ar:"إطلاق طلقة بعد LOAD وقبل START",en:"Firing after LOAD but before START"},p:{ar:"تُحتسب الطلقة صفراً (Miss).",en:"The shot is scored as a miss (0)."},r:"6.17.1.14 k",sc:8},
+ {h:{ar:"طلقة إضافية في مجموعة أو خلال زمن طلقة فردية",en:"Extra shot in a series or single-shot time"},p:{ar:"تُلغى الطلقة الإضافية + خصم 2 من آخر طلقة/مجموعة صحيحة.",en:"Extra shot nullified + 2 on the last correct shot/series."},r:"6.17.1.14 l",sc:9},
+ {h:{ar:"مخالفة قبل أول طلقة مباراة",en:"Any violation before the first MATCH shot"},p:{ar:"يُطبّق الخصم على نتيجة أول طلقة مباراة، والخصومات الأخرى على الطلقة التي وقعت فيها المخالفة. لا تُسجل نتيجة أقل من صفر.",en:"Applied to the first MATCH shot; other deductions go to the shot where the violation occurred. No score below zero is recorded."},r:"6.17.2 c · 6.17.1.5",sc:6},
+ {g:{ar:"الأعطال",en:"Malfunctions"}},
+ {h:{ar:"عطل مسموح به أثناء طلقة فردية",en:"ALLOWABLE malfunction during a single shot"},p:{ar:"دقيقة واحدة كحد أقصى للإصلاح أو استبدال البندقية، ثم يُوجَّه اللاعب لإعادة الطلقة.",en:"Up to one minute to repair or replace the rifle, then the athlete is directed to repeat the shot."},r:"6.17.1.6",sc:10},
+ {h:{ar:"عطل مسموح به في مجموعة 5 طلقات",en:"ALLOWABLE malfunction in a 5-shot series"},p:{ar:"إذا أُصلح خلال دقيقة: تُحتسب الطلقات المُطلقة، ويستكمل المجموعة في الزمن المتبقي عند الادعاء مضافاً إليه زمن الإصلاح (حد أقصى دقيقة).",en:"If repaired within one minute: shots fired count and the series is completed in the time remaining when claimed plus the repair time (max one minute)."},r:"6.17.1.6",sc:11},
+ {h:{ar:"اللاعب لا يستطيع إطلاق الطلقة (عطل أو تجاوز الزمن)",en:"Finalist unable to fire a shot (malfunction or overtime)"},p:{ar:"يستخدم رئيس الميدان أسطوانة تفريغ الكُريات (PDC).",en:"The CRO uses the Pellet Discharge Cylinder (PDC)."},r:"Commands & Announcements 2026"},
+ {h:{ar:"عطل في الأهداف الإلكترونية (EST)",en:"EST malfunction"},p:{ar:"ينتظر رئيس الميدان توجيه مسؤول لجنة RTS. لا إعلان حتى تُحل المشكلة، وعند أي توقف غير مبرر يجب أن يُصدر رئيس الميدان إعلاناً.",en:"The CRO waits for the RTS Jury-in-Charge to advise. No announcement until resolved; for any undue interruption the CRO should make an announcement."},r:"Commands & Announcements 2026"},
+ {h:{ar:"عدد الأعطال",en:"Number of malfunctions"},p:{ar:"عطل مسموح به واحد فقط لكل لاعب في النهائي.",en:"Only one ALLOWABLE malfunction per athlete in the Final."},r:"6.17.1.6 · 6.17.1.14 r"},
+ {g:{ar:"شكاوى الأهداف والاحتجاجات",en:"Target complaints and protests"}},
+ {h:{ar:"صفر غير متوقع (طلقة مفقودة) في طلقة مباراة",en:"Unexpected zero (missing shot) on a MATCH shot"},p:{ar:"تفحص لجنة الحكام الهدف. ما لم يوجد دليل موثوق على أن الطلقة خارج الهدف، يطلق اللاعب طلقة مباراة أخرى تُحتسب قيمتها بدلاً من الصفر.",en:"The Jury examines the target. Unless there is credible evidence the shot missed, the athlete fires another competition shot whose value replaces the zero."},r:"6.17.1.8",sc:12},
+ {h:{ar:"تأخير أطول من 5 دقائق",en:"Delay longer than 5 minutes"},p:{ar:"يُعطى جميع اللاعبين دقيقتين اختبار قبل استئناف رمي المباراة. أثناء التأخير يُسمح بتمارين التصويب والرمي الجاف.",en:"All athletes get 2 minutes of sighting before competition firing resumes. During the delay aiming exercises and dry firing are allowed."},r:"6.17.1.8 d"},
+ {h:{ar:"الاعتراض على قيمة الطلقة أو عدد الطلقات",en:"Claim on the value or number of shots"},p:{ar:"غير مسموح في النهائيات، وتبقى النتيجة كما هي.",en:"Not permitted in Finals; the result stands."},r:"6.17.1.7",sc:13},
+ {h:{ar:"رفض الاحتجاج في النهائي",en:"Protest in the Final not upheld"},p:{ar:"خصم نقطتين (2) من الطلقة أو المجموعة المرتبطة بالاحتجاج. قرار لجنة احتجاجات النهائيات نهائي.",en:"2 points from the shot or series related to the protest. The Finals Protest Jury decision is final."},r:"6.17.1.13 d",sc:14},
+ {g:{ar:"حالات بلا عقوبة",en:"No penalty"}},
+ {h:{ar:"طلقة غير مقصودة من لاعب غير مشارك في فض التعادل أو إعادة الرمي",en:"Inadvertent shot by a finalist not in a shoot-off or malfunction refire"},p:{ar:"تُلغى الطلقة دون عقوبة.",en:"Shot nullified, no penalty."},r:"6.17.1.14 m"},
+ {h:{ar:"طلقات زائدة خطأً بعد تصحيح أمر غير صحيح من رئيس الميدان",en:"Extra shots fired by mistake after an incorrect CRO command is corrected"},p:{ar:"تُلغى الطلقات الزائدة دون عقوبة.",en:"Extra shots nullified, no penalty."},r:"6.17.1.14 p"}
+];
+function renderIrr(){ const tt=t(); $("tab-irr").textContent=tt.tabIrr; $("irrh").textContent=tt.irrH; $("irrsub").textContent=tt.irrSub;
+  let h=`<thead><tr>${tt.irrCols.map(c=>`<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>`;
+  IRRT.forEach(x=>{ if(x.g){ h+=`<tr class="grp"><td colspan="4">${esc(L(x.g))}</td></tr>`; return; }
+    h+=`<tr><td>${esc(L(x.h))}</td><td>${esc(L(x.p))}</td><td class="ref">ISSF ${esc(x.r)}</td><td>${x.sc?`<button class="btn" data-sc="${x.sc}" data-nth="${x.nth||1}">${esc(tt.show)}</button>`:""}</td></tr>`; });
+  $("irrtable").innerHTML=h+"</tbody>"; }
+$("irrtable").addEventListener("click",e=>{ const b=e.target.closest("[data-sc]"); if(!b) return;
+  const sc=+b.dataset.sc, nth=+b.dataset.nth; setTab("sim"); newScenario(sc);
+  const idx=STEPS.map((s,i)=>s.flag?i:-1).filter(i=>i>=0); const j=idx[Math.min(nth,idx.length)-1];
+  if(j!=null) go(j,true); window.scrollTo({top:0,behavior:"smooth"}); });
+
+/* ================= judging cases ================= */
+const Y={ar:"نعم",en:"Yes"};
+const CASES=[
+ {h:{ar:"أقصى درجة للطلقة",en:"Highest shot score"},x:{ar:"يُحتسب النهائي بالكسور العشرية.",en:"The Final is scored in tenths."},shots:["10.9","10.6","10.2"],
+  q:{ar:"ما أقصى درجة يمكن أن تسجلها طلقة واحدة؟",en:"What is the highest score one shot can record?"},o:[{ar:"10.0",en:"10.0"},{ar:"10.9",en:"10.9"},{ar:"11.0",en:"11.0"},{ar:"10.5",en:"10.5"}],a:1,
+  e:{ar:"الدرجات في النهائي بالكسور العشرية، وأقصاها 10.9.",en:"Finals use decimal (tenth-ring) scoring; the maximum is 10.9."},r:"6.17.2 b"},
+ {h:{ar:"أول إقصاء",en:"First elimination"},x:{ar:"انتهت المجموعتان والطلقتان 11 و12.",en:"Both series and shots 11 and 12 are over."},
+  q:{ar:"متى يبدأ الإقصاء؟",en:"When do eliminations begin?"},o:[{ar:"بعد المجموعة الثانية",en:"After series 2"},{ar:"بعد الطلقة 12، ثم بعد كل طلقتين",en:"After shot 12, then after every two shots"},{ar:"بعد كل طلقة من 11",en:"After every shot from 11"},{ar:"بعد الطلقة 14",en:"After shot 14"}],a:1,
+  e:{ar:"يبدأ إقصاء صاحب أقل ترتيب بعد الطلقة 12 (المركز الثامن) ويستمر بعد كل طلقتين حتى تتحدد الذهبية والفضية بعد الطلقة 24.",en:"The lowest-ranked finalist goes after shot 12 (8th place), then after every two shots until gold and silver are decided after shot 24."},r:"6.17.2 a, g"},
+ {h:{ar:"متى تتحدد البرونزية؟",en:"When is bronze decided?"},x:{ar:"بقي ثلاثة لاعبين في النهائي.",en:"Three finalists remain."},
+  q:{ar:"بعد أي طلقة تتحدد البرونزية؟",en:"After which shot is bronze decided?"},o:[{ar:"20",en:"20"},{ar:"22",en:"22"},{ar:"23",en:"23"},{ar:"24",en:"24"}],a:1,
+  e:{ar:"البرونزية بعد الطلقة 22، والفضية والذهبية بعد الطلقة 24.",en:"Bronze after shot 22; silver and gold after shot 24."},r:"6.17.2 g"},
+ {h:{ar:"تعادل على المركز الثامن",en:"Tie for 8th place"},x:{ar:"بعد الطلقة 12 تعادل اللاعبان C وF عند 125.6.",en:"After shot 12 athletes C and F are tied on 125.6."},
+  q:{ar:"كيف يُحسم؟",en:"How is it decided?"},o:[{ar:"بنتيجة التأهيل",en:"By qualification score"},{ar:"طلقة/طلقات فردية إضافية لفض التعادل حتى يُكسر",en:"Additional single tie-breaking shot(s) until it is broken"},{ar:"بعدد العشرات الداخلية",en:"By inner tens"},{ar:"يستمران معاً",en:"Both continue"}],a:1,
+  e:{ar:"المتعادلون على أقل ترتيب يرمون طلقة/طلقات فردية إضافية لفض التعادل حتى يُكسر، ولا تُضاف إلى المجموع.",en:"Athletes tied for the place to be eliminated fire additional single tie-breaking shots until the tie is broken; these are not added to the total."},r:"6.17.2 h"},
+ {h:{ar:"ماذا يقول رئيس الميدان عند التعادل؟",en:"What does the CRO say at a tie?"},x:{ar:"بعد الطلقة 16 تعادل على المركز السادس.",en:"After shot 16 there is a tie for 6th place."},
+  q:{ar:"ما أول ما يفعله رئيس الميدان؟",en:"What does the CRO do first?"},o:[{ar:"ينتظر تعليق المعلّق",en:"Waits for the Announcer"},{ar:"يعلن فوراً أسماء عائلات المتعادلين ويأمرهم بطلقة فض التعادل بإجراءات الرمي العادية",en:"Immediately announces the tied athletes' family names and commands the tie-breaking shot with the normal procedure"},{ar:"يعلن نقاط الرمي فقط",en:"Announces firing points only"},{ar:"يأمر بإعادة الطلقة 16",en:"Orders shot 16 refired"}],a:1,
+  e:{ar:"يعلن رئيس الميدان أسماء عائلات المتعادلين ونقاط رميهم، ويأمرهم بإطلاق طلقة/طلقات فض التعادل وفق إجراءات الرمي العادية (FOR THE SHOOT-OFF SHOT).",en:"The CRO announces the tied finalists' family names and firing points and commands the tie-breaking shot(s) with the normal firing procedure (FOR THE SHOOT-OFF SHOT)."},r:"6.17.2 h"},
+ {h:{ar:"طلقة بعد LOAD وقبل START",en:"Shot after LOAD, before START"},x:{ar:"في الطلقة 15 أطلق اللاعب طلقته بعد LOAD مباشرة وقبل أمر START، وسجّلت 10.2.",en:"On shot 15 the athlete fires right after LOAD, before START; it scores 10.2."},shots:["0.0"],
+  q:{ar:"ما القرار؟",en:"What is the ruling?"},o:[{ar:"تُحتسب 10.2",en:"It counts 10.2"},{ar:"تُحتسب صفراً (Miss)",en:"Scored as a miss (0)"},{ar:"خصم نقطتين",en:"−2 points"},{ar:"استبعاد",en:"Disqualification"}],a:1,
+  e:{ar:"في نهائيات 10م إذا أُطلقت طلقة بعد LOAD وقبل START تُحتسب صفراً.",en:"In a 10m Final a shot fired after LOAD but before START is scored as a miss."},r:"6.17.1.14 k"},
+ {h:{ar:"طلقة بعد STOP للإعداد والاختبار",en:"Shot after the sighting STOP"},x:{ar:"بعد PREPARATION AND SIGHTING TIME … STOP وقبل START لأول مجموعة أطلق اللاعب طلقة.",en:"After PREPARATION AND SIGHTING TIME … STOP and before START of the first series, the athlete fires a shot."},
+  q:{ar:"ما القرار؟",en:"What is the ruling?"},o:[{ar:"تُحتسب طلقة اختبار",en:"It counts as a sighter"},{ar:"لا تُحتسب طلقة مباراة + خصم 2 من أول طلقة مباراة",en:"Not counted as a MATCH shot + 2 points off the first MATCH shot"},{ar:"تُحتسب أول طلقة مباراة",en:"It counts as the first MATCH shot"},{ar:"استبعاد",en:"Disqualification"}],a:1,
+  e:{ar:"لا تُحتسب طلقة مباراة، ويُخصم نقطتان (2) من نتيجة أول طلقة مباراة.",en:"It is not counted as a MATCH shot and 2 points are deducted from the first MATCH shot."},r:"6.17.1.14 i"},
+ {h:{ar:"التعمير قبل أمر البدء",en:"Loading before START"},x:{ar:"بعد TAKE YOUR POSITIONS عمّر لاعب بندقيته وأطلق طلقة قبل بدء زمن الإعداد والاختبار.",en:"After TAKE YOUR POSITIONS an athlete loads and fires before the Preparation and Sighting Time starts."},
+  q:{ar:"ما القرار؟",en:"What is the ruling?"},o:[{ar:"خصم نقطة",en:"−1 point"},{ar:"استبعاد",en:"Disqualification"},{ar:"إنذار",en:"A warning"},{ar:"خصم نقطتين",en:"−2 points"}],a:1,
+  e:{ar:"إذا عمّر لاعب النهائي ورمى قبل PREPARATION AND SIGHTING TIME … START فلا بد من استبعاده.",en:"A finalist who loads and fires before PREPARATION AND SIGHTING TIME … START must be disqualified."},r:"6.17.1.14 h"},
+ {h:{ar:"الرمي الجاف",en:"Dry firing"},x:{ar:"أثناء تعليق المعلّق بعد الطلقة 13 قام اللاعب برمي جاف.",en:"During the Announcer's comments after shot 13 the athlete dry fires."},
+  q:{ar:"ما القرار؟",en:"What is the ruling?"},o:[{ar:"مسموح",en:"Allowed"},{ar:"خصم نقطة واحدة",en:"−1 point"},{ar:"خصم نقطتين",en:"−2 points"},{ar:"استبعاد",en:"Disqualification"}],a:1,
+  e:{ar:"في النهائي يُسمح بالرمي الجاف فقط في زمن الإعداد والاختبار؛ في أي وقت آخر خصم نقطة واحدة في نهائيات 10م و50م. (الاستثناء: أثناء تأخير لفض صفر غير متوقع).",en:"Dry firing is allowed only during Preparation and Sighting Time; at any other time it costs 1 point in 10m and 50m Finals (except during a delay for an unexpected zero)."},r:"6.17.1.14 e · 6.17.1.8 d"},
+ {h:{ar:"مخالفة قبل أول طلقة مباراة",en:"Violation before the first MATCH shot"},x:{ar:"عوقب لاعب بخصم نقطة لرمي جاف بعد STOP … UNLOAD للاختبار.",en:"An athlete is penalised 1 point for dry firing after the sighting STOP … UNLOAD."},
+  q:{ar:"من أين يُخصم؟",en:"Where is the deduction applied?"},o:[{ar:"من المجموع في النهاية",en:"From the final total"},{ar:"من نتيجة أول طلقة مباراة",en:"From the first MATCH shot"},{ar:"من المجموعة الثانية",en:"From series 2"},{ar:"يُلغى لأنه قبل المباراة",en:"Cancelled, it is before the match"}],a:1,
+  e:{ar:"الخصومات الناتجة عن مخالفات قبل أول طلقة مباراة تُطبّق على نتيجة أول طلقة مباراة.",en:"Deductions for violations before the first MATCH shot are applied to the first MATCH shot."},r:"6.17.2 c"},
+ {h:{ar:"نتيجة أقل من صفر",en:"Score below zero"},x:{ar:"طلقة سُجلت صفراً، وعلى نفس الطلقة خصم نقطة.",en:"A shot scored zero and a 1-point deduction falls on the same shot."},shots:["0.0"],
+  q:{ar:"ما نتيجة الطلقة؟",en:"What does the shot score?"},o:[{ar:"−1.0",en:"−1.0"},{ar:"0.0",en:"0.0"},{ar:"يُخصم من الطلقة التالية",en:"Taken from the next shot"},{ar:"يُخصم من المجموع",en:"Taken from the total"}],a:1,
+  e:{ar:"لا تُسجل نتيجة أقل من صفر: 0 − خصم نقطة = 0 (و3 − 1 = 2).",en:"No score below zero: 0 − 1 point = 0 (and 3 − 1 = 2)."},r:"6.17.1.5"},
+ {h:{ar:"طلقة زائدة",en:"Extra shot"},x:{ar:"في المجموعة الأولى أطلق اللاعب ست طلقات.",en:"In series 1 the athlete fires six shots."},shots:["10.1","9.7","10.3","9.9","10.5","10.0"],
+  q:{ar:"ما القرار؟",en:"What is the ruling?"},o:[{ar:"تُحتسب أفضل خمس",en:"The best five count"},{ar:"تُلغى الطلقة الزائدة + خصم 2 من آخر طلقة/مجموعة صحيحة",en:"Extra shot nullified + 2 points off the last correct shot/series"},{ar:"تُلغى أعلى طلقة",en:"The highest shot is cancelled"},{ar:"استبعاد",en:"Disqualification"}],a:1,
+  e:{ar:"الطلقة الإضافية في مجموعة أو في زمن طلقة فردية تُلغى، ويُخصم 2 من آخر طلقة/مجموعة صحيحة.",en:"An extra shot in a series or single-shot time is nullified, and 2 are deducted from the last correct shot/series."},r:"6.17.1.14 l"},
+ {h:{ar:"حضور متأخر",en:"Late reporting"},x:{ar:"حضر لاعب إلى منطقة الإعداد قبل البداية بـ 22 دقيقة.",en:"An athlete reports to the preparation area 22 minutes before the start."},
+  q:{ar:"ما القرار؟",en:"What is the ruling?"},o:[{ar:"لا شيء",en:"Nothing"},{ar:"خصم نقطتين من أول طلقة مباراة",en:"2 points off the first MATCH shot"},{ar:"DNS",en:"DNS"},{ar:"خصم نقطة",en:"−1 point"}],a:1,
+  e:{ar:"يجب الحضور قبل البداية بثلاثين دقيقة على الأقل، وإلا يُخصم نقطتان من نتيجة أول طلقة مباراة.",en:"Athletes must report at least 30 minutes before the start; otherwise 2 points are deducted from the first MATCH shot."},r:"6.17.1.3"},
+ {h:{ar:"عدم الحضور",en:"Not reporting"},x:{ar:"لم يحضر لاعب إلى منطقة الإعداد خلال 10 دقائق بعد وقت الحضور.",en:"An athlete has not reported within 10 minutes after the Reporting Time."},
+  q:{ar:"ما القرار؟",en:"What is the ruling?"},o:[{ar:"خصم نقطتين",en:"−2 points"},{ar:"لا يبدأ، يُسجل أول المُقصَين DNS، ويبدأ أول إقصاء بالسابع",en:"May not start, first eliminated as DNS; the first elimination begins with 7th"},{ar:"يُستدعى الاحتياطي التاسع",en:"The 9th-placed athlete replaces him"},{ar:"يتأخر النهائي",en:"The Final is delayed"}],a:1,
+  e:{ar:"لا يجوز له البدء، ويُسجل أول لاعب مُقصى ويظهر DNS، ويبدأ أول إقصاء بالمركز السابع.",en:"The athlete may not start, is recorded as the first eliminated and shown as DNS; the first elimination begins with 7th place."},r:"6.17.1.4"},
+ {h:{ar:"عطل في طلقة فردية",en:"Malfunction on a single shot"},x:{ar:"في الطلقة 13 لم تنطلق البندقية، وقرر ضابط الميدان أن العطل مسموح به.",en:"On shot 13 the rifle does not fire and the Range Officer rules the malfunction ALLOWABLE."},
+  q:{ar:"ماذا يحدث؟",en:"What happens?"},o:[{ar:"تُحتسب صفراً",en:"It counts as zero"},{ar:"دقيقة كحد أقصى للإصلاح أو الاستبدال، ثم يعيد الطلقة",en:"Up to one minute to repair or replace, then the shot is repeated"},{ar:"5 دقائق للإصلاح",en:"5 minutes to repair"},{ar:"يُقصى",en:"Eliminated"}],a:1,
+  e:{ar:"في الطلقة الفردية يُعطى دقيقة واحدة كحد أقصى لإصلاح العطل أو استبدال البندقية، ثم يُوجَّه لإعادة الطلقة.",en:"For a single shot, a maximum of one minute is given to repair or replace, then the athlete repeats the shot."},r:"6.17.1.6"},
+ {h:{ar:"عطل في مجموعة 5 طلقات",en:"Malfunction in a 5-shot series"},x:{ar:"في المجموعة الثانية توقفت البندقية بعد طلقتين، وأُصلح في 40 ثانية.",en:"In series 2 the rifle stops after two shots and is repaired in 40 seconds."},shots:["10.2","9.9","—","—","—"],
+  q:{ar:"ماذا يحدث؟",en:"What happens?"},o:[{ar:"تُعاد المجموعة كاملة",en:"The whole series is repeated"},{ar:"تُحتسب الطلقتان، ويستكمل في الزمن المتبقي + زمن الإصلاح (حد أقصى دقيقة)",en:"Both shots count; he completes in the remaining time + repair time (max one minute)"},{ar:"250 ثانية جديدة",en:"A new 250 seconds"},{ar:"الطلقات الثلاث صفر",en:"The three shots are zero"}],a:1,
+  e:{ar:"إذا أُصلح العطل خلال دقيقة: الطلقات المُطلقة تُحتسب، ويُسمح باستكمال المجموعة في الزمن المتبقي عند الادعاء مضافاً إليه زمن الإصلاح، بحد أقصى دقيقة.",en:"If repaired within one minute, shots fired count and the series is completed within the time remaining when claimed plus the repair time, not more than one minute."},r:"6.17.1.6"},
+ {h:{ar:"عطل ثانٍ",en:"Second malfunction"},x:{ar:"لاعب حصل على عطل مسموح به في الطلقة 12، ثم ادّعى عطلاً آخر في الطلقة 18.",en:"An athlete had an ALLOWABLE malfunction on shot 12 and claims another on shot 18."},
+  q:{ar:"هل يُعطى وقت إصلاح وإعادة؟",en:"Is repair time and a repeat given?"},o:[Y,{ar:"لا، عطل مسموح به واحد فقط لكل لاعب في النهائي",en:"No, only one ALLOWABLE malfunction per athlete per Final"},{ar:"نعم بموافقة المدرب",en:"Yes, with the coach's agreement"},{ar:"يعيد كل الطلقات",en:"All shots are refired"}],a:1,
+  e:{ar:"يُسمح لكل لاعب بعطل مسموح به واحد فقط خلال النهائي.",en:"Finalists may have only one ALLOWABLE malfunction per Final."},r:"6.17.1.6 · 6.17.1.14 r"},
+ {h:{ar:"صفر غير متوقع",en:"Unexpected zero"},x:{ar:"في الطلقة 17 أظهر هدف اللاعب صفراً، ويقول إنه أطلق طلقة سليمة.",en:"On shot 17 the athlete's target shows a zero, and he says the shot was fired normally."},shots:["0.0"],
+  q:{ar:"ما الإجراء؟",en:"What is the procedure?"},o:[{ar:"تبقى صفراً، الاعتراض غير مسموح",en:"It stays zero; no protest allowed"},{ar:"تفحص لجنة الحكام، وما لم يوجد دليل موثوق يطلق طلقة مباراة أخرى تُحتسب بدلاً منه",en:"The Jury examines; unless there is credible evidence, he fires another competition shot that counts instead"},{ar:"تُعاد الطلقة للجميع",en:"Everyone refires"},{ar:"ينتقل فوراً إلى هدف احتياطي",en:"He moves to a reserve target at once"}],a:1,
+  e:{ar:"لجنة الحكام (العضو المسؤول، والعضو الثاني، وعضو RTS) تحدد هل هي خارج الهدف أم عطل في الهدف. ما لم تجد دليلاً موثوقاً تأمر بطلقة مباراة أخرى، وتُحتسب قيمتها بدلاً من الصفر.",en:"The Jury (Member-in-Charge, second Jury Member and one RTS) decides between a miss and a target malfunction. Unless there is credible evidence, it directs another competition shot whose value replaces the zero."},r:"6.17.1.8"},
+ {h:{ar:"تأخير طويل",en:"Long delay"},x:{ar:"استغرق فحص صفر غير متوقع 6 دقائق.",en:"Resolving an unexpected zero takes 6 minutes."},
+  q:{ar:"ماذا قبل استئناف رمي المباراة؟",en:"What happens before competition firing resumes?"},o:[{ar:"لا شيء",en:"Nothing"},{ar:"دقيقتان اختبار لجميع اللاعبين",en:"2 minutes of sighting for all athletes"},{ar:"5 دقائق إعداد",en:"5 minutes of preparation"},{ar:"طلقتا اختبار لصاحب الشكوى فقط",en:"Two sighters for the complainant only"}],a:1,
+  e:{ar:"إذا زاد التأخير عن 5 دقائق يُعطى جميع اللاعبين في نهائيات 10م و50م دقيقتين اختبار قبل الاستئناف.",en:"If the delay exceeds 5 minutes, all athletes in 10m and 50m Finals get 2 minutes of sighting before firing resumes."},r:"6.17.1.8 d"},
+ {h:{ar:"الاعتراض على قيمة طلقة",en:"Claim of shot value"},x:{ar:"سجّلت طلقة 10.2، ويرى المدرب أنها 10.3 ويطلب مراجعتها.",en:"A shot scores 10.2; the coach believes it is 10.3 and asks for a check."},shots:["10.2"],
+  q:{ar:"ما القرار؟",en:"What is the ruling?"},o:[{ar:"تُراجع بالمقياس",en:"It is gauged"},{ar:"غير مسموح: الاحتجاج على قيمة الطلقات أو عددها غير مسموح في النهائيات",en:"Not permitted: protests on the value or number of shots are not allowed in Finals"},{ar:"تُعاد الطلقة",en:"The shot is refired"},{ar:"تقرر لجنة الاستئناف",en:"The Jury of Appeal decides"}],a:1,
+  e:{ar:"الاحتجاجات على النتائج بخصوص قيمة الطلقات أو عددها غير مسموح بها في النهائيات.",en:"Score protests regarding the value or number of shots are not permitted in Finals."},r:"6.17.1.7"},
+ {h:{ar:"احتجاج غير مقبول",en:"Protest not upheld"},x:{ar:"احتج لاعب على توقيت أمر STOP في الطلقة 16، ولم تقبل لجنة احتجاجات النهائيات الاحتجاج.",en:"An athlete protests the timing of STOP on shot 16 and the Finals Protest Jury does not uphold it."},
+  q:{ar:"ما القرار؟",en:"What is the ruling?"},o:[{ar:"لا شيء",en:"Nothing"},{ar:"خصم نقطتين من الطلقة المرتبطة بالاحتجاج",en:"2 points off the shot related to the protest"},{ar:"استئناف أمام لجنة الاستئناف",en:"Appeal to the Jury of Appeal"},{ar:"إنذار",en:"A warning"}],a:1,
+  e:{ar:"إذا لم يُقبل الاحتجاج في النهائي يُخصم نقطتان من الطلقة أو المجموعة المرتبطة به، وقرار لجنة احتجاجات النهائيات نهائي لا يُستأنف.",en:"If a protest in a Final is not upheld, 2 points are deducted from the related shot or series; the Finals Protest Jury decision is final and may not be appealed."},r:"6.17.1.13 c, d"},
+ {h:{ar:"طلقة غير مقصودة",en:"Inadvertent shot"},x:{ar:"أثناء طلقة فض تعادل بين لاعبين، أطلق لاعب ثالث غير مشارك طلقة.",en:"During a tie-breaking shot between two athletes, a third athlete who is not involved fires a shot."},
+  q:{ar:"ما القرار؟",en:"What is the ruling?"},o:[{ar:"خصم نقطتين",en:"−2 points"},{ar:"تُلغى الطلقة دون عقوبة",en:"Shot nullified, no penalty"},{ar:"استبعاد",en:"Disqualification"},{ar:"تُضاف لمجموعه",en:"Added to his total"}],a:1,
+  e:{ar:"اللاعب غير المشارك في فض التعادل أو إعادة الرمي بسبب عطل، إذا عمّر وأطلق طلقة، تُلغى طلقته ولا عقوبة على هذا الخطأ.",en:"A finalist not involved in a shoot-off or malfunction refire who loads and fires has that shot nullified, with no penalty."},r:"6.17.1.14 m"},
+ {h:{ar:"زمن الإعداد والاختبار للبندقية",en:"Rifle preparation & sighting"},x:{ar:"أصدر رئيس الميدان TAKE YOUR POSITIONS في نهائي بندقية الهواء.",en:"The CRO has commanded TAKE YOUR POSITIONS in an Air Rifle Final."},
+  q:{ar:"متى يبدأ زمن الإعداد والاختبار؟",en:"When does preparation and sighting start?"},o:[{ar:"بعد 10 ثوانٍ",en:"After 10 seconds"},{ar:"بعد 30 ثانية",en:"After 30 seconds"},{ar:"فوراً",en:"Immediately"},{ar:"بعد دقيقة",en:"After one minute"}],a:1,
+  e:{ar:"بعد 30 ثانية في البندقية و10 ثوانٍ في المسدس يبدأ زمن الإعداد والاختبار المشترك (5 دقائق).",en:"After 30 seconds for rifle and 10 seconds for pistol the combined 5-minute Preparation and Sighting Time starts."},r:"6.17.2 d"},
+ {h:{ar:"أمر 30 SECONDS",en:"The 30 SECONDS call"},x:{ar:"بدأ زمن الإعداد والاختبار.",en:"Preparation and sighting is running."},
+  q:{ar:"متى يعلن رئيس الميدان 30 SECONDS؟",en:"When does the CRO call 30 SECONDS?"},o:[{ar:"بعد 30 ثانية من البدء",en:"30 seconds after the start"},{ar:"قبل نهاية الدقائق الخمس بثلاثين ثانية",en:"30 seconds before the end of the five minutes"},{ar:"قبل كل مجموعة",en:"Before each series"},{ar:"لا يُعلن",en:"It is not called"}],a:1,
+  e:{ar:"قبل نهاية الإعداد والاختبار بثلاثين ثانية: 30 SECONDS، وبعد خمس دقائق: STOP … UNLOAD.",en:"30 seconds before the end of preparation and sighting: 30 SECONDS; after five minutes: STOP … UNLOAD."},r:"6.17.2 d"},
+ {h:{ar:"إعلان درجات المرحلة الأولى",en:"Announcing stage 1 scores"},x:{ar:"انتهت المجموعة الأولى وأصدر رئيس الميدان STOP.",en:"Series 1 is over and the CRO has commanded STOP."},
+  q:{ar:"ماذا يعلن المعلّق؟",en:"What does the Announcer give?"},o:[{ar:"درجة كل طلقة لكل لاعب",en:"Every shot score of every athlete"},{ar:"15–20 ثانية تعليق على الترتيب والنتائج البارزة دون درجات الطلقات الفردية",en:"15–20 seconds on the ranking and notable scores, without individual shot scores"},{ar:"لا شيء",en:"Nothing"},{ar:"نتائج التأهيل",en:"Qualification results"}],a:1,
+  e:{ar:"فور STOP يعلّق المعلّق 15–20 ثانية على الترتيب الحالي والنتائج البارزة، ولا تُعلن درجات الطلقات الفردية.",en:"Right after STOP the Announcer gives 15–20 seconds of comments on the ranking and notable scores; individual shot scores are not announced."},r:"6.17.2 e"},
+ {h:{ar:"أمر فض التعادل",en:"Shoot-off command"},x:{ar:"بعد الطلقة 14 تعادل KIM على نقطة الرمي C وSINGH على F على أقل ترتيب.",en:"After shot 14 KIM on firing point C and SINGH on F are tied for the lowest place."},
+  q:{ar:"ما الصيغة الصحيحة لأمر رئيس الميدان؟",en:"What is the CRO's correct wording?"},o:[{ar:"TIE-BREAK … LOAD … START",en:"TIE-BREAK … LOAD … START"},{ar:"The next command is for KIM on firing point C and SINGH on firing point F … ONLY: FOR THE SHOOT-OFF SHOT … LOAD … START … STOP",en:"The next command is for KIM on firing point C and SINGH on firing point F … ONLY: FOR THE SHOOT-OFF SHOT … LOAD … START … STOP"},{ar:"FOR THE NEXT COMPETITION SHOT … LOAD",en:"FOR THE NEXT COMPETITION SHOT … LOAD"},{ar:"C AND F … FIRE",en:"C AND F … FIRE"}],a:1,
+  e:{ar:"بعد 10 ثوانٍ كحد أقصى من تعليق المعلّق، يعلن رئيس الميدان أن هناك تعادلاً على أقل ترتيب، ثم أسماء العائلات ونقاط الرمي متبوعة بـ ONLY، ثم FOR THE SHOOT-OFF SHOT … LOAD … START … STOP.",en:"After max. 10 seconds of Announcer comments, the CRO states there is a tie for the lowest ranking finalist, names the family names and firing points followed by ONLY, then FOR THE SHOOT-OFF SHOT … LOAD … START … STOP."},r:"6.17.2 h · Commands 2026"},
+ {h:{ar:"لا يستطيع الرمي",en:"Unable to fire"},x:{ar:"انتهى زمن الطلقة الفردية ولم يتمكن اللاعب من إطلاق الكُرية المعمّرة في بندقيته.",en:"Single-shot time is over and the finalist could not fire the pellet loaded in the rifle."},
+  q:{ar:"ماذا يستخدم رئيس الميدان؟",en:"What does the CRO use?"},o:[{ar:"يطلب من اللاعب الرمي في الهدف",en:"Has the athlete fire it at the target"},{ar:"أسطوانة تفريغ الكُريات (PDC)",en:"The Pellet Discharge Cylinder (PDC)"},{ar:"يُخرج الكُرية يدوياً",en:"Removes the pellet by hand"},{ar:"يتركها حتى النهاية",en:"Leaves it until the end"}],a:1,
+  e:{ar:"إذا لم يتمكن اللاعب من إطلاق طلقة (عطل أو تجاوز الزمن) يجب على رئيس الميدان استخدام أسطوانة تفريغ الكُريات (PDC).",en:"If a finalist is unable to fire a shot (malfunction or overtime), the CRO must use the Pellet Discharge Cylinder (PDC)."},r:"Commands & Announcements 2026"},
+ {h:{ar:"الوقت الرسمي للأوامر",en:"Official command times"},x:{ar:"نهائي موعده 12:00.",en:"A Final scheduled for 12:00."},
+  q:{ar:"متى يُصدر رئيس الميدان FIVE MINUTES PREPARATION AND SIGHTING TIME … START؟",en:"When does the CRO command FIVE MINUTES PREPARATION AND SIGHTING TIME … START?"},o:[{ar:"11:50",en:"11:50"},{ar:"11:53:55",en:"11:53:55"},{ar:"11:55:00",en:"11:55:00"},{ar:"11:58:55",en:"11:58:55"}],a:1,
+  e:{ar:"ATHLETES TO THE LINE 11:50، TAKE YOUR POSITIONS 11:53:25، البدء 11:53:55، 30 SECONDS 11:58:25، STOP … UNLOAD 11:58:55، LOAD 11:59:55، START 12:00.",en:"ATHLETES TO THE LINE 11:50, TAKE YOUR POSITIONS 11:53:25, START 11:53:55, 30 SECONDS 11:58:25, STOP … UNLOAD 11:58:55, LOAD 11:59:55, START 12:00."},r:"Commands & Announcements 2026"},
+ {h:{ar:"السير إلى الخط",en:"Walking to the line"},x:{ar:"عند ATHLETES TO THE LINE سار لاعب بندقية إلى نقطة الرمي وسترته مفتوحة.",en:"At ATHLETES TO THE LINE a rifle finalist walks to the firing point with the jacket open."},
+  q:{ar:"ما المطلوب؟",en:"What is required?"},o:[{ar:"مسموح، يغلقها عند الرمي",en:"Allowed, close it to fire"},{ar:"يسير لاعبو البندقية بكامل ملابسهم والسراويل والسترات مغلقة",en:"Rifle finalists walk to the line fully dressed, trousers and jackets closed"},{ar:"يسير بدون سترة",en:"Walk without the jacket"},{ar:"قرار المدرب",en:"The coach decides"}],a:1,
+  e:{ar:"عند استدعاء لاعبي البندقية إلى خط الرمي يجب أن يسيروا بكامل ملابسهم والسراويل والسترات مغلقة (انظر القاعدة 7.5.2.3).",en:"When rifle finalists are called to the firing line they must walk fully dressed with trousers and jackets closed (see Rule 7.5.2.3)."},r:"6.17.1.14 c"},
+ {h:{ar:"التعريف الوطني",en:"National identification"},x:{ar:"لاعب بندقية في النهائي لا يظهر على سترته أي تعريف بدولته.",en:"A rifle finalist's jacket shows no national identification."},
+  q:{ar:"ما المطلوب؟",en:"What is required?"},o:[{ar:"لا شيء",en:"Nothing"},{ar:"علم الدولة أو رمزها الثلاثي على الجيب المواجه للجمهور أو أسفل ظهر السترة",en:"The national flag or 3-letter code on the pocket facing the audience or the lower back of the jacket"},{ar:"اسم اللاعب على الكم",en:"The name on the sleeve"},{ar:"رقم نقطة الرمي",en:"The firing point letter"}],a:1,
+  e:{ar:"يجب على لاعبي البندقية عرض التعريف الوطني على سترة الرمي: علم الدولة أو الرمز الثلاثي المعتمد من IOC على الجيب المواجه للجمهور أو أسفل ظهر السترة.",en:"Rifle athletes must display national identification on the shooting jacket: the national flag or the IOC 3-letter code on the pocket facing the audience or on the lower back of the jacket."},r:"6.17.1.14 v"},
+ {h:{ar:"أمر النهاية",en:"End command"},x:{ar:"أطلق اللاعبان المتبقيان الطلقة 24، ولا تعادل ولا احتجاج.",en:"The two remaining finalists have fired shot 24; no tie and no protest."},
+  q:{ar:"ماذا يقول رئيس الميدان؟",en:"What does the CRO say?"},o:[{ar:"UNLOAD فقط",en:"UNLOAD only"},{ar:"STOP … UNLOAD ثم RESULTS ARE FINAL",en:"STOP … UNLOAD, then RESULTS ARE FINAL"},{ar:"END OF MATCH",en:"END OF MATCH"},{ar:"لا شيء، المعلّق يعلن",en:"Nothing, the Announcer speaks"}],a:1,
+  e:{ar:"يُصدر رئيس الميدان STOP … UNLOAD، وبعد التأكد مع غرفة التحكم يعلن RESULTS ARE FINAL، وتجمع لجنة الحكام الفائزين الثلاثة في منطقة اللعب.",en:"The CRO commands STOP … UNLOAD and declares RESULTS ARE FINAL; the Jury assembles the three medallists on the FOP."},r:"6.17.2 i"}
+];
+let CI=0, CANS={};
+function renderCase(){
+  const tt=t(), c=CASES[CI];
+  $("caseno").innerHTML=`${tt.caseNo} <b>${CI+1}</b> ${tt.of} ${CASES.length}`; $("casetag").textContent=tt.caseTag;
+  $("casetitle").textContent=L(c.h); $("casetext").textContent=L(c.x); $("caseq").textContent=L(c.q);
+  $("caseshots").innerHTML=c.shots?c.shots.map((s,k)=>`<span class="shot"><b class="${s==="0.0"?"z":s==="—"?"u":"h"}">${esc(s)}</b>${k+1}</span>`).join(""):"";
+  const box=$("caseopts"); box.innerHTML=""; const ans=CANS[CI];
+  c.o.forEach((o,k)=>{const b=document.createElement("button");b.className="opt";b.textContent=L(o);
+    if(ans!=null){b.disabled=true; if(k===c.a)b.classList.add("right"); else if(k===ans)b.classList.add("wrong");}
+    b.onclick=()=>{CANS[CI]=k;renderCase();}; box.appendChild(b);});
+  $("caseex").innerHTML=ans!=null?`<b>${ans===c.a?tt.right:tt.notq}</b> ${esc(L(c.e))} <span class="ref">ISSF ${c.r}</span>`:"";
+  $("cprev").textContent=tt.cprev; $("cnext").textContent=tt.cnext; $("crestart").textContent=tt.crestart; $("clisten").textContent=tt.clisten;
+  $("cprev").disabled=CI===0; $("cnext").disabled=CI===CASES.length-1; $("clisten").disabled=!synth;
+  const right=Object.entries(CANS).filter(([i,a])=>CASES[i].a===a).length;
+  $("cscore").textContent=`${tt.cscore} ${right} / ${Object.keys(CANS).length}`;
+}
+// shuffle answer positions once per load so the right answer is not always the second option
+CASES.forEach(c=>{ const idx=c.o.map((_,i)=>i).sort(()=>Math.random()-.5); const right=c.o[c.a]; c.o=idx.map(i=>c.o[i]); c.a=c.o.indexOf(right); });
+$("cprev").onclick=()=>{CI--;renderCase()}; $("cnext").onclick=()=>{CI++;renderCase()};
+$("crestart").onclick=()=>{CI=0;CANS={};renderCase()};
+$("clisten").onclick=()=>{ if(!SOUND){ SOUND=true; try{localStorage.setItem("ar10-sound","1")}catch(e){} render(false); renderCase(); } const c=CASES[CI]; speak(L(c.h)+". "+L(c.x)+" "+L(c.q)+" "+c.o.map((o,k)=>(k+1)+": "+L(o)).join(". "));};
+
+/* ================= wiring ================= */
+function setTab(k){ ["sim","cases","irr"].forEach(x=>{ $("tab-"+x).setAttribute("aria-selected",k===x); $("view-"+x).hidden=k!==x; }); if(k!=="sim"){stopPlay();closeTrainer();} if(k==="cases") renderCase(); if(k==="irr") renderIrr(); }
+$("tab-sim").onclick=()=>setTab("sim"); $("tab-cases").onclick=()=>setTab("cases"); $("tab-irr").onclick=()=>setTab("irr");
+$("langbtn").onclick=()=>{ lang=lang==="ar"?"en":"ar"; try{localStorage.setItem("ar10-lang",lang)}catch(e){} render(false); renderCase(); renderNames(); renderIrr(); };
+const setEv=v=>{ EV=v; try{localStorage.setItem("ar10-ev",v)}catch(e){} rebuild(true); render(false); };
+$("evm").onclick=()=>setEv("m"); $("evw").onclick=()=>setEv("w");
+$("bnext").onclick=()=>{stopPlay(); nextStep();};
+$("bprev").onclick=()=>{stopPlay(); $("gate").hidden=true; go(I-1,false);};
+$("bplay").onclick=play;
+$("bpause").onclick=()=>setPaused(!PAUSED);
+$("seek").oninput=e=>{stopPlay(); $("gate").hidden=true; go(+e.target.value,false);};
+[1,2,4,8].forEach(v=>{ $("sp"+v).onclick=()=>{SPEED=v; [1,2,4,8].forEach(w=>$("sp"+w).setAttribute("aria-pressed",SPEED===w));}; });
+$("scen").onchange=e=>newScenario(+e.target.value);
+$("bstart").onclick=()=>{stopPlay(); closeTrainer(); $("gate").hidden=true; go(0,false);};
+$("vmode").onchange=()=>speakStep(); $("vvoice").onchange=e=>{ VOICE_PREF=e.target.value; try{localStorage.setItem("ar10-voice",VOICE_PREF)}catch(x){} speak("START"); }; $("vrate").onchange=()=>speakStep();
+function applyNames(){ computeNames(); saveNames(); rebuild(true); render(false); }
+function renderNames(){ const tt=t(); const box=$("names"); box.innerHTML="";
+  $("usenames").checked=USE_NAMES; $("usenamesl").textContent=tt.usenames; $("namespanel").hidden=!USE_NAMES;
+  $("nameshelp").textContent=tt.nameshelp; $("namespaste").placeholder=tt.pasteph; $("bfill").textContent=tt.fill; $("bclear").textContent=tt.clearn;
+  POS.forEach((p,n)=>{const l=document.createElement("label"); l.innerHTML=chip(p);
+    const i=document.createElement("input"); i.type="text"; i.id="nm"+p; i.value=ENTRIES[n].name; i.maxLength=24; i.placeholder=tt.famph+" "+p; i.setAttribute("aria-label",tt.famph+" "+p); i.autocomplete="off";
+    i.oninput=()=>{ENTRIES[n].name=i.value;}; i.onchange=()=>{ENTRIES[n].name=i.value.trim(); applyNames();};
+    const c=document.createElement("input"); c.type="text"; c.className="noc"; c.id="noc"+p; c.value=ENTRIES[n].noc; c.maxLength=3; c.placeholder=tt.nocph; c.setAttribute("aria-label",tt.nocph+" "+p); c.autocomplete="off";
+    c.onchange=()=>{ENTRIES[n].noc=c.value.trim().toUpperCase().slice(0,3); c.value=ENTRIES[n].noc; applyNames();};
+    l.appendChild(i); l.appendChild(c); box.appendChild(l);}); }
+$("usenames").onchange=e=>{ USE_NAMES=e.target.checked; $("namespanel").hidden=!USE_NAMES; applyNames(); };
+$("bfill").onclick=()=>{ const lines=$("namespaste").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,8);
+  lines.forEach((ln,k)=>{ let parts=ln.replace(/^[A-H\d]+[\.\)\-:]\s*/,"").split(/[,;\t]+|\s+/).filter(Boolean); let noc="";
+    if(parts.length>1&&/^[A-Z]{3}$/.test(parts[parts.length-1])){ noc=parts.pop(); }
+    ENTRIES[k]={name:parts.join(" ").slice(0,24),noc}; });
+  if(lines.length){ USE_NAMES=true; $("namespaste").value=""; renderNames(); applyNames(); } };
+$("bclear").onclick=()=>{ ENTRIES=POS.map(()=>({name:"",noc:""})); renderNames(); applyNames(); };
+
+const FS_OK=!!(document.documentElement.requestFullscreen&&document.fullscreenEnabled!==false);
+if(FS_OK) $("fsbtn").hidden=false;
+function toggleFS(){ try{ if(document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(()=>{}); }catch(e){} }
+$("fsbtn").onclick=toggleFS;
+function toggleSound(){ SOUND=!SOUND; try{localStorage.setItem("ar10-sound",SOUND?"1":"0")}catch(e){}
+  if(!SOUND){ VOICE_ON=false; try{synth&&synth.cancel()}catch(e){} }
+  else { VOICE_ON=true; beep(880,.08); if(!$("view-cases").hidden){ const c=CASES[CI]; speak(L(c.h)+". "+L(c.x)+" "+L(c.q)); } else speakStep(); }
+  render(false); renderCase(); }
+$("sndbtn").onclick=toggleSound;
+document.addEventListener("fullscreenchange",()=>{ $("fsbtn").textContent=document.fullscreenElement?t().fsx:t().fs; setTimeout(()=>renderField(false),120); });
+document.addEventListener("keydown",e=>{
+  if(e.ctrlKey||e.metaKey||e.altKey) return;
+  const tg=e.target; if(tg&&(/^(INPUT|SELECT|TEXTAREA)$/.test(tg.tagName)||tg.isContentEditable)) return;
+  const fwd=lang==="ar"?"ArrowLeft":"ArrowRight", back=lang==="ar"?"ArrowRight":"ArrowLeft";
+  if(!$("view-sim").hidden){
+    if(e.key===fwd||e.key==="PageDown"||e.key==="n"||e.key==="N"){ e.preventDefault(); if(!$("gate").hidden) return; stopPlay(); nextStep(); return; }
+    if(e.key===back||e.key==="PageUp"||e.key==="p"||e.key==="P"){ e.preventDefault(); stopPlay(); $("gate").hidden=true; go(I-1,false); return; }
+    if(e.key===" "&&!(tg&&tg.tagName==="BUTTON")){ e.preventDefault(); play(); render(false); return; }
+    if(e.key==="k"||e.key==="K"){ e.preventDefault(); setPaused(!PAUSED); return; }
+    if(e.key==="t"||e.key==="T"){ e.preventDefault(); TR?closeTrainer():openTrainer(); return; }
+    if(e.key==="Home"){ e.preventDefault(); stopPlay(); closeTrainer(); $("gate").hidden=true; go(0,false); return; }
+  } else if(!$("view-cases").hidden){
+    if(e.key===fwd&&CI<CASES.length-1){ e.preventDefault(); CI++; renderCase(); return; }
+    if(e.key===back&&CI>0){ e.preventDefault(); CI--; renderCase(); return; }
+    if(/^[1-4]$/.test(e.key)&&CANS[CI]==null){ CANS[CI]=+e.key-1; renderCase(); return; }
+  }
+  if(e.key==="f"||e.key==="F"){ if(FS_OK){ e.preventDefault(); toggleFS(); } return; }
+  if(e.key==="m"||e.key==="M"){ e.preventDefault(); toggleSound(); return; }
+  if(e.key==="l"||e.key==="L"){ e.preventDefault(); $("langbtn").click(); return; }
+});
+let rzT=null; window.addEventListener("resize",()=>{clearTimeout(rzT); rzT=setTimeout(()=>renderField(false),150);});
+VOICE_ON=SOUND;
+drawField(); renderNames(); PLAN=planFor(0); rebuild(false); render(false); renderCase(); renderIrr();
+requestAnimationFrame(()=>requestAnimationFrame(()=>{for(const k in TOK) TOK[k].style.transition="";}));
+window.__ar={STEPS:()=>STEPS,go,newScenario,EVENTS:()=>EVENTS,simulate,planFor};
+})();
+</script>
+
+</body>
+</html>
+<script>
+if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});}
+</script>
