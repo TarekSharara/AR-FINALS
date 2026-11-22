@@ -244,6 +244,21 @@ body[dir="rtl"] .annbox .c{text-align:right}
 .evseg{display:inline-flex}
 .shot b{width:auto;min-width:40px;height:30px;border-radius:15px;display:grid;place-items:center;font-family:var(--f-mono);font-size:12px;color:#111;padding:0 6px}
 .shot b.z{color:var(--bad);font-weight:700}
+/* full results card fits under the field without scrolling */
+.rescard{padding:12px 8px}
+.rescard .tw{overflow-x:visible}
+#results{table-layout:auto;width:100%}
+#results th,#results td{padding:4px 1px;font-size:11px;letter-spacing:-.02em}
+#results td:first-child{font-size:11px;max-width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#results td:first-child .small{display:none}
+#results .chip{width:18px;height:18px;font-size:10px;vertical-align:-4px}
+#results sup{font-size:8px}
+#results td.sep:nth-last-child(3){white-space:normal;line-height:1.2}
+@media (max-width:960px){.rescard .tw{overflow-x:auto}}
+/* athlete just eliminated: red ring on the field */
+@keyframes elimring{0%,100%{opacity:1}50%{opacity:.1}}
+.tok.justout .ring{animation:elimring .7s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.tok.justout .ring{animation:none}}
 @keyframes elimflash{0%,100%{background:color-mix(in srgb, var(--bad) 30%, var(--panel))}50%{background:transparent}}
 /* athletes already eliminated: shaded, no flashing */
 #results tr.out td,#board tr.out td{background:color-mix(in srgb, var(--muted) 20%, var(--panel));color:var(--muted)}
@@ -259,10 +274,6 @@ body[dir="rtl"] .annbox .c{text-align:right}
       <p class="eyebrow" id="eyebrow"></p>
       <h1 id="h1"></h1>
       <p class="lead" id="lead"></p>
-/* athlete just eliminated: red ring on the field */
-@keyframes elimring{0%,100%{opacity:1}50%{opacity:.1}}
-.tok.justout .ring{animation:elimring .7s ease-in-out infinite}
-@media (prefers-reduced-motion:reduce){.tok.justout .ring{animation:none}}
       <p class="byline" id="byline"></p>
     </div>
     <div class="hdr-side">
@@ -284,6 +295,10 @@ body[dir="rtl"] .annbox .c{text-align:right}
           <svg id="field" viewBox="0 0 1000 420" role="img" aria-label="Field of play"></svg>
           <div class="timer"><span id="timerlbl"></span><span class="bar"><i id="timerbar"></i></span><span class="t" id="timert">–</span></div>
           <div class="legend" id="legend"></div>
+        </div>
+        <div class="card rescard">
+          <div class="row" style="justify-content:space-between"><h2 id="resh"></h2><span class="small" id="ressub"></span></div>
+          <div class="tw"><table id="results"></table></div>
         </div>
       </div>
       <div class="col">
@@ -333,10 +348,6 @@ body[dir="rtl"] .annbox .c{text-align:right}
           <div class="tw"><table id="board"></table></div>
         </div>
       </div>
-    </div>
-    <div class="card rescard">
-      <div class="row" style="justify-content:space-between"><h2 id="resh"></h2><span class="small" id="ressub"></span></div>
-      <div class="tw"><table id="results"></table></div>
     </div>
   </section>
 
