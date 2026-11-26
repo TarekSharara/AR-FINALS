@@ -51,6 +51,10 @@ button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visi
 h1{font-family:var(--f-disp); font-weight:700; font-size:clamp(28px,4vw,42px); line-height:1.15; margin:2px 0 4px; text-wrap:balance}
 .lead{margin:0; color:var(--muted); max-width:62ch}
 .hdr-side{display:flex; flex-direction:column; gap:10px; align-items:flex-end}
+.hdr-top{display:flex; justify-content:space-between; align-items:center; gap:24px; flex-wrap:wrap; width:100%}
+.hdr-top>div:first-child{flex:1 1 520px; min-width:0}
+.aibox{flex:0 1 auto; border:2px solid #E0362C; color:#E0362C; padding:22px 18px; text-align:center; font-weight:700; line-height:1.7; font-size:clamp(14px,1.6vw,17px); font-family:Arial,"Segoe UI",sans-serif; background:transparent; margin-inline:auto}
+.aibox[hidden]{display:none}
 .langbtn{border:1px solid var(--line); background:var(--panel); border-radius:999px; padding:6px 16px; font-weight:700; cursor:pointer}
 .phasechips{display:flex; gap:6px; flex-wrap:wrap}
 .pchip{border:1px solid var(--line); background:var(--panel); color:var(--muted); border-radius:999px; padding:4px 12px; font-size:13px; cursor:pointer}
@@ -80,11 +84,11 @@ nav.tabs button[aria-selected="true"]{color:var(--ink); border-bottom-color:var(
 .steptitle{font-family:var(--f-disp); font-size:22px; font-weight:700; margin:6px 0 10px; line-height:1.35}
 .cmdbox{background:var(--navy); color:var(--navy-ink); border-radius:10px; padding:10px 14px; margin-bottom:10px}
 .cmdbox .cap{font-size:12px; opacity:.8; margin-bottom:4px}
-.cmdrow{display:grid; grid-template-columns:1fr auto; gap:2px 12px; padding:5px 0; border-top:1px solid rgba(255,255,255,.12)}
+.cmdrow{display:grid; grid-template-columns:1fr; gap:2px 12px; padding:6px 0; border-top:1px solid rgba(255,255,255,.12)}
 .cmdrow:first-of-type{border-top:0}
 .cmdrow .c{font-family:var(--f-mono); font-weight:600; font-size:14px; direction:ltr; text-align:start; overflow-wrap:anywhere}
 body[dir="rtl"] .cmdrow .c{text-align:right}
-.cmdrow .at{font-family:var(--f-mono); font-size:12.5px; opacity:.85; direction:ltr}
+.cmdrow .at{font-size:12.5px; opacity:.85; unicode-bidi:plaintext; text-align:start}
 .desc{margin:0 0 10px}
 .chip{display:inline-grid; place-items:center; width:22px; height:22px; border-radius:50%; font-size:12px; font-weight:700; border:1px solid rgba(0,0,0,.25); vertical-align:-5px; font-family:var(--f-mono)}
 .ref{font-size:12px; color:var(--muted); font-family:var(--f-mono)}
@@ -270,11 +274,14 @@ body[dir="rtl"] .annbox .c{text-align:right}
 <body>
 <div class="wrap">
   <header class="hdr">
+    <div class="hdr-top">
     <div>
       <p class="eyebrow" id="eyebrow"></p>
       <h1 id="h1"></h1>
       <p class="lead" id="lead"></p>
       <p class="byline" id="byline"></p>
+    </div>
+    <div class="aibox" id="aivoice" hidden></div>
     </div>
     <div class="hdr-side">
       <div class="row"><div class="seg evseg" role="group" aria-label="Event"><button id="evm" aria-pressed="true"></button><button id="evw" aria-pressed="false"></button></div><button class="langbtn" id="sndbtn" aria-pressed="true"></button><button class="langbtn" id="fsbtn" hidden></button><button class="langbtn" id="langbtn"></button></div>
@@ -299,6 +306,10 @@ body[dir="rtl"] .annbox .c{text-align:right}
         <div class="card rescard">
           <div class="row" style="justify-content:space-between"><h2 id="resh"></h2><span class="small" id="ressub"></span></div>
           <div class="tw"><table id="results"></table></div>
+        </div>
+        <div class="card">
+          <div class="row" style="justify-content:space-between"><h2 id="boardh"></h2><span class="small" id="boardsub"></span></div>
+          <div class="tw"><table id="board"></table></div>
         </div>
       </div>
       <div class="col">
@@ -329,7 +340,9 @@ body[dir="rtl"] .annbox .c{text-align:right}
           <div class="row"><span class="small" id="speedl"></span><div class="seg" role="group"><button id="sp1" aria-pressed="true">×1</button><button id="sp2" aria-pressed="false">×2</button><button id="sp4" aria-pressed="false">×4</button><button id="sp8" aria-pressed="false">×8</button></div>
             <label class="row small" style="margin-inline-start:auto"><input type="checkbox" id="quizme"><span id="quizmel"></span></label></div>
           <div class="row"><button class="btn" id="bvoice"></button><select class="grow" id="vmode" aria-label="Narration"></select></div>
-          <div class="row"><select class="grow" id="vrate" aria-label="Rate"></select><select class="grow" id="vvoice" aria-label="Voice"></select></div>
+          <div class="row"><select class="grow" id="vrate" aria-label="Rate"></select></div>
+          <div class="row" style="align-items:center"><label class="small" for="vvoice" id="vvoicel" style="min-width:7.5em"></label><select class="grow" id="vvoice" aria-label="English voice"></select><button class="btn" id="vtesten" type="button">▶</button></div>
+          <div class="row" style="align-items:center"><label class="small" for="vvoicear" id="vvoicearl" style="min-width:7.5em"></label><select class="grow" id="vvoicear" aria-label="Arabic voice"></select><button class="btn" id="vtestar" type="button">▶</button></div>
           <div class="row"><select class="grow" id="scen" aria-label="Scenario"></select><button class="btn" id="bstart"></button></div>
           <p class="small" id="scennote" style="margin:0"></p>
           <p class="small kbd" id="kbdhint" style="margin:0"></p>
@@ -342,10 +355,6 @@ body[dir="rtl"] .annbox .c{text-align:right}
               <div class="row" style="margin-top:8px"><button class="btn" id="bfill"></button><button class="btn" id="bclear"></button></div>
             </div>
           </div>
-        </div>
-        <div class="card">
-          <div class="row" style="justify-content:space-between"><h2 id="boardh"></h2><span class="small" id="boardsub"></span></div>
-          <div class="tw"><table id="board"></table></div>
         </div>
       </div>
     </div>
@@ -391,7 +400,7 @@ const f1=v=>v==null?"":(v/10).toFixed(1);   /* scores are kept in tenths (103 = 
 /* ================= UI strings ================= */
 const T={
 ar:{eyebrow:"بندقية هواء 10م · نهائي ISSF · مجموعتان × 5 طلقات ثم 14 طلقة فردية",h1:{m:"محاكي نهائي بندقية هواء 10م رجال",w:"محاكي نهائي بندقية هواء 10م سيدات"},ev:["رجال","سيدات"],
- lead:"تابع النهائي خطوة بخطوة: ثمانية لاعبين على نقاط الرمي A–H، مع أوامر رئيس ضباط الميدان وتوقيتها، والدرجات بالكسور العشرية، والإقصاء بعد كل طلقتين من الطلقة 12، وفض التعادل حتى الميداليات.",
+ lead:"تابع النهائي خطوة بخطوة: ثمانية لاعبين على نقاط الرمي من A إلى H، مع أوامر رئيس ضباط الميدان وتوقيتها، والدرجات بالكسور العشرية، والإقصاء بعد كل ٢ طلقة من الطلقة 12، وفض التعادل حتى الميداليات.",
  anncap:"المعلّق (Announcer) · بالإنجليزية",snd1:"🔊 الصوت: يعمل",snd0:"🔇 الصوت: مغلق",fs:"⛶ ملء الشاشة",fsx:"⛶ خروج من ملء الشاشة",
  kbd:"لوحة المفاتيح: <kbd>←</kbd> التالي · <kbd>→</kbd> السابق · <kbd>مسافة</kbd> تشغيل/إيقاف · <kbd>K</kbd> إيقاف مؤقت · <kbd>T</kbd> تدريب رئيس ضباط الميدان · <kbd>F</kbd> ملء الشاشة · <kbd>L</kbd> اللغة · <kbd>M</kbd> الصوت · <kbd>Home</kbd> من البداية",
  by:"إعداد: الحكم الدولي طارق شرارة",byf:"© T.SHARARA",
@@ -399,9 +408,9 @@ ar:{eyebrow:"بندقية هواء 10م · نهائي ISSF · مجموعتان �
  step:"الخطوة",of:"من",cmdcap:"أوامر رئيس ضباط الميدان (CRO) وتوقيتها",nocmd:"لا يوجد أمر في هذه الخطوة",train:"⏱ تدريب رئيس ضباط الميدان بالزمن الحقيقي من هنا",
  sayAt:"عند الصفر قل:",sayNow:"قل الآن",wait:"انتظر",pause:"إيقاف مؤقت",resume:"استئناف",nextStage:"المرحلة التالية",close:"إغلاق",auto:"أكمل التالي تلقائياً",beep:"تنبيه صوتي",
  prev:"→ السابق",next:"التالي ←",play:"▶ تشغيل",stop:"■ إيقاف",speed:"السرعة",quizme:"اختبرني قبل كل خطوة",
- voiceOn:"🔊 تشغيل الشرح الصوتي",voiceOff:"🔇 إيقاف الشرح الصوتي",vmode:["الشرح والأوامر","الأوامر فقط"],vrate:["قراءة عادية","قراءة بطيئة","قراءة سريعة"],novoice:"الصوت الافتراضي للجهاز",
+ voiceOn:"🔊 تشغيل الشرح الصوتي",voiceOff:"🔇 إيقاف الشرح الصوتي",vmode:["الشرح والأوامر","الأوامر فقط"],vrate:["قراءة عادية","قراءة بطيئة","قراءة سريعة"],novoice:"الصوت الافتراضي للجهاز",vEnL:"الصوت الإنجليزي (الأوامر)",vArL:"الصوت العربي (الشرح)",
  scen:["سيناريو نتائج جديد…","تعادل على المركز الثامن بعد الطلقة 12","تعادل على البرونزية بعد الطلقة 22","تعادل على الذهبية بعد الطلقة 24","مخالفة: حضور متأخر (أقل من 30 دقيقة)","مخالفة: عدم الحضور خلال 10 دقائق (DNS)","مخالفة: رمي جاف قبل أول طلقة مباراة","مخالفة: طلقة بعد STOP للإعداد والاختبار","مخالفة: طلقة بعد LOAD وقبل START","مخالفة: طلقة زائدة في مجموعة","مخالفة: عطل مسموح به في طلقة فردية","مخالفة: عطل مسموح به في مجموعة 5 طلقات","مخالفة: صفر غير متوقع","مخالفة: اعتراض على قيمة طلقة","مخالفة: احتجاج غير مقبول","مخالفة: تعمير ورمي قبل بدء الإعداد والاختبار","كل المخالفات في نهائي واحد"],fromStart:"من البداية",
- usenames:"استخدام أسماء اللاعبين",nameshelp:"اكتب اسم العائلة لكل لاعب حسب نقطة الرمي التي حصل عليها بالقرعة (A–H). الدولة اختيارية. رئيس ضباط الميدان ينادي اسم العائلة عند التعادل، والاسم يظهر في الملعب ولوحة النتائج.",
+ usenames:"استخدام أسماء اللاعبين",nameshelp:"اكتب اسم العائلة لكل لاعب حسب نقطة الرمي التي حصل عليها بالقرعة (من A إلى H). الدولة اختيارية. رئيس ضباط الميدان ينادي اسم العائلة عند التعادل، والاسم يظهر في الملعب ولوحة النتائج.",
  pasteph:"أو الصق القائمة هنا، اسم في كل سطر بترتيب A إلى H:\nMORENO ESP\nFARID EGY\n…",fill:"تعبئة من القائمة",clearn:"مسح الأسماء",famph:"اسم العائلة",nocph:"الدولة",
  board:"لوحة النتائج",boardsub:"آخر مجموعة أو طلقة · المجموع",res:"كارت النتائج الكامل",ressub:"المجموعتان ثم كل طلقة فردية، يتحدث مع كل خطوة",
  col:{rk:"المركز",sh:"اللاعب",last:"الأخيرة",tot:"المجموع",st:"الحالة",so:"فض تعادل",s1:"م1",s2:"م2"},
@@ -411,9 +420,9 @@ ar:{eyebrow:"بندقية هواء 10م · نهائي ISSF · مجموعتان �
  gateQ:"قبل أن تكمل: ما الذي يحدث بعد ذلك؟",right:"صحيح.",wrong:"ليس هذا. الصحيح:",go:"تابع",
  scenNote:{none:"نتائج عشوائية بدون تعادل يحتاج فض تعادل.",so:"في هذا السيناريو طلقة فض تعادل بعد الطلقة",irr:"مخالفات في هذا النهائي: "},
  caseTag:"اختبر قرارك",caseNo:"الحالة",cprev:"→ السابقة",cnext:"التالية ←",crestart:"ابدأ من جديد",clisten:"🔊 اسمع الحالة",cscore:"إجاباتك الصحيحة:",notq:"ليست الإجابة الصحيحة.",
- src:"المصدر: دليل نهائيات بندقية هواء ومسدس هواء 10م (إنجليزي/عربي) إعداد الحكم الدولي طارق شرارة، وكتاب قواعد ISSF رقم A-678 V3 (إصدار 2025، الطبعة الثالثة 10/2026، سارية من 19 أكتوبر 2026، تصحيح الترجمة 15/11/2026)، القاعدة 6.17.2 وقواعد النهائيات العامة 6.17.1، ومستند ISSF «أوامر وإعلانات نهائيات بندقية هواء 10م رجال – إصدار 2026». النتائج في المحاكي افتراضية. درجات فض التعادل تُسجل منفصلة ولا تُضاف إلى المجموع. اللاعب المستبعد (DSQ) يُدرج في آخر القائمة ويستمر جدول الإقصاء مع الباقين (افتراض في المحاكي)."},
+ src:"المصدر: دليل نهائيات بندقية هواء وبندقية هواء 10م (إنجليزي/عربي) إعداد الحكم الدولي طارق شرارة، وكتاب قواعد ISSF رقم A-678 V3 (إصدار 2025، الطبعة الثالثة 10/2026، سارية من 19 أكتوبر 2026، تصحيح الترجمة 15/11/2026)، القاعدة 6.17.2 وقواعد النهائيات العامة 6.17.1، ومستند ISSF «أوامر وإعلانات نهائيات بندقية هواء 10م رجال – إصدار 2026». النتائج في المحاكي افتراضية. درجات فض التعادل تُسجل منفصلة ولا تُضاف إلى المجموع. اللاعب المستبعد (DSQ) يُدرج في آخر القائمة ويستمر جدول الإقصاء مع الباقين (افتراض في المحاكي)."},
 en:{eyebrow:"10m Air Rifle · ISSF Final · 2 × 5-shot series, then 14 single shots",h1:{m:"10m Air Rifle Men Final Simulator",w:"10m Air Rifle Women Final Simulator"},ev:["Men","Women"],
- lead:"Follow the Final step by step: eight athletes on firing points A–H, every CRO command and its timing, decimal scores, an elimination every two shots from shot 12, and tie-breaking through to the medals.",
+ lead:"Follow the Final step by step: eight athletes from Firing Point A to Firing Point H, every CRO command and its timing, decimal scores, an elimination every two shots from shot 12, and tie-breaking through to the medals.",
  anncap:"Announcer",snd1:"🔊 Sound: on",snd0:"🔇 Sound: off",fs:"⛶ Full screen",fsx:"⛶ Exit full screen",
  kbd:"Keyboard: <kbd>→</kbd> next · <kbd>←</kbd> back · <kbd>Space</kbd> play/stop · <kbd>K</kbd> pause · <kbd>T</kbd> CRO trainer · <kbd>F</kbd> full screen · <kbd>L</kbd> language · <kbd>M</kbd> sound · <kbd>Home</kbd> from the start",
  by:"Prepared by: International Judge Tarek Sharara",byf:"© T.SHARARA",
@@ -421,11 +430,11 @@ en:{eyebrow:"10m Air Rifle · ISSF Final · 2 × 5-shot series, then 14 single s
  step:"Step",of:"of",cmdcap:"CRO commands and timing",nocmd:"No command in this step",train:"⏱ Train as CRO in real time from here",
  sayAt:"At zero, say:",sayNow:"Say now",wait:"Wait",pause:"Pause",resume:"Resume",nextStage:"Next stage",close:"Close",auto:"Continue automatically",beep:"Sound cue",
  prev:"← Back",next:"Next →",play:"▶ Play",stop:"■ Stop",speed:"Speed",quizme:"Quiz me before each step",
- voiceOn:"🔊 Play narration",voiceOff:"🔇 Stop narration",vmode:["Explanation and commands","Commands only"],vrate:["Normal speed","Slow","Fast"],novoice:"Device default voice",
+ voiceOn:"🔊 Play narration",voiceOff:"🔇 Stop narration",vmode:["Explanation and commands","Commands only"],vrate:["Normal speed","Slow","Fast"],novoice:"Device default voice",vEnL:"English voice (commands)",vArL:"Arabic voice (narration)",
  scen:["New random results…","Tie for 8th place after shot 12","Tie for bronze after shot 22","Tie for gold after shot 24","Irregularity: late reporting (under 30 min)","Irregularity: not reporting within 10 min (DNS)","Irregularity: dry firing before the first MATCH shot","Irregularity: shot after sighting STOP","Irregularity: shot after LOAD, before START","Irregularity: extra shot in a series","Irregularity: allowable malfunction in a single shot","Irregularity: allowable malfunction in a 5-shot series","Irregularity: unexpected zero","Irregularity: claim of shot value","Irregularity: protest not upheld","Irregularity: loading and firing before sighting START","All irregularities in one Final"],fromStart:"From the start",
- usenames:"Use athletes' names",nameshelp:"Enter each athlete's family name by the firing point drawn (A–H). Country code is optional. The CRO calls family names in a tie, and they show on the field and the scoreboard.",
- pasteph:"Or paste the list here, one name per line from A to H:\nMORENO ESP\nFARID EGY\n…",fill:"Fill from list",clearn:"Clear names",famph:"Family name",nocph:"NOC",
- board:"Scoreboard",boardsub:"Last series or shot · total",res:"Full results card",ressub:"Both series, then every single shot, updated at every step",
+ usenames:"Use athletes' names",nameshelp:"Enter each athlete's family name by the firing point drawn (from Firing Point A to Firing Point H). Country code is optional. The CRO calls family names in a tie, and they show on the field and the scoreboard.",
+ pasteph:"Or paste the list here, one name per line from Firing Point A to Firing Point H:\nMORENO ESP\nFARID EGY\n…",fill:"Fill from list",clearn:"Clear names",famph:"Family name",nocph:"NOC",
+ board:"Scoreboard",boardsub:"Last series or shot · total",res:"Full results card",ressub:"Both series, then every single shot, updated at every step · flashing row: the athlete eliminated after shots 12, 14, 16, 18, 20, 22",
  col:{rk:"Rank",sh:"Athlete",last:"Last",tot:"Total",st:"Status",so:"Tie-break",s1:"S1",s2:"S2"},
  st:{fp:"At firing point",entry:"Not yet in",shoot:"Firing",out:"Out",g:"Gold",s:"Silver",b:"Bronze",fop:"On the FOP"},
  timer:"Time",lg:["Firing point","Reserve target","MATCH shot","Sighting shot"],
@@ -493,7 +502,11 @@ function simulate(plan,names,quick){
     {lbl:{ar:"تعليق المعلّق على التعادل (10 ث كحد أقصى)",en:"Announcer: tie-break comments (max 10 s)"},secs:10,say:"There is a tie for the lowest ranking Finalist to be eliminated.",hint:{ar:"فور STOP يعلّق المعلّق 10 ثوانٍ كحد أقصى على موقف التعادل، ثم يعلن رئيس ضباط الميدان التعادل.",en:"Right after STOP the Announcer gives max. 10 seconds of comments on the tie-break situation; then the CRO announces the tie."}},
     {lbl:{ar:"إعلان التعادل",en:"Tie announced"},secs:5,say:"The next Command is for "+andL(tied.map(famOn))+" … ONLY:",hint:{ar:"ثم ينادي رئيس ضباط الميدان أسماء العائلات ونقاط الرمي للمتعادلين فقط.",en:"Then the CRO calls the family names and firing points of the tied finalists ONLY."}},
     {lbl:{ar:"نداء المتعادلين",en:"Tied finalists called"},secs:6,say:"FOR THE SHOOT-OFF SHOT … LOAD",hint:{ar:"ثم أمر التعمير لطلقة فض التعادل، وبعده بـ 5 ثوانٍ START، ثم STOP بعد 50 ثانية.",en:"Then LOAD for the shoot-off shot; START 5 seconds later, STOP after 50 seconds."}}];
-  const cmdsFrom=stages=>{let acc=0; return stages.filter(s=>{acc+=s.secs; s._at=acc; return !!s.say;}).map(s=>({c:s.say,at:s.at||("+"+Math.round(s._at)+"s")}));};
+  const durW=sec=>{ const r=Math.round(sec*10)/10, m=Math.floor(r/60), x=Math.round((r-m*60)*10)/10;
+    const mA=m===1?"دقيقة":m===2?"دقيقتين":m<=10?m+" دقائق":m+" دقيقة", sA=x===1?"ثانية":x===2?"ثانيتين":(x>=3&&x<=10&&x%1===0)?x+" ثوانٍ":x+" ثانية";
+    const mE=m+(m===1?" minute":" minutes"), sE=x+(x===1?" second":" seconds");
+    const ar=m&&x?mA+" و"+sA:m?mA:sA, en=m&&x?mE+" "+sE:m?mE:sE; return {ar:"بعد "+ar,en:"after "+en}; };
+  const cmdsFrom=stages=>{let acc=0; return stages.filter(s=>{acc+=s.secs; s._at=acc; return !!s.say;}).map(s=>({c:s.say,at:s.at||durW(s._at)}));};
   const annName=p=>{const i=POS.indexOf(p); const noc=(typeof USE_NAMES!=="undefined"&&USE_NAMES&&ENTRIES[i].noc)?ENTRIES[i].noc.toUpperCase():"(COUNTRY)"; return {n:nm(p),c:noc};};
   const BEFORE={ar:"قبل النهائي",en:"Before the Final"};
   const irrStep=(ph,p,color,title,desc,ref)=>push({ph,tag:{ar:"مخالفة",en:"Irregularity"},title,desc,ref,pos:fpPos(),flag:{p,color},
@@ -504,7 +517,7 @@ function simulate(plan,names,quick){
   /* ---- before the Final ---- */
   push({ph:0,tag:BEFORE,title:{ar:"الحضور: 30 دقيقة قبل البداية",en:"Reporting: 30 min before the Start Time"},
     desc:{ar:"وقت البداية هو اللحظة التي يبدأ فيها رئيس ضباط الميدان أوامر أول طلقة مباراة. يحضر اللاعبون إلى منطقة الإعداد قبل وقت البداية بثلاثين دقيقة على الأقل مع المعدات والذخيرة الكافية وملابس المنافسة وزي المنتخب للتتويج. تتأكد لجنة الحكام من حضور الجميع وصحة الأسماء والدول، وتفحص المعدات في أقرب وقت ممكن، وتُركّب أجهزة التصويب الحي (Live Aiming) على البنادق بمساعدة وإشراف مسؤولي RTS والعرض الرياضي.",en:"The Start Time is when the CRO begins the commands for the first MATCH shot. Athletes report to the Finals preparation area at least 30 minutes before, with equipment, enough pellets, competition clothing and national team uniform for the ceremony. The Jury confirms all finalists and their names and nations, and checks equipment as soon as possible. Live Aiming devices are fitted to the rifles, assisted and overseen by RTS and Sport Presentation officials."},
-    ref:"6.17.1.3",pos:pm(()=>"entry"),stages:[{lbl:{ar:"الحضور",en:"Reporting"},secs:10,say:null,hint:{ar:"30:00 قبل البداية.",en:"30:00 before the start."}}],cmds:[]});
+    ref:"6.17.1.3",pos:pm(()=>"entry"),stages:[{lbl:{ar:"الحضور",en:"Reporting"},secs:10,say:null,hint:{ar:"قبل وقت بداية النهائي بـ 30 دقيقة.",en:"30 minutes before the start time of the Final."}}],cmds:[]});
   IRRS.filter(x=>x.t==="late").forEach(x=>{ const p=x.p; A[p].pen[1]=(A[p].pen[1]||0)-20; irrNotes.push({ar:`حضور متأخر (${p})`,en:`late reporting (${p})`});
     irrStep(0,p,"#E5A23A",{ar:`مخالفة: حضور متأخر (${p})`,en:`Irregularity: late reporting (${p})`},
       {ar:`حضر {${p}} إلى منطقة الإعداد قبل البداية بـ 25 دقيقة فقط بدلاً من 30. العقوبة خصم نقطتين (2) من نتيجة أول طلقة مباراة.`,en:`{${p}} reports only 25 minutes before the Start Time instead of 30. The penalty is a 2-point deduction from the score of the first MATCH shot.`},"6.17.1.3"); });
@@ -513,13 +526,13 @@ function simulate(plan,names,quick){
       {ar:`لم يحضر {${p}} إلى منطقة الإعداد خلال 10 دقائق بعد وقت الحضور، فلا يُسمح له بالبدء ويُسجَّل أول المُقصَين (المركز الثامن) ويظهر DNS. لذلك يبدأ أول إقصاء بالمركز السابع.`,en:`{${p}} has not reported within 10 minutes after the Reporting Time, so may not start, is recorded as the first eliminated athlete (8th) and shown as DNS. The first elimination therefore begins with 7th place.`},"6.17.1.4"); });
   push({ph:0,tag:BEFORE,title:{ar:"المعدات على نقاط الرمي: 20 دقيقة قبل البداية",en:"Equipment on the firing points: 20 min before"},
     desc:{ar:"يُسمح للاعبين أو مدربيهم بوضع الأسلحة والمعدات على نقاط الرمي قبل وقت البداية بعشرين دقيقة على الأقل. لا تُترك حقائب الأسلحة في منطقة اللعب، ولا يُسمح بتمارين التصويب في هذا الوقت. يعود اللاعبون بعدها إلى منطقة الإعداد، ويجلس المدربون في أماكنهم.",en:"Athletes or coaches place guns and equipment on the firing points at least 20 minutes before the Start Time. Gun cases may not stay on the FOP and aiming exercises are not permitted now. Athletes then return to the preparation area and coaches take their seats."},
-    ref:"6.17.1.14 b",pos:pm(p=>A[p].status==="dns"?"entry":"entry"),equip:true,stages:[{lbl:{ar:"المعدات",en:"Equipment"},secs:10,say:null,hint:{ar:"20:00 قبل البداية.",en:"20:00 before the start."}}],cmds:[]});
-  {const stg=[{lbl:{ar:"النداء إلى الخط",en:"Call to the line"},secs:5,say:"ATHLETES TO THE LINE",at:"−10:00",hint:{ar:"قبل البداية بعشر دقائق (مثال: 11:50 لنهائي يبدأ 12:00). يتأكد مساعد من ترتيب اللاعبين ويعطي إشارة.",en:"10 minutes before the start (e.g. 11:50 for a 12:00 Final). An assistant lines the finalists up in order and gives a sign."}}];
+    ref:"6.17.1.14 b",pos:pm(p=>A[p].status==="dns"?"entry":"entry"),equip:true,stages:[{lbl:{ar:"المعدات",en:"Equipment"},secs:10,say:null,hint:{ar:"قبل وقت بداية النهائي بـ 20 دقيقة.",en:"20 minutes before the start time of the Final."}}],cmds:[]});
+  {const stg=[{lbl:{ar:"النداء إلى الخط",en:"Call to the line"},secs:5,say:"ATHLETES TO THE LINE",at:{ar:"قبل وقت بداية النهائي بـ 10 دقائق",en:"10 minutes before the start time"},hint:{ar:"قبل وقت بداية النهائي بـ (10) دقائق. يتأكد مساعد من ترتيب اللاعبين ويعطي إشارة.",en:"10 minutes before the start time of the Final. An assistant lines the finalists up in order and gives a sign."}}];
    push({ph:0,tag:BEFORE,title:{ar:"النداء إلى الخط وتقديم اللاعبين",en:"Call to the line and introductions"},
-    desc:{ar:"قبل وقت البداية بعشر (10) دقائق يُصدر رئيس ضباط الميدان ATHLETES TO THE LINE. يسير لاعبو البندقية إلى الخط بكامل ملابسهم والسراويل والسترات مغلقة (7.5.2.3). يدخل اللاعبون واحداً تلو الآخر ويتم تقديمهم أثناء توجههم إلى نقاط الرمي A–H المخصصة لهم بالقرعة، ويقفون أمام نقاط الرمي مواجهين للجمهور حتى انتهاء التقديم بالكامل. يقدّم المعلّق اللاعبين من A إلى H أو من H إلى A، ثم عضو لجنة الحكام المسؤول ورئيس ضباط الميدان. أعلام الأمان تبقى مُدخلة أثناء التقديم.",en:"Ten (10) minutes before the Start Time the CRO commands ATHLETES TO THE LINE. Rifle finalists walk to the line fully dressed, trousers and jackets closed (7.5.2.3). Athletes enter one at a time and are introduced as they walk to the firing points A–H they drew, and stand in front of their firing points facing the spectators until all introductions are done. The Announcer introduces them from A to H or H to A, then the Jury Member-in-Charge and the CRO. Safety flags stay inserted during the presentation."},
+    desc:{ar:"قبل وقت البداية بـ (10) دقائق يُصدر رئيس ضباط الميدان ATHLETES TO THE LINE. يسير لاعبو البندقية إلى الخط بكامل ملابسهم والسراويل والسترات مغلقة (7.5.2.3). يدخل اللاعبون واحداً تلو الآخر ويتم تقديمهم أثناء توجههم إلى نقاط الرمي من نقطة الرمي Firing Point A إلى نقطة الرمي Firing Point H المخصصة لهم بالقرعة، ويقفون أمام نقاط الرمي مواجهين للجمهور حتى انتهاء التقديم بالكامل. يقدّم المعلّق اللاعبين من نقطة الرمي Firing Point A إلى نقطة الرمي Firing Point H أو من نقطة الرمي Firing Point H إلى نقطة الرمي Firing Point A، ثم يتم تقديم عضو لجنة الحكام المسؤول ثم تقديم رئيس ضباط الميدان. ويجب أن تبقى أعلام الأمان داخل الأسلحة أثناء التقديم.",en:"10 minutes before the Start Time the CRO commands ATHLETES TO THE LINE. Rifle finalists walk to the line fully dressed, trousers and jackets closed (7.5.2.3). Athletes enter one at a time and are introduced as they walk to the firing points they drew, from Firing Point A to Firing Point H, and stand in front of their firing points facing the spectators until all introductions are done. The Announcer introduces them from Firing Point A to Firing Point H or from Firing Point H to Firing Point A, then the Jury Member-in-Charge is introduced, then the CRO. Safety flags must remain inserted in the guns during the presentation."},
     ref:"6.17.2 d · 6.17.1.12 · 6.17.1.14 c",pos:fpPos(),equip:true,walk:true,ann:"On firing point H, representing (Country), (Name) … On firing point A … The Jury Member-in-Charge is (Name) from (Country). The Chief Range Officer is (Name) from (Country).",stages:stg,cmds:cmdsFrom(stg)});}
-  {const stg=[{lbl:{ar:"بعد التقديم",en:"After introductions"},secs:15,say:"TAKE YOUR POSITIONS",at:"−06:35",hint:{ar:"بعد الانتهاء من جميع فقرات التقديم.",en:"After all introductions have been made."}},
-     {lbl:{ar:"30 ثانية (بندقية)",en:"30 seconds (rifle)"},secs:30,say:"FIVE MINUTES PREPARATION AND SIGHTING TIME … START",at:"−06:05",hint:{ar:"بعد 30 ثانية في البندقية (10 ثوانٍ في المسدس).",en:"After 30 seconds for rifle (10 seconds for pistol)."}}];
+  {const stg=[{lbl:{ar:"بعد التقديم",en:"After introductions"},secs:15,say:"TAKE YOUR POSITIONS",at:{ar:"قبل وقت بداية النهائي بـ 6 دقائق و35 ثانية",en:"6 min 35 s before the start time"},hint:{ar:"بعد الانتهاء من جميع فقرات التقديم.",en:"After all introductions have been made."}},
+     {lbl:{ar:"30 ثانية (بندقية)",en:"30 seconds (rifle)"},secs:30,say:"FIVE MINUTES PREPARATION AND SIGHTING TIME … START",at:{ar:"قبل وقت بداية النهائي بـ 6 دقائق و5 ثوانٍ",en:"6 min 5 s before the start time"},hint:{ar:"بعد 30 ثانية في البندقية (10 ثوانٍ في المسدس).",en:"After 30 seconds for rifle (10 seconds for pistol)."}}];
    push({ph:0,tag:BEFORE,title:{ar:"اتخاذ المواقع وبدء الإعداد والاختبار",en:"Take positions and start preparation & sighting"},
     desc:{ar:"بعد التقديم يُصدر رئيس ضباط الميدان TAKE YOUR POSITIONS. يجوز للاعبين تناول البنادق واتخاذ أوضاع الرمي وعمل تمارين الحمل والتصويب، ولا يجوز إزالة أعلام الأمان أو الرمي الجاف قبل أمر البدء. بعد 30 ثانية في البندقية يبدأ زمن الإعداد والاختبار المشترك (5 دقائق).",en:"After the introductions the CRO commands TAKE YOUR POSITIONS. Athletes may handle their rifles, get into position and do holding and aiming exercises, but may not remove safety flags or dry fire before the START command. After 30 seconds for rifle the combined 5-minute Preparation and Sighting Time starts."},
     ref:"6.17.2 d · 6.17.1.14 d, g",pos:fpPos(),equip:true,stages:stg,cmds:cmdsFrom(stg)});}
@@ -527,8 +540,8 @@ function simulate(plan,names,quick){
     irrStep(0,p,"#D93B36",{ar:`مخالفة: تعمير ورمي قبل أمر البدء (${p})`,en:`Irregularity: loading and firing before START (${p})`},
       {ar:`بعد TAKE YOUR POSITIONS وقبل الأمر PREPARATION AND SIGHTING TIME … START قام {${p}} بتعمير البندقية وإطلاق طلقة. العقوبة الاستبعاد (DSQ).`,en:`After TAKE YOUR POSITIONS and before PREPARATION AND SIGHTING TIME … START, {${p}} loads and fires a shot. The penalty is disqualification (DSQ).`},"6.17.1.14 h"); });
   const sightShooters=act();
-  {const stg=[{lbl:{ar:"الإعداد والاختبار",en:"Preparation & sighting"},secs:270,say:"30 SECONDS",at:"−01:35",hint:{ar:"طلقات اختبار بلا حدود، والرمي الجاف مسموح. عند −06:00 يرحّب المعلّق ويشرح النهائي.",en:"Unlimited sighting shots; dry firing is allowed. At −06:00 the Announcer welcomes and explains the Final."}},
-     {lbl:{ar:"آخر 30 ثانية",en:"Last 30 seconds"},secs:30,say:"STOP … UNLOAD",at:"−01:05",hint:{ar:"بعد انقضاء الدقائق الخمس. يفرّغ اللاعبون بنادقهم.",en:"When the five minutes are over. Finalists unload their rifles."}}];
+  {const stg=[{lbl:{ar:"الإعداد والاختبار",en:"Preparation & sighting"},secs:270,say:"30 SECONDS",at:{ar:"قبل وقت بداية النهائي بدقيقة و35 ثانية",en:"1 min 35 s before the start time"},hint:{ar:"طلقات اختبار بلا حدود، والرمي الجاف مسموح. قبل وقت بداية النهائي بـ 6 دقائق يرحّب المعلّق ويشرح النهائي.",en:"Unlimited sighting shots; dry firing is allowed. 6 minutes before the start time the Announcer welcomes and explains the Final."}},
+     {lbl:{ar:"آخر 30 ثانية",en:"Last 30 seconds"},secs:30,say:"STOP … UNLOAD",at:{ar:"قبل وقت بداية النهائي بدقيقة و5 ثوانٍ",en:"1 min 5 s before the start time"},hint:{ar:"بعد انقضاء الدقائق الخمس. يفرّغ اللاعبون بنادقهم.",en:"When the five minutes are over. Finalists unload their rifles."}}];
    sightShooters.forEach(p=>{A[p].last=plan.sight[p].slice(); A[p].lastKind="sight";});
    push({ph:0,tag:{ar:"اختبار",en:"Sighting"},title:{ar:"5 دقائق إعداد واختبار",en:"5 minutes preparation and sighting"},
     desc:{ar:"خلال هذا الزمن يُسمح بعدد غير محدود من طلقات الاختبار (Sighting shots)، والرمي الجاف مسموح فقط في هذا الزمن. قبل النهاية بثلاثين ثانية يُعلن رئيس ضباط الميدان 30 SECONDS، وبعد خمس دقائق STOP … UNLOAD. لا يُعلن عن أي نتائج أثناء طلقات الاختبار.",en:"Finalists may fire unlimited sighting shots, and dry firing is allowed only in this time. 30 seconds before the end the CRO announces 30 SECONDS, and after five minutes STOP … UNLOAD. No scores are announced during sighting shots."},
@@ -540,18 +553,20 @@ function simulate(plan,names,quick){
   IRRS.filter(x=>x.t==="afterStop").forEach(x=>{ const p=x.p; if(!need(p)) return; A[p].pen[1]=(A[p].pen[1]||0)-20; irrNotes.push({ar:`طلقة بعد STOP (${p})`,en:`shot after STOP (${p})`});
     irrStep(0,p,"#E5A23A",{ar:`مخالفة: طلقة بعد STOP للإعداد والاختبار (${p})`,en:`Irregularity: shot after the sighting STOP (${p})`},
       {ar:`أطلق {${p}} طلقة بعد الأمر PREPARATION AND SIGHTING TIME … STOP وقبل START لأول مجموعة مباراة. لا تُحتسب طلقة مباراة، ويُخصم نقطتان (2) من نتيجة أول طلقة مباراة.`,en:`{${p}} fires a shot after PREPARATION AND SIGHTING TIME … STOP and before the START of the first competition series. It is not counted as a MATCH shot and 2 points are deducted from the first MATCH shot.`},"6.17.1.14 i"); });
-  {const stg=[{lbl:{ar:"مسح الأهداف",en:"Clearing targets"},secs:60,say:"FOR THE FIRST COMPETITION SERIES … LOAD",at:"−00:05",hint:{ar:"60 ثانية بعد STOP … UNLOAD. عند −01:00 يقدّم المعلّق شرحاً موجزاً.",en:"60 seconds after STOP … UNLOAD. At −01:00 the Announcer gives a brief explanation."}}];
-   push({ph:1,tag:{ar:"المباراة",en:"Match"},title:{ar:"مسح الأهداف ولوحة النتائج لطلقات المباراة",en:"Targets and scoreboard cleared for MATCH shots"},
-    desc:{ar:"تُمسح الأهداف ولوحة النتائج استعداداً لطلقات المباراة، ويبدأ النهائي من الصفر (نتيجة التأهيل لا تُحمل). بعد 60 ثانية يبدأ رئيس ضباط الميدان أوامر المجموعة الأولى، وهذا هو وقت البداية؛ رمي المباراة يبدأ عند 0:00.",en:"Targets and scoreboard are cleared for MATCH shots and the Final starts from zero (qualification scores do not carry forward). After 60 seconds the CRO begins the commands for the first series; this is the Start Time, and competition firing starts at 0:00."},
+  {const stg=[{lbl:{ar:"إعادة ضبط الأهداف",en:"Resetting targets"},secs:60,say:"FOR THE FIRST COMPETITION SERIES … LOAD",at:{ar:"قبل وقت بداية النهائي بـ 5 ثوانٍ",en:"5 seconds before the start time"},hint:{ar:"60 ثانية بعد STOP … UNLOAD. قبل وقت بداية النهائي بدقيقة يقدّم المعلّق شرحاً موجزاً.",en:"60 seconds after STOP … UNLOAD. One minute before the start time the Announcer gives a brief explanation."}}];
+   push({ph:1,tag:{ar:"المباراة",en:"Match"},title:{ar:"إعادة ضبط الأهداف ولوحة النتائج من أجل طلقات المباراة",en:"Targets and scoreboard reset for MATCH shots"},
+    desc:{ar:"يُعاد ضبط الأهداف ولوحة النتائج استعداداً لطلقات المباراة، ويبدأ النهائي من الصفر (نتيجة التأهيل لا يتم ترحيلها). بعد 60 ثانية يبدأ رئيس ضباط الميدان أوامر المجموعة الأولى، وهذا هو وقت البداية؛ ومن هذه اللحظة يبدأ رمي المباراة.",en:"Targets and scoreboard are cleared for MATCH shots and the Final starts from zero (qualification scores do not carry forward). After 60 seconds the CRO begins the commands for the first series; this is the Start Time, and competition firing starts from then."},
     ref:"6.17.2 d, e · 6.17.1.5",ann:"All Finalists will now shoot two series of five shots, each in 250 seconds, followed by fourteen single shots, each on command in 50 seconds. Eliminations begin after the 12th shot.",pos:fpPos(),stages:stg,cmds:cmdsFrom(stg)});}
 
   /* ---- match ---- */
   const PLACE={1:{ar:"الذهبية",en:"gold"},2:{ar:"الفضية",en:"silver"},3:{ar:"البرونزية",en:"bronze"}};
   const ORD={4:"الرابع",5:"الخامس",6:"السادس",7:"السابع",8:"الثامن"};
   const placeName=pl=>PLACE[pl]||{ar:"المركز "+ORD[pl],en:pl+"th place"};
+  /* how the athlete leaves: out in a place, or with a medal */
+  const outAr=pl=>pl<=3?"يحصل على الميدالية "+PLACE[pl].ar:"يُقصى في "+placeName(pl).ar, outEn=pl=>pl<=3?"and wins the "+PLACE[pl].en+" medal":"eliminated in "+placeName(pl).en, onAr=pl=>pl<=3?"الميدالية "+PLACE[pl].ar:placeName(pl).ar;
   function elim(p){const a=A[p]; a.place=act().length; a.status="out"; a.elimOrder=elimCount++; if(a.place===2)a.medal="s"; if(a.place===3)a.medal="b"; return a.place;}
   const rankLine=()=>act().sort((x,y)=>total(y)-total(x)||x.localeCompare(y)).map(p=>`${p}: ${f1(total(p))}`).join(" · ");
-  const announcer=(say,hint)=>({lbl:{ar:"تعليق المعلّق",en:"Announcer"},secs:20,say,hint:hint||{ar:"فور STOP يعلّق المعلّق 15–20 ثانية على الترتيب والنتائج البارزة.",en:"Right after STOP the Announcer comments for 15–20 seconds on the ranking and notable scores."}});
+  const announcer=(say,hint)=>({lbl:{ar:"تعليق المعلّق",en:"Announcer"},secs:20,say,hint:hint||{ar:"فور STOP يعلّق المعلّق من 15 إلى 20 ثانية على الترتيب والنتائج البارزة.",en:"Right after STOP the Announcer comments for 15 to 20 seconds on the ranking and notable scores."}});
 
   function series(n){
     const k0=(n-1)*5+1, inc=IRRS.filter(x=>x.t!=="claim"&&x.s===n);
@@ -563,11 +578,11 @@ function simulate(plan,names,quick){
       const ex=inc.find(x=>x.p===p&&x.t==="extra"); if(ex) v.push(plan.rep[p][0]);
       vals[p]=v; A[p].last=v.slice(0,5).map((x,j)=>x==null?null:eff(p,k0+j)); A[p].lastKind="series"; });
     const ms=inc.find(x=>x.t==="malfS");
-    const stg=[{lbl:{ar:"التعمير",en:"Loading"},secs:5,say:"START",at:n===1?"00:00":undefined,hint:{ar:n===1?"وقت البداية 00:00 (مثال: 12:00).":"بعد 5 ثوانٍ من أمر LOAD.",en:n===1?"Start Time 00:00 (e.g. 12:00).":"5 seconds after the LOAD command."}},
+    const stg=[{lbl:{ar:"التعمير",en:"Loading"},secs:5,say:"START",at:n===1?{ar:"عند وقت بداية النهائي",en:"at the start time of the Final"}:undefined,hint:{ar:n===1?"هذا هو وقت بداية النهائي.":"بعد 5 ثوانٍ من أمر LOAD.",en:n===1?"This is the Start Time of the Final.":"5 seconds after the LOAD command."}},
       {lbl:{ar:"250 ثانية · 5 طلقات",en:"250 seconds · 5 shots"},secs:250,say:ms?null:"STOP",hint:ms?{ar:"لاعب يصلح عطلاً، والباقون انتهوا من الرمي.",en:"One athlete is repairing a malfunction; the others have finished."}:{ar:"عند انقضاء 250 ثانية أو بعد انتهاء الجميع من 5 طلقات.",en:"At 250 seconds, or when all finalists have fired five shots."}}];
     push({ph:1,tag:{ar:"المجموعة "+n,en:"Series "+n},title:{ar:`المجموعة ${n}: خمس طلقات في 250 ثانية`,en:`Series ${n}: five shots in 250 seconds`},
-      desc:{ar:`${sh.map(p=>"{"+p+"}").join(" ")} يرمون خمس (5) طلقات مباراة في زمن 250 ثانية (الطلقات ${k0}–${k0+4}). تُحتسب الدرجات بالكسور العشرية وأقصى درجة للطلقة 10.9. عند انقضاء 250 ثانية أو بعد انتهاء الجميع يُصدر رئيس ضباط الميدان STOP. لا إقصاء في المرحلة الأولى.`,
-            en:`${sh.map(p=>"{"+p+"}").join(" ")} fire five (5) MATCH shots in 250 seconds (shots ${k0}–${k0+4}). Decimal scoring, maximum 10.9 per shot. At 250 seconds or when all have fired five shots, the CRO commands STOP. No eliminations in stage 1.`},
+      desc:{ar:`يرمي اللاعبون مجموعة من ٥ طلقات في زمن ٢٥٠ ثانية. وتُحتسب الدرجات بالكسور العشرية. وعند انقضاء زمن ٢٥٠ ثانية أو بعد انتهاء الجميع من الرمي يُصدر رئيس ضباط الميدان الأمر STOP. لا إقصاء في هذه المرحلة.`,
+            en:`Finalists fire 5 MATCH shots in 250 seconds. Decimal scoring. At 250 seconds or when all have fired five shots, the CRO commands STOP. No eliminations in stage 1.`},
       ref:"6.17.2 a, b, e",pos:fpPos(),fire:{shooters:sh,vals,kind:"series",dur:250,base:k0},stages:stg,cmds:cmdsFrom(stg)});
     inc.forEach(x=>{ const p=x.p, a=A[p];
       if(x.t==="extra"){ a.pen[k0+4]=(a.pen[k0+4]||0)-20; a.last=[0,1,2,3,4].map(j=>eff(p,k0+j)); irrNotes.push({ar:`طلقة زائدة (${p}، المجموعة ${n})`,en:`extra shot (${p}, series ${n})`});
@@ -584,9 +599,9 @@ function simulate(plan,names,quick){
           ref:"6.17.1.6 · 6.17.1.8 d",pos:fpPos(),fire:{shooters:[p],vals:{[p]:v},kind:"series",dur:150,base:k0},stages:stg2,cmds:cmdsFrom(stg2)}); }
     });
     const nx=n===1?"FOR THE NEXT COMPETITION SERIES … LOAD":"FOR THE NEXT COMPETITION SHOT … LOAD";
-    const stg3=[announcer(nx,n===2?{ar:"يوضح المعلّق أن الطلقات الفردية ستبدأ وأنه بعد كل طلقتين يُقصى صاحب أقل ترتيب.",en:"The Announcer explains that single shots begin and that after every second shot the lowest-ranked finalist is eliminated."}:null)];
+    const stg3=[announcer(nx,n===2?{ar:"يوضح المعلّق أن الطلقات الفردية ستبدأ وأنه بعد كل ٢ طلقة يُقصى صاحب أقل ترتيب.",en:"The Announcer explains that single shots begin and that after every second shot the lowest-ranked finalist is eliminated."}:null)];
     push({ph:1,tag:{ar:"نتيجة المجموعة "+n,en:"Series "+n+" result"},title:{ar:`انتهت المجموعة ${n}`,en:`End of series ${n}`},
-      desc:{ar:`يعلّق المعلّق 15–20 ثانية على الترتيب الحالي والنتائج البارزة دون إعلان درجات الطلقات الفردية.`+(n===2?" ثم يوضح أن الطلقات الفردية ستبدأ، وأنه بعد كل طلقتين يُقصى صاحب أقل ترتيب.":""),en:`The Announcer comments for 15–20 seconds on the current ranking and notable scores; individual shot scores are not announced.`+(n===2?" Then explains that single shots begin and the lowest-ranked finalist is eliminated after every second shot.":"")},
+      desc:{ar:`يعلّق المعلّق من 15 إلى 20 ثانية على الترتيب الحالي والنتائج البارزة دون إعلان درجات الطلقات الفردية.`+(n===2?" ثم يوضح أن الطلقات الفردية ستبدأ، وأنه بعد كل ٢ طلقة يُقصى صاحب أقل ترتيب.":""),en:`The Announcer comments for 15 to 20 seconds on the current ranking and notable scores; individual shot scores are not announced.`+(n===2?" Then explains that single shots begin and the lowest-ranked finalist is eliminated after every second shot.":"")},
       ref:"6.17.2 e",ann:n===1?"In the lead after the first series … Only … points behind … At the moment in last place …":"Now, after the two 5-shot series, the following fourteen single shots will be fired on command. After every two single shots the lowest ranking Finalist will be eliminated.",pos:fpPos(),stages:stg3,cmds:cmdsFrom(stg3)});
   }
 
@@ -602,16 +617,16 @@ function simulate(plan,names,quick){
     const stopSay=k===24?"STOP … UNLOAD":"STOP";
     const stg=[{lbl:{ar:"التعمير",en:"Loading"},secs:5,say:"START",hint:{ar:"بعد 5 ثوانٍ من أمر LOAD.",en:"5 seconds after the LOAD command."}},
       {lbl:{ar:"50 ثانية للطلقة",en:"50 seconds for the shot"},secs:50,say:stopSay,hint:k===24?{ar:"في نهاية الطلقة 24: STOP … UNLOAD، ويتحقق ضابط الميدان من فتح الأجزاء وإدخال أعلام الأمان.",en:"At the end of shot 24: STOP … UNLOAD; a Range Officer verifies actions open and safety flags inserted."}:{ar:"عند انقضاء 50 ثانية أو بعد إطلاق الجميع.",en:"At 50 seconds, or when all athletes have fired."}}];
-    if(!elimAfter && !inc.length) stg.push(announcer("FOR THE NEXT COMPETITION SHOT … LOAD",{ar:"15–20 ثانية تعليق على الترتيب دون درجات الطلقات، ويشير المعلّق إلى من قد يُقصى بعد الطلقة التالية.",en:"15–20 seconds on the ranking without shot scores; the Announcer indicates who will probably be eliminated after the next shot."}));
-    const elimTxt=elimAfter?(k===24?{ar:" بعد هذه الطلقة تتحدد الفضية والذهبية.",en:" After this shot silver and gold are decided."}:k===22?{ar:" بعد هذه الطلقة تتحدد البرونزية.",en:" After this shot the bronze medal is decided."}:{ar:` بعد هذه الطلقة يُقصى صاحب أقل مجموع (${placeName(keepAfter(k)+1).ar}).`,en:` After this shot the lowest total is eliminated (${placeName(keepAfter(k)+1).en}).`}):{ar:" لا إقصاء بعد هذه الطلقة.",en:" No elimination after this shot."};
+    if(!elimAfter && !inc.length) stg.push(announcer("FOR THE NEXT COMPETITION SHOT … LOAD",{ar:"من 15 إلى 20 ثانية تعليق على الترتيب دون درجات الطلقات، ويشير المعلّق إلى من قد يُقصى بعد الطلقة التالية.",en:"15 to 20 seconds on the ranking without shot scores; the Announcer indicates who will probably be eliminated after the next shot."}));
+    const elimTxt=elimAfter?(k===24?{ar:" بعد هذه الطلقة تتحدد الفضية والذهبية.",en:" After this shot silver and gold are decided."}:k===22?{ar:" بعد هذه الطلقة تتحدد البرونزية.",en:" After this shot the bronze medal is decided."}:{ar:` بعد هذه الطلقة يُقصى صاحب أقل مجموع (${placeName(keepAfter(k)+1).ar}).`,en:` After this shot the lowest total is eliminated (${placeName(keepAfter(k)+1).en}).`}):{ar:" ولا إقصاء بعد هذه الطلقة.",en:" No elimination after this shot."};
     push({ph:2,tag:{ar:"الطلقة "+k,en:"Shot "+k},title:{ar:`الطلقة ${k}: ${sh.length} لاعبين · 50 ثانية`,en:`Shot ${k}: ${sh.length} athletes · 50 seconds`},
-      desc:{ar:`${sh.map(p=>"{"+p+"}").join(" ")} يطلقون طلقة مباراة فردية باستخدام الأمر في زمن 50 ثانية.`+elimTxt.ar,en:`${sh.map(p=>"{"+p+"}").join(" ")} fire a single MATCH shot on command in 50 seconds.`+elimTxt.en},
+      desc:{ar:`يطلق اللاعبون طلقة مباراة فردية بالأمر في زمن ٥٠ ثانية.`+elimTxt.ar,en:`Finalists fire a single MATCH shot on command in 50 seconds.`+elimTxt.en},
       ref:"6.17.2 a, f",ann:(!elimAfter&&k<24)?"In last place, and facing elimination after the next single shot, is …":null,pos:fpPos(),fire:{shooters:sh,vals,kind:"shot",dur:50,base:k},stages:stg,cmds:cmdsFrom(stg)});
     incidents(k,inc);
     if(elimAfter) results(k); else { if(inc.length) contStep(k); after(k); }
   }
   function contStep(k){ const stg=[announcer("FOR THE NEXT COMPETITION SHOT … LOAD")];
-    push({ph:2,tag:{ar:"متابعة",en:"Continue"},title:{ar:`متابعة بعد الطلقة ${k}`,en:`Continue after shot ${k}`},desc:{ar:"يعلّق المعلّق 15–20 ثانية على الترتيب الحالي دون إعلان درجات الطلقات، ثم يُصدر رئيس ضباط الميدان أمر الطلقة التالية.",en:"The Announcer comments for 15–20 seconds on the current ranking without shot scores; then the CRO commands the next shot."},ref:"6.17.2 f",pos:fpPos(),stages:stg,cmds:cmdsFrom(stg)}); }
+    push({ph:2,tag:{ar:"متابعة",en:"Continue"},title:{ar:`متابعة بعد الطلقة ${k}`,en:`Continue after shot ${k}`},desc:{ar:"يعلّق المعلّق من 15 إلى 20 ثانية على الترتيب الحالي دون إعلان درجات الطلقات، ثم يُصدر رئيس ضباط الميدان أمر الطلقة التالية.",en:"The Announcer comments for 15 to 20 seconds on the current ranking without shot scores; then the CRO commands the next shot."},ref:"6.17.2 f",pos:fpPos(),stages:stg,cmds:cmdsFrom(stg)}); }
   function compShot(k,p,val,title,desc,ref,firstLbl,firstSecs){
     const a=A[p]; a.shots[k]=val; a.last=[eff(p,k)]; a.lastKind="shot";
     const stg=[{lbl:firstLbl,secs:firstSecs,say:null,hint:{ar:"الآخرون في انتظار ويجوز لهم تمارين التصويب والرمي الجاف.",en:"The others stand by and may do aiming exercises and dry fire."}},
@@ -645,9 +660,9 @@ function simulate(plan,names,quick){
     const keep=keepAfter(k); const notes={ar:[],en:[]}; const rl=rankLine();
     if(act().length>keep){
       const AA=act().sort((x,y)=>total(x)-total(y)); const low=total(AA[0]); const tied=AA.filter(p=>total(p)===low);
-      if(tied.length===1){ const pl=elim(tied[0]); notes.ar.push(`أقل مجموع: {${tied[0]}} (${f1(low)}) يخرج في ${placeName(pl).ar}.`); notes.en.push(`Lowest total: {${tied[0]}} (${f1(low)}) is out in ${placeName(pl).en}.`); }
+      if(tied.length===1){ const pl=elim(tied[0]); notes.ar.push(pl<=3?`يُقصى اللاعب صاحب أقل مجموع، ويحصل على الميدالية ${PLACE[pl].ar}.`:`يُقصى اللاعب صاحب أقل مجموع، ويأخذ ${placeName(pl).ar}.`); notes.en.push(`The lowest total is the athlete on Firing Point {${tied[0]}} (${f1(low)}), ${outEn(pl)}.`); }
       else { const pl=act().length; events.push({s:k,place:pl,n:tied.length});
-        notes.ar.push(`تعادل عند ${f1(low)} بين ${tied.map(p=>"{"+p+"}").join(" و")} على ${placeName(pl).ar}: يعلن رئيس ضباط الميدان أسماء عائلات المتعادلين ونقاط رميهم (… ONLY) ويأمرهم بطلقة فض التعادل FOR THE SHOOT-OFF SHOT بإجراءات الرمي العادية.`);
+        notes.ar.push(`تعادل عند ${f1(low)} بين اللاعبين في نقاط الرمي ${tied.map(p=>"{"+p+"}").join(" و")} على ${onAr(pl)}: يعلن رئيس ضباط الميدان أسماء عائلات المتعادلين ونقاط رميهم (… ONLY) ويأمرهم بطلقة فض التعادل FOR THE SHOOT-OFF SHOT بإجراءات الرمي العادية.`);
         notes.en.push(`Tie on ${f1(low)} between ${tied.map(p=>"{"+p+"}").join(" and ")} for ${placeName(pl).en}: the CRO announces the tied finalists' family names and firing points (… ONLY) and commands FOR THE SHOOT-OFF SHOT with the normal firing procedure.`);
         pushResults(k,notes,rl,true,tied); shootoff(k,tied,pl); return; }
     } else if(k<24){ notes.ar.push("لا إقصاء: العدد المطلوب من اللاعبين باقٍ بالفعل (DNS أو DSQ)."); notes.en.push("No elimination: the required number of finalists is already left (DNS or DSQ)."); }
@@ -656,12 +671,12 @@ function simulate(plan,names,quick){
   }
   function pushResults(k,notes,rl,tie,tied){
     const stg=tie?tieStages(tied)
-            :(k<24?[announcer("FOR THE NEXT COMPETITION SHOT … LOAD",{ar:"يهنئ المعلّق اللاعب المُقصى بمركزه، ثم 15–20 ثانية على ترتيب الباقين، ويشير إلى من قد يُقصى بعده.",en:"The Announcer congratulates the eliminated finalist on the place, gives 15–20 seconds on the remaining ranking and indicates who will probably be eliminated next."})]:[]);
+            :(k<24?[announcer("FOR THE NEXT COMPETITION SHOT … LOAD",{ar:"يهنئ المعلّق اللاعب المُقصى بمركزه، ثم من 15 إلى 20 ثانية على ترتيب الباقين، ويشير إلى من قد يُقصى بعده.",en:"The Announcer congratulates the eliminated finalist on the place, gives 15 to 20 seconds on the remaining ranking and indicates who will probably be eliminated next."})]:[]);
     const outP=POS.find(p=>A[p].status==="out"&&A[p].elimOrder===elimCount-1);
     if(k===24&&!tie) return finalStep(notes,rl);
     push({ph:2,elimFlash:k<=22?(tie?tied.slice():(outP?[outP]:[])):[],tag:{ar:"بعد الطلقة "+k,en:"After shot "+k},
-      title:{ar:`بعد الطلقة ${k}`+(tie?": تعادل":notes.ar.length&&!/^لا/.test(notes.ar[0])?": إقصاء":""),en:`After shot ${k}`+(tie?": tie":notes.en.length&&!/^No/.test(notes.en[0])?": elimination":"")},
-      desc:{ar:notes.ar.join(" ")+(tie?"":" يفرّغ اللاعب المُقصى بندقيته ويُدخل علم الأمان ويضعه ويتراجع عن نقطة الرمي، ويتحقق ضابط الميدان من ذلك."),en:notes.en.join(" ")+(tie?"":" The eliminated finalist unloads, inserts the safety flag, lays the rifle down and steps back; a Range Officer verifies it.")},
+      title:{ar:`بعد الطلقة الـ ${k}`+(tie?": تعادل":notes.ar.length&&!/^لا/.test(notes.ar[0])?": إقصاء":""),en:`After shot ${k}`+(tie?": tie":notes.en.length&&!/^No/.test(notes.en[0])?": elimination":"")},
+      desc:{ar:notes.ar.join(" ")+(tie?"":" يقوم هذا اللاعب بتفريغ بندقيته ويُدخل علم الأمان، ثم يضع البندقية على الطاولة ويتراجع عن نقطة الرمي، ويتحقق ضابط الميدان من ذلك."),en:notes.en.join(" ")+(tie?"":" The eliminated finalist unloads, inserts the safety flag, lays the rifle down and steps back; a Range Officer verifies it.")},
       ref:"6.17.2 g, h · 6.17.1.14 n",ann:tie?"(Max. 10 seconds on the tie-break situation.)":(outP?`After the ${k===22?"22nd":k+"th"} shot, ${A[outP].place===3?"the Bronze medal":A[outP].place+"th place"} has been decided. Representing ${annName(outP).c}, it goes to ${annName(outP).n}.`:null),pos:fpPos(),stages:stg,cmds:cmdsFrom(stg)});
   }
   function after(k){ if(k<24) single(k+1); }
@@ -676,14 +691,14 @@ function simulate(plan,names,quick){
     const lo=Math.min(...tied.map(sc)); const bottom=tied.filter(p=>sc(p)===lo);
     const notes={ar:[`فض التعادل: ${tied.map(p=>`{${p}} ${f1(sc(p))}`).join(" · ")}.`],en:[`Tie-breaking: ${tied.map(p=>`{${p}} ${f1(sc(p))}`).join(" · ")}.`]};
     if(bottom.length>1){
-      notes.ar.push(`ما زال التعادل قائماً بين ${bottom.map(p=>"{"+p+"}").join(" و")}: طلقة فض تعادل أخرى.`); notes.en.push(`Still tied between ${bottom.map(p=>"{"+p+"}").join(" and ")}: another tie-breaking shot.`);
+      notes.ar.push(`ما زال التعادل قائماً بين اللاعبين في نقاط الرمي ${bottom.map(p=>"{"+p+"}").join(" و")}: طلقة فض تعادل أخرى.`); notes.en.push(`Still tied between ${bottom.map(p=>"{"+p+"}").join(" and ")}: another tie-breaking shot.`);
       const stg2=tieStages(bottom);
       push({ph:2,elimFlash:k<=22?bottom.slice():[],tag:{ar:"فض التعادل",en:"Tie-breaking"},title:{ar:"ما زال التعادل قائماً",en:"Still tied"},desc:{ar:notes.ar.join(" "),en:notes.en.join(" ")},ref:"6.17.2 h",pos:fpPos(),stages:stg2,cmds:cmdsFrom(stg2)});
       shootoff(k,bottom,pl); return;
     }
     const pPl=elim(bottom[0]);
-    notes.ar.push(`{${bottom[0]}} في ${placeName(pPl).ar}.`); notes.en.push(`{${bottom[0]}} takes ${placeName(pPl).en}.`);
-    if(k===24){ const w=act()[0]; if(w){A[w].place=1;A[w].medal="g"; notes.ar.push(`{${w}} الذهبية.`); notes.en.push(`{${w}} wins gold.`);} return finalStep(notes,null,true); }
+    notes.ar.push(`اللاعب في نقطة الرمي {${bottom[0]}} ${outAr(pPl)}.`); notes.en.push(`The athlete on Firing Point {${bottom[0]}} takes ${placeName(pPl).en}.`);
+    if(k===24){ const w=act()[0]; if(w){A[w].place=1;A[w].medal="g"; notes.ar.push(`اللاعب في نقطة الرمي {${w}} يفوز بالميدالية الذهبية.`); notes.en.push(`The athlete on Firing Point {${w}} wins gold.`);} return finalStep(notes,null,true); }
     const stg3=[announcer("FOR THE NEXT COMPETITION SHOT … LOAD")];
     push({ph:2,elimFlash:[bottom[0]],tag:{ar:"فض التعادل",en:"Tie-breaking"},title:{ar:"نتيجة فض التعادل",en:"Tie-breaking result"},desc:{ar:notes.ar.join(" "),en:notes.en.join(" ")},ref:"6.17.2 g, h",ann:`After the ${k===22?"22nd":k+"th"} shot, ${pPl===3?"the Bronze medal":pPl+"th place"} has been decided. Representing ${annName(bottom[0]).c}, it goes to ${annName(bottom[0]).n}.`,pos:fpPos(),stages:stg3,cmds:cmdsFrom(stg3)});
     after(k);
@@ -839,7 +854,7 @@ function renderField(animate){
   if(st.fire && animate){
     /* real time, as commanded: LOAD … 5 s … START … 250 s (series) / 50 s (single shot) … STOP; ×2 ×4 ×8 shorten every time */
     const sg=st.stages; let e=0, last=performance.now(), k=0; fieldAt(st,0,0);
-    const loop=now=>{ if(!PAUSED) e+=(now-last)/1000*SPEED; last=now;
+    const loop=now=>{ /* the explanation is read to the end before the step's commands start */ if(NARR&&!narrating()&&performance.now()-NARR_T>800) NARR=false; if(!PAUSED&&!NARR) e+=(now-last)/1000*SPEED; last=now;
       while(k<sg.length&&e>=sg[k].secs){ e-=sg[k].secs; if(sg[k].say&&VOICE_ON&&SOUND) speak(sg[k].say); k++; }
       if(k<sg.length){ fieldAt(st,k,e); anim=requestAnimationFrame(loop); }
       else { show(1); let s2=""; for(let j=sg.length-1;j>=0;j--) if(sg[j].say){ s2=sg[j].say; break; } fieldCmd(s2); $("timert").textContent="STOP"; $("timerbar").style.width="100%";
@@ -862,7 +877,7 @@ function render(animate){
   $("steptag").textContent=L(st.tag); $("steptitle").textContent=L(st.title);
   $("cmdcap").textContent=tt.cmdcap;
   const cl=$("cmdlist"); cl.innerHTML="";
-  if(st.cmds&&st.cmds.length) st.cmds.forEach(c=>{const d=document.createElement("div");d.className="cmdrow";d.innerHTML=`<span class="c">${esc(c.c)}</span><span class="at">${esc(c.at)}</span>`;cl.appendChild(d);});
+  if(st.cmds&&st.cmds.length) st.cmds.forEach(c=>{const d=document.createElement("div");d.className="cmdrow";d.innerHTML=`<span class="c">${esc(c.c)}</span><span class="at">${esc(L(c.at))}</span>`;cl.appendChild(d);});
   else cl.innerHTML=`<div class="cmdrow"><span class="c" style="font-family:var(--f-body);font-weight:500;opacity:.85">${esc(tt.nocmd)}</span></div>`;
   const ab=$("annbox"); ab.hidden=!st.ann; if(st.ann){ $("anncap").textContent=tt.anncap; $("anntext").textContent=st.ann; }
   $("stepdesc").innerHTML=chipify(L(st.desc)); $("stepref").textContent="ISSF "+st.ref;
@@ -873,7 +888,7 @@ function render(animate){
   [1,2,4,8].forEach(v=>$("sp"+v).setAttribute("aria-pressed",SPEED===v));
   fillSelect($("vmode"),tt.vmode); fillSelect($("vrate"),tt.vrate); fillSelect($("scen"),tt.scen,SCEN);
   $("bvoice").textContent=VOICE_ON?tt.voiceOff:tt.voiceOn; fillVoices();
-  $("bstart").textContent=tt.fromStart; $("kbdhint").innerHTML=tt.kbd; $("sndbtn").textContent=SOUND?tt.snd1:tt.snd0; $("sndbtn").setAttribute("aria-pressed",SOUND); $("bvoice").disabled=!synth; $("tbeep").disabled=!SOUND; $("clisten").disabled=!synth; $("fsbtn").textContent=document.fullscreenElement?tt.fsx:tt.fs;
+  $("bstart").textContent=tt.fromStart; $("kbdhint").innerHTML=tt.kbd; { const av=$("aivoice"); av.hidden=lang!=="ar"; av.innerHTML=lang==="ar"?"تمت ترجمة الصوت بالذكاء الاصطناعي.<br>ولهذا هناك أخطاء في نطق بعض الكلمات باللغة العربية.":""; } $("sndbtn").textContent=SOUND?tt.snd1:tt.snd0; $("sndbtn").setAttribute("aria-pressed",SOUND); $("bvoice").disabled=!synth; $("tbeep").disabled=!SOUND; $("clisten").disabled=!synth; $("fsbtn").textContent=document.fullscreenElement?tt.fsx:tt.fs;
   const PL={1:{ar:"الذهبية",en:"gold"},2:{ar:"الفضية",en:"silver"},3:{ar:"البرونزية",en:"bronze"}};
   $("scennote").textContent=(((!EVENTS.length&&!IRRN.length)?tt.scenNote.none:EVENTS.map(e=>`${tt.scenNote.so} ${e.s} (${L(PL[e.s===24?1:e.place])||(lang==="ar"?"المركز "+e.place:e.place+"th")}).`).join(" "))+(IRRN.length?" "+tt.scenNote.irr+IRRN.map(L).join(lang==="ar"?"، ":", ")+".":"")).trim();
   $("tautol").textContent=tt.auto; $("tbeepl").textContent=tt.beep; $("tnext").textContent=tt.nextStage; $("tclose").textContent=tt.close;
@@ -1031,37 +1046,75 @@ let SOUND=false; try{ if(localStorage.getItem("ar10-sound")==="1") SOUND=true; }
 const synth=("speechSynthesis" in window)?window.speechSynthesis:null;
 function voicesNow(){ try{ const v=synth?synth.getVoices():[]; if(v&&v.length) VOICES=v; }catch(e){} return VOICES; }
 function loadVoices(){ voicesNow(); fillVoices(); }
-let VOICE_PREF=null; try{ VOICE_PREF=localStorage.getItem("ar10-voice"); }catch(e){}
+let VOICE_PREF=null, VOICE_PREF_AR=null; try{ VOICE_PREF=localStorage.getItem("ar10-voice"); VOICE_PREF_AR=localStorage.getItem("ar10-voicear"); }catch(e){}
+/* novelty / effect voices of Apple devices are not offered as narrators */
+const FX=/^(Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Deranged|Hysterical|Pipe Organ)\b/i;
 const isEn=v=>(v.lang||"").toLowerCase().startsWith("en"), isAr=v=>(v.lang||"").toLowerCase().startsWith("ar");
 function defaultEn(){ const en=VOICES.filter(isEn);
   return en.find(v=>v.name==="Daniel"&&/en-GB/i.test(v.lang)) || en.find(v=>/^daniel\b/i.test(v.name)) || en.find(v=>/en-GB/i.test(v.lang)&&v.localService) || en.find(v=>/en-GB/i.test(v.lang)) || en.find(v=>v.localService) || en[0] || null; }
-function defaultAr(){ const ar=VOICES.filter(isAr); return ar.find(v=>v.localService)||ar[0]||null; }
-function fillVoices(){ const sel=$("vvoice"); const en=VOICES.filter(isEn);
+function defaultAr(){ const ar=VOICES.filter(isAr); const nat=v=>/Natural|Neural/i.test(v.name); /* a neural (Edge "Online (Natural)") Arabic voice, Egyptian first, reads diacritics best */ return ar.find(v=>nat(v)&&/EG/i.test(v.lang))||ar.find(nat)||ar.find(v=>v.localService)||ar[0]||null; }
+function fillVoices(){ const tt=t(); if($("vvoicel")) $("vvoicel").textContent=tt.vEnL; if($("vvoicearl")) $("vvoicearl").textContent=tt.vArL;
+  { const sa=$("vvoicear"); const ar=VOICES.filter(v=>isAr(v)&&!FX.test(v.name)); const da=defaultAr(); const ka=VOICE_PREF_AR||sa.value;
+    sa.innerHTML=ar.length?ar.map(v=>`<option value="${esc(v.name)}">${esc(v.name)} (${esc(v.lang)})${da&&v.name===da.name?" ★":""}</option>`).join(""):`<option value="">${esc(tt.novoice)}</option>`;
+    sa.value=ar.some(v=>v.name===ka)?ka:(da?da.name:""); }
+  const sel=$("vvoice"); const en=VOICES.filter(v=>isEn(v)&&!FX.test(v.name));
   const keep=VOICE_PREF||sel.value; const d=defaultEn();
   sel.innerHTML=en.length?en.map(v=>`<option value="${esc(v.name)}">${esc(v.name)} (${esc(v.lang)})${d&&v.name===d.name?" ★":""}</option>`).join(""):`<option value="">${esc(t().novoice)}</option>`;
   sel.value=en.some(v=>v.name===keep)?keep:(d?d.name:""); }
 if(synth){ loadVoices(); try{ synth.addEventListener?synth.addEventListener("voiceschanged",loadVoices):(synth.onvoiceschanged=loadVoices); }catch(e){}
   let tries=0; const poll=setInterval(()=>{ const had=VOICES.length; voicesNow(); if(VOICES.length!==had) fillVoices(); if(VOICES.length||++tries>60) clearInterval(poll); },250); }
-function pickVoice(arabic){ voicesNow(); if(arabic) return defaultAr(); const want=$("vvoice").value; return VOICES.find(x=>x.name===want&&isEn(x)) || defaultEn(); }
+function pickVoice(arabic){ voicesNow(); if(arabic){ const wa=$("vvoicear").value; return VOICES.find(x=>x.name===wa&&isAr(x)) || defaultAr(); } const want=$("vvoice").value; return VOICES.find(x=>x.name===want&&isEn(x)) || defaultEn(); }
+/* ---- Arabic pronunciation: vocalised forms of the shooting terms the device voice tends to misread ---- */
+const SAY_AR=[["الطلقة","الطَلْقَة"],["الطلقات","الطَلَقَات"],["للطلقة","لِلطَلْقَة"],["للطلقات","لِلطَلَقَات"],["الطلقتين","الطَلْقَتَيْن"],["طلقتي","طَلْقَتَي"],["يقوم هذا اللاعب بتفريغ بندقيته","يُفَرِّغُ هذا اللاعبُ بُنْدُقِيَّتَهُ"],["بندقيته","بُنْدُقِيَّتِهِ"],["بنادقهم","بَنَادِقَهُم"],["البنادق","البَنَادِق"],["بنادق","بَنَادِق"],["للمسدس","لِلْمُسَدَّسْ"],["من ذلك","مِنْ ذَالِكْ"],["ذلك","ذَالِكْ"],["من قد","مَنْ قَد"],["من","مِنْ"],["أسطوانة تفريغ الكُريات","أُسْطُوَانَةَ تَفْرِيغِ الكُرَيَّات"],["تفريغ","تَفْرِيغِ"],["يفرّغ","يُفَرِّغُ"],["يفرغ","يُفَرِّغُ"],["يقوم هذا اللاعب بتفريغ مسدسه","يُفَرِّغُ هذا اللاعبُ مُسَدَّسَهُ"],["بتفريغ","بِتَفْرِيغِ"],["نقطة الرمي","نُقْطَةِ الرَمْي"],["مسدسه","مُسَدَّسِهِ"],["تفريغ","تَفْرِيغِ"],["يُدخل","يُدْخِلُ"],["يدخل","يُدْخِلُ"],["علم الأمان","عَلَمَ الأَمَان"],["يقوم","يَقُومُ"],["يضع","يَضَعُ"],["يتراجع","يَتَرَاجَعُ"],["يتحقق","يَتَحَقَّقُ"],["أقل مجموع","أَقَلِّ مَجْمُوع"],["صاحب","صَاحِبُ"],["يأخذ","يَأْخُذُ"],["المركز","المَرْكَز"],["لجنة الحكام","لَجْنَةُ الحُكَّام"],["ضباط الميدان","ضُبَّاطِ المَيْدَان"],["رئيس ضباط الميدان","رَئِيسُ ضُبَّاطِ المَيْدَان"],["ضابط الميدان","ضَابِطُ المَيْدَان"],
+ ["الشحنة الدافعة","الشُحْنَةَ الدَافِعَة"],["الإعداد والاختبار","الإِعْدَادِ وَالاِخْتِبَار"],["الدائرة الكاملة","الدَائِرَةِ الكَامِلَة"],["الكسور العشرية","الكُسُورِ العَشْرِيَّة"],["العشرات الداخلية","العَشَرَاتِ الدَاخِلِيَّة"],
+ ["رشتين","رَشَّتَيْن"],["رشتان","رَشَّتَان"],["رشة","رَشَّة"],["المرتكز","المُرْتَكِز"],["مرتكز","مُرْتَكِز"],["الراقد","الرَاقِد"],["راقد","رَاقِد"],["الواقف","الوَاقِف"],
+ ["طلقتين","طَلْقَتَيْن"],["طلقتان","طَلْقَتَان"],["طلقات","طَلَقَات"],["طلقة","طَلْقَة"],["طلقته","طَلْقَتَه"],["الحكام","الحُكَّام"],["ضباط","ضُبَّاط"],["الاختبار","الاِخْتِبَار"],["الإعداد","الإِعْدَاد"],
+ ["تُحتسب","تُحْتَسَب"],["تحتسب","تُحْتَسَب"],["تُسجَّل","تُسَجَّل"],["صفراً","صِفْرًا"],["صفرا","صِفْرًا"],["أصفاراً","أَصْفَارًا"],["صفر","صِفْر"],["مخالفة","مُخَالَفَة"],["المخالفة","المُخَالَفَة"],["خصم","خَصْم"],["يُخصم","يُخْصَم"],
+ ["نقطتان","نُقْطَتَان"],["نقطتين","نُقْطَتَيْن"],["القطار","القِطَار"],["قطار","قِطَار"],["القطارات","القِطَارَات"],["الهدف","الهَدَف"],["هدف","هَدَف"],["أهداف","أَهْدَاف"],["الأهداف","الأَهْدَاف"],
+ ["النداء","النِدَاء"],["الخط","الخَطّ"],["النهائي","النِهَائِي"],["النهائيات","النِهَائِيَّات"],["سيدة","سَيِّدَة"],["لاعبة","لاعِبَة"],["رجل","رَجُل"],["عطل","عُطْل"],["مسدس","مُسَدَّسْ"],["المسدس","المُسَدَّسْ"],
+ ["بندقية","بُنْدُقِيَّة"],["البندقية","البُنْدُقِيَّة"],["المجموعة","المَجْمُوعَة"],["مجموعة","مَجْمُوعَة"],["التأهيل","التَأْهِيل"],["التعادل","التَعَادُل"],["يُفض","يُفَضّ"],["الذخيرة","الذَخِيرَة"],
+ ["أعلام الأمان","أَعْلَامِ الأَمَان"],["الرمي الجاف","الرَمْيِ الجَافّ"],["تمارين الحمل والتصويب","تَمَارِينِ الحَمْلِ وَالتَصْوِيب"],["خط الرمي","خَطِّ الرَمْي"],["المسدسات","المُسَدَّسَات"],["مسدسات","مُسَدَّسَات"],["مرئية","مَرْئِيَّة"],["ومواجهة","وَمُوَاجِهَة"],["مواجهة","مُوَاجِهَة"],["وتناول","وَتَنَاوُل"],["تناول","تَنَاوُل"],["إزالة","إِزَالَة"],["يجوز","يَجُوز"],["للاعبين","لِلَّاعِبِين"],["اللاعبين","اللَاعِبِين"],["الأهداف","الأَهْدَاف"],["وقت الإعداد","وَقْتُ الإِعْدَاد"],["بالأمر","بِالأَمْر"],["يبدأ","يَبْدَأ"],["وتكون","وَتَكُون"],
+ ["يضاء","يُضَاء"],["الضوء","الضَوْء"],["ذراعه","ذِرَاعَه"],["وضع الاستعداد","وَضْعِ الاِسْتِعْدَاد"],["الطاولة","الطَاوِلَة"],["كحد أقصى","كَحَدٍّ أَقْصَى"],["المعلّق","المُعَلِّق"],["المعلق","المُعَلِّق"],["المتأهلين","المُتَأَهِّلِين"],["الإقصاء","الإِقْصَاء"],["يُقصى","يُقْصَى"],["مسدساتهم","مُسَدَّسَاتِهِم"],["النهائي","النِهَائِيّ"],
+ ["يطلقون","يُطْلِقُون"],["يطلقان","يُطْلِقَان"],["فردية","فَرْدِيَّة"],["إقصاء","إِقْصَاء"],["باستخدام","بِاسْتِخْدَام"],["المتبقيان","المُتَبَقِّيَان"],["اللاعبان","اللَاعِبَان"],["نقطتي","نُقْطَتَي"],
+ ["10م","عَشَرَةِ أَمْتَار"],["50م","خَمْسِينَ مِتْرًا"],["م1","المَجْمُوعَةُ الأُولَى"]];
+const AL="\\u0600-\\u06FF";
+const ALW="\\u0621-\\u065F\\u0670-\\u06D3";
+const SAY_RE=SAY_AR.sort((a,b)=>b[0].length-a[0].length).map(([w,v])=>[new RegExp("(^|[^"+ALW+"])([وفب]?)"+w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"(?=$|[^"+ALW+"])","g"),v]);
+function sayAr(t){ let o=" "+t+" "; o=o.replace(/(\d+)\s?°/g,"$1 درجة"); o=o.replace(/±\s?0\.1/g," زائد أو ناقص عُشر ثانية ").replace(/\+\s?0\.1/g," زائد عُشر ثانية ").replace(/(\d+)\s?ث(?![\u0600-\u06FF])/g,"$1 ثانية"); SAY_RE.forEach(([re,v])=>{ o=o.replace(re,(m,a,b)=>a+b+v); }); return o.trim(); }
+/* an Arabic sentence with English commands inside is read in pieces: Arabic by the Arabic voice, English by the English voice */
+function sayPieces(pt){ if(!/[؀-ۿ]/.test(pt)) return [{t:pt,ar:false}];
+  const out=[]; const re=/(?:\d+\s+)?[A-Za-z][A-Za-z0-9'’\-]*(?:[ .…·]+[A-Za-z0-9][A-Za-z0-9'’\-]*)*/g; let last=0, m;
+  while((m=re.exec(pt))){ const a=pt.slice(last,m.index); if(/[؀-ۿ0-9]/.test(a)) out.push({t:sayAr(a),ar:true}); out.push({t:m[0],ar:false}); last=m.index+m[0].length; }
+  const r=pt.slice(last); if(/[؀-ۿ0-9]/.test(r)) out.push({t:sayAr(r),ar:true});
+  /* a lone firing-point letter inside Arabic is said in Arabic, so the voice does not switch for one letter */
+  const LET={A:"إيه",B:"بي",C:"سي",D:"دي",E:"إي",F:"إف",G:"جي",H:"إتش"}; const m2=[];
+  out.forEach(x=>{ const y=(!x.ar&&/^[A-H]$/.test(x.t))?{t:LET[x.t],ar:true}:x; const l=m2[m2.length-1]; if(l&&l.ar&&y.ar) l.t+=" "+y.t; else m2.push(y); }); return m2; }
 function speak(text){
   if(!synth||!SOUND||!text) return;
-  const parts=String(text).split(/(?<=[.!?؟…])\s+/).map(x=>x.trim()).filter(Boolean);
+  const parts=String(text).split(/(?<=[.!?؟])\s+/).map(x=>x.trim()).filter(Boolean);
   const rate=[1,.8,1.2][$("vrate").selectedIndex]||1;
-  const run=()=>{ try{ window.__arU=[]; parts.forEach(pt=>{ const arabic=/[؀-ۿ]/.test(pt); const v=pickVoice(arabic); const u=new SpeechSynthesisUtterance(pt);
+  const run=()=>{ try{ window.__arU=[]; parts.flatMap(sayPieces).forEach(pc=>{ const pt=pc.t, arabic=pc.ar; const v=pickVoice(arabic); const u=new SpeechSynthesisUtterance(pt);
       if(v){u.voice=v;u.lang=v.lang;} else u.lang=arabic?"ar":"en-GB"; u.rate=rate; u.volume=1; window.__arU.push(u); synth.speak(u); }); if(synth.paused&&synth.resume) synth.resume(); }catch(e){} };
   try{ if(synth.speaking||synth.pending){ synth.cancel(); setTimeout(run,80); } else run(); }catch(e){}
 }
-function speakStep(){ if(!VOICE_ON||!SOUND) return; const st=STEPS[I]; const cmds=st.fire?"":(st.cmds||[]).map(c=>c.c).join(". "); if(st.fire&&$("vmode").selectedIndex===1) return;
-  const txt=$("vmode").selectedIndex===1?(cmds||L(st.title)):(L(st.title)+". "+L(st.desc).replace(/^(الترتيب|Ranking): .*?\.(\s+|$)/,"").replace(/\{([A-H])\}/g,"$1")+(cmds?". "+cmds:"")); speak(txt); }
+let NARR=false, NARR_T=0; function narrating(){ try{ return !!(synth&&(synth.speaking||synth.pending)); }catch(e){ return false; } }
+function speakStep(){ NARR=false; if(!VOICE_ON||!SOUND) return; const st=STEPS[I]; const cmds=st.fire?"":(st.cmds||[]).map(c=>c.c).join(". "); if(st.fire&&$("vmode").selectedIndex===1) return;
+  const txt=$("vmode").selectedIndex===1?(cmds||L(st.title)):(L(st.title)+". "+L(st.desc).replace(/^(الترتيب|Ranking): .*?\.(\s+|$)/,"").replace(/(?:\{[A-H]\}\s*){2,}/g,chipsSay).replace(/\{([A-H])\}/g,"$1")+(cmds?". "+cmds:"")); speak(txt); NARR=!!STEPS[I].fire; NARR_T=performance.now(); }
+/* a row of firing-point chips is read as a phrase, not as a string of letters */
+function chipsSay(m){ const ps=(m.match(/[A-H]/g)||[]); const sp=m.endsWith(" ")?" ":""; const seq=ps.every((c,i)=>i===0||c.charCodeAt(0)===ps[i-1].charCodeAt(0)+1);
+  if(lang==="ar"){ if(ps.length===2) return "نقطتا الرمي "+ps[0]+" و"+ps[1]+"،"+sp;
+    return (seq?"نقاط الرمي من "+ps[0]+" إلى "+ps[ps.length-1]:"نقاط الرمي "+ps.join(" و"))+"،"+sp; }
+  if(ps.length===2) return "The athletes on Firing Points "+ps[0]+" and "+ps[1]+sp;
+  return (seq?"The athletes on Firing Points "+ps[0]+" to "+ps[ps.length-1]:"The athletes on Firing Points "+ps.slice(0,-1).join(", ")+" and "+ps[ps.length-1])+sp; }
 $("bvoice").onclick=()=>{ if(!SOUND){ toggleSound(); return; } VOICE_ON=!VOICE_ON; if(VOICE_ON) speakStep(); else {try{synth&&synth.cancel()}catch(e){}} render(false); };
 if(!synth){ $("bvoice").disabled=true; }
 
 /* ================= info cards ================= */
 const INFOS=[
- {h:{ar:"قبل النهائي",en:"Before the Final"},p:{ar:"الحضور قبل البداية بـ 30 دقيقة، والمعدات على نقاط الرمي قبلها بـ 20 دقيقة على الأقل، والنداء إلى الخط قبلها بـ 10 دقائق. بعد TAKE YOUR POSITIONS بثلاثين ثانية (بندقية) تبدأ 5 دقائق إعداد واختبار مشتركة.",en:"Report 30 minutes before the start, equipment on the points at least 20 minutes before, call to the line 10 minutes before. 30 seconds after TAKE YOUR POSITIONS (rifle), 5 minutes of combined preparation and sighting start."}},
- {h:{ar:"نقاط الرمي",en:"Firing points"},p:{ar:"نقاط الرمي في نهائيات 10م مرقمة R1-A-B-C-D-E-F-G-H-R2. يوزع اللاعبون الثمانية على A–H بالقرعة العشوائية التي يجريها الحاسب، وR1 وR2 احتياطي.",en:"10m finals firing points are labelled R1-A-B-C-D-E-F-G-H-R2. The eight finalists are placed on A–H by a random computer draw; R1 and R2 are reserves."}},
+ {h:{ar:"قبل النهائي",en:"Before the Final"},p:{ar:"الحضور قبل البداية بـ 30 دقيقة، والمعدات على نقاط الرمي قبلها بـ 20 دقيقة على الأقل، والنداء إلى الخط قبلها بـ 10 دقائق. بعد TAKE YOUR POSITIONS بـ 30 ثانية (بندقية) تبدأ 5 دقائق إعداد واختبار مشتركة.",en:"Report 30 minutes before the start, equipment on the points at least 20 minutes before, call to the line 10 minutes before. 30 seconds after TAKE YOUR POSITIONS (rifle), 5 minutes of combined preparation and sighting start."}},
+ {h:{ar:"نقاط الرمي",en:"Firing points"},p:{ar:"نقاط الرمي في نهائيات 10م مرقمة R1-A-B-C-D-E-F-G-H-R2. يوزع اللاعبون الثمانية على نقاط الرمي من A إلى H بالقرعة العشوائية التي يجريها الحاسب، وR1 وR2 احتياطي.",en:"10m finals firing points are labelled R1-A-B-C-D-E-F-G-H-R2. The eight finalists are placed from Firing Point A to Firing Point H by a random computer draw; R1 and R2 are reserves."}},
  {h:{ar:"الشكل والدرجات",en:"Format & scoring"},p:{ar:"مجموعتان × 5 طلقات (250 ثانية لكل مجموعة)، ثم 14 طلقة فردية (50 ثانية لكل طلقة): 24 طلقة. الدرجات بالكسور العشرية وأقصاها 10.9، ويبدأ النهائي من الصفر والمجموع تراكمي.",en:"2 series of 5 shots (250 seconds each), then 14 single shots (50 seconds each): 24 shots. Decimal scoring, maximum 10.9; the Final starts from zero and totals are cumulative."}},
- {h:{ar:"الإقصاء وفض التعادل",en:"Eliminations & ties"},p:{ar:"بعد الطلقة 12 يخرج الثامن، ثم واحد بعد كل طلقتين: البرونزية بعد 22، والفضية والذهبية بعد 24. التعادل على مركز إقصاء يُفض بطلقات فردية إضافية حتى يُكسر، ولا تُضاف إلى المجموع.",en:"After shot 12 the 8th place goes, then one every two shots: bronze after 22, silver and gold after 24. A tie for an elimination place is broken by additional single shots, not added to the total."}},
+ {h:{ar:"الإقصاء وفض التعادل",en:"Eliminations & ties"},p:{ar:"بعد الطلقة 12 يخرج الثامن، ثم واحد بعد كل ٢ طلقة: البرونزية بعد 22، والفضية والذهبية بعد 24. التعادل على مركز إقصاء يُفض بطلقات فردية إضافية حتى يُكسر، ولا تُضاف إلى المجموع.",en:"After shot 12 the 8th place goes, then one every two shots: bronze after 22, silver and gold after 24. A tie for an elimination place is broken by additional single shots, not added to the total."}},
  {h:{ar:"الخصومات",en:"Deductions"},p:{ar:"الحضور المتأخر: −2. الرمي الجاف خارج الإعداد والاختبار: −1. طلقة بعد STOP للاختبار: لا تُحتسب و−2. طلقة بعد LOAD وقبل START: صفر. طلقة زائدة: تُلغى و−2. لا تُسجل درجة أقل من صفر.",en:"Late reporting: −2. Dry firing outside preparation and sighting: −1. Shot after the sighting STOP: not counted and −2. Shot after LOAD before START: zero. Extra shot: nullified and −2. No score below zero is recorded."}},
  {h:{ar:"شكاوى الأهداف والاحتجاجات",en:"Target complaints & protests"},p:{ar:"صفر غير متوقع: تفحص لجنة الحكام الهدف، وما لم يوجد دليل موثوق يطلق اللاعب طلقة مباراة أخرى تُحتسب بدلاً منه. الاعتراض على قيمة الطلقات أو عددها غير مسموح. الاحتجاج غير المقبول: −2 من الطلقة المرتبطة.",en:"Unexpected zero: the Jury examines the target; unless there is credible evidence, the athlete fires another competition shot that counts instead. Claims on the value or number of shots are not permitted. A protest not upheld: −2 on the related shot."}},
  {h:{ar:"الأعطال",en:"Malfunctions"},p:{ar:"عطل مسموح به واحد فقط في النهائي. في طلقة فردية: دقيقة كحد أقصى للإصلاح ثم إعادة الطلقة. في مجموعة 5 طلقات: تُحتسب الطلقات المُطلقة ويُستكمل الباقي في الزمن المتبقي مضافاً إليه زمن الإصلاح (حتى دقيقة).",en:"Only one ALLOWABLE malfunction per Final. In a single shot: up to one minute to repair, then the shot is repeated. In a 5-shot series: shots fired count and the rest are completed in the remaining time plus the repair time (up to one minute)."}}
@@ -1112,8 +1165,8 @@ const CASES=[
   q:{ar:"ما أقصى درجة يمكن أن تسجلها طلقة واحدة؟",en:"What is the highest score one shot can record?"},o:[{ar:"10.0",en:"10.0"},{ar:"10.9",en:"10.9"},{ar:"11.0",en:"11.0"},{ar:"10.5",en:"10.5"}],a:1,
   e:{ar:"الدرجات في النهائي بالكسور العشرية، وأقصاها 10.9.",en:"Finals use decimal (tenth-ring) scoring; the maximum is 10.9."},r:"6.17.2 b"},
  {h:{ar:"أول إقصاء",en:"First elimination"},x:{ar:"انتهت المجموعتان والطلقتان 11 و12.",en:"Both series and shots 11 and 12 are over."},
-  q:{ar:"متى يبدأ الإقصاء؟",en:"When do eliminations begin?"},o:[{ar:"بعد المجموعة الثانية",en:"After series 2"},{ar:"بعد الطلقة 12، ثم بعد كل طلقتين",en:"After shot 12, then after every two shots"},{ar:"بعد كل طلقة من 11",en:"After every shot from 11"},{ar:"بعد الطلقة 14",en:"After shot 14"}],a:1,
-  e:{ar:"يبدأ إقصاء صاحب أقل ترتيب بعد الطلقة 12 (المركز الثامن) ويستمر بعد كل طلقتين حتى تتحدد الذهبية والفضية بعد الطلقة 24.",en:"The lowest-ranked finalist goes after shot 12 (8th place), then after every two shots until gold and silver are decided after shot 24."},r:"6.17.2 a, g"},
+  q:{ar:"متى يبدأ الإقصاء؟",en:"When do eliminations begin?"},o:[{ar:"بعد المجموعة الثانية",en:"After series 2"},{ar:"بعد الطلقة 12، ثم بعد كل ٢ طلقة",en:"After shot 12, then after every two shots"},{ar:"بعد كل طلقة من 11",en:"After every shot from 11"},{ar:"بعد الطلقة 14",en:"After shot 14"}],a:1,
+  e:{ar:"يبدأ إقصاء صاحب أقل ترتيب بعد الطلقة 12 (المركز الثامن) ويستمر بعد كل ٢ طلقة حتى تتحدد الذهبية والفضية بعد الطلقة 24.",en:"The lowest-ranked finalist goes after shot 12 (8th place), then after every two shots until gold and silver are decided after shot 24."},r:"6.17.2 a, g"},
  {h:{ar:"متى تتحدد البرونزية؟",en:"When is bronze decided?"},x:{ar:"بقي ثلاثة لاعبين في النهائي.",en:"Three finalists remain."},
   q:{ar:"بعد أي طلقة تتحدد البرونزية؟",en:"After which shot is bronze decided?"},o:[{ar:"20",en:"20"},{ar:"22",en:"22"},{ar:"23",en:"23"},{ar:"24",en:"24"}],a:1,
   e:{ar:"البرونزية بعد الطلقة 22، والفضية والذهبية بعد الطلقة 24.",en:"Bronze after shot 22; silver and gold after shot 24."},r:"6.17.2 g"},
@@ -1181,17 +1234,17 @@ const CASES=[
   q:{ar:"متى يعلن رئيس ضباط الميدان 30 SECONDS؟",en:"When does the CRO call 30 SECONDS?"},o:[{ar:"بعد 30 ثانية من البدء",en:"30 seconds after the start"},{ar:"قبل نهاية الدقائق الخمس بثلاثين ثانية",en:"30 seconds before the end of the five minutes"},{ar:"قبل كل مجموعة",en:"Before each series"},{ar:"لا يُعلن",en:"It is not called"}],a:1,
   e:{ar:"قبل نهاية الإعداد والاختبار بثلاثين ثانية: 30 SECONDS، وبعد خمس دقائق: STOP … UNLOAD.",en:"30 seconds before the end of preparation and sighting: 30 SECONDS; after five minutes: STOP … UNLOAD."},r:"6.17.2 d"},
  {h:{ar:"إعلان درجات المرحلة الأولى",en:"Announcing stage 1 scores"},x:{ar:"انتهت المجموعة الأولى وأصدر رئيس ضباط الميدان STOP.",en:"Series 1 is over and the CRO has commanded STOP."},
-  q:{ar:"ماذا يعلن المعلّق؟",en:"What does the Announcer give?"},o:[{ar:"درجة كل طلقة لكل لاعب",en:"Every shot score of every athlete"},{ar:"15–20 ثانية تعليق على الترتيب والنتائج البارزة دون درجات الطلقات الفردية",en:"15–20 seconds on the ranking and notable scores, without individual shot scores"},{ar:"لا شيء",en:"Nothing"},{ar:"نتائج التأهيل",en:"Qualification results"}],a:1,
-  e:{ar:"فور STOP يعلّق المعلّق 15–20 ثانية على الترتيب الحالي والنتائج البارزة، ولا تُعلن درجات الطلقات الفردية.",en:"Right after STOP the Announcer gives 15–20 seconds of comments on the ranking and notable scores; individual shot scores are not announced."},r:"6.17.2 e"},
+  q:{ar:"ماذا يعلن المعلّق؟",en:"What does the Announcer give?"},o:[{ar:"درجة كل طلقة لكل لاعب",en:"Every shot score of every athlete"},{ar:"من 15 إلى 20 ثانية تعليق على الترتيب والنتائج البارزة دون درجات الطلقات الفردية",en:"15 to 20 seconds on the ranking and notable scores, without individual shot scores"},{ar:"لا شيء",en:"Nothing"},{ar:"نتائج التأهيل",en:"Qualification results"}],a:1,
+  e:{ar:"فور STOP يعلّق المعلّق من 15 إلى 20 ثانية على الترتيب الحالي والنتائج البارزة، ولا تُعلن درجات الطلقات الفردية.",en:"Right after STOP the Announcer gives 15 to 20 seconds of comments on the ranking and notable scores; individual shot scores are not announced."},r:"6.17.2 e"},
  {h:{ar:"أمر فض التعادل",en:"Shoot-off command"},x:{ar:"بعد الطلقة 14 تعادل KIM على نقطة الرمي C وSINGH على F على أقل ترتيب.",en:"After shot 14 KIM on firing point C and SINGH on F are tied for the lowest place."},
   q:{ar:"ما الصيغة الصحيحة لأمر رئيس ضباط الميدان؟",en:"What is the CRO's correct wording?"},o:[{ar:"TIE-BREAK … LOAD … START",en:"TIE-BREAK … LOAD … START"},{ar:"The next command is for KIM on firing point C and SINGH on firing point F … ONLY: FOR THE SHOOT-OFF SHOT … LOAD … START … STOP",en:"The next command is for KIM on firing point C and SINGH on firing point F … ONLY: FOR THE SHOOT-OFF SHOT … LOAD … START … STOP"},{ar:"FOR THE NEXT COMPETITION SHOT … LOAD",en:"FOR THE NEXT COMPETITION SHOT … LOAD"},{ar:"C AND F … FIRE",en:"C AND F … FIRE"}],a:1,
   e:{ar:"بعد 10 ثوانٍ كحد أقصى من تعليق المعلّق، يعلن رئيس ضباط الميدان أن هناك تعادلاً على أقل ترتيب، ثم أسماء العائلات ونقاط الرمي متبوعة بـ ONLY، ثم FOR THE SHOOT-OFF SHOT … LOAD … START … STOP.",en:"After max. 10 seconds of Announcer comments, the CRO states there is a tie for the lowest ranking finalist, names the family names and firing points followed by ONLY, then FOR THE SHOOT-OFF SHOT … LOAD … START … STOP."},r:"6.17.2 h · Commands 2026"},
  {h:{ar:"لا يستطيع الرمي",en:"Unable to fire"},x:{ar:"انتهى زمن الطلقة الفردية ولم يتمكن اللاعب من إطلاق الكُرية المعمّرة في بندقيته.",en:"Single-shot time is over and the finalist could not fire the pellet loaded in the rifle."},
   q:{ar:"ماذا يستخدم رئيس ضباط الميدان؟",en:"What does the CRO use?"},o:[{ar:"يطلب من اللاعب الرمي في الهدف",en:"Has the athlete fire it at the target"},{ar:"أسطوانة تفريغ الكُريات (PDC)",en:"The Pellet Discharge Cylinder (PDC)"},{ar:"يُخرج الكُرية يدوياً",en:"Removes the pellet by hand"},{ar:"يتركها حتى النهاية",en:"Leaves it until the end"}],a:1,
   e:{ar:"إذا لم يتمكن اللاعب من إطلاق طلقة (عطل أو تجاوز الزمن) يجب على رئيس ضباط الميدان استخدام أسطوانة تفريغ الكُريات (PDC).",en:"If a finalist is unable to fire a shot (malfunction or overtime), the CRO must use the Pellet Discharge Cylinder (PDC)."},r:"Commands & Announcements 2026"},
- {h:{ar:"الوقت الرسمي للأوامر",en:"Official command times"},x:{ar:"نهائي موعده 12:00.",en:"A Final scheduled for 12:00."},
-  q:{ar:"متى يُصدر رئيس ضباط الميدان FIVE MINUTES PREPARATION AND SIGHTING TIME … START؟",en:"When does the CRO command FIVE MINUTES PREPARATION AND SIGHTING TIME … START?"},o:[{ar:"11:50",en:"11:50"},{ar:"11:53:55",en:"11:53:55"},{ar:"11:55:00",en:"11:55:00"},{ar:"11:58:55",en:"11:58:55"}],a:1,
-  e:{ar:"ATHLETES TO THE LINE 11:50، TAKE YOUR POSITIONS 11:53:25، البدء 11:53:55، 30 SECONDS 11:58:25، STOP … UNLOAD 11:58:55، LOAD 11:59:55، START 12:00.",en:"ATHLETES TO THE LINE 11:50, TAKE YOUR POSITIONS 11:53:25, START 11:53:55, 30 SECONDS 11:58:25, STOP … UNLOAD 11:58:55, LOAD 11:59:55, START 12:00."},r:"Commands & Announcements 2026"},
+ {h:{ar:"الوقت الرسمي للأوامر",en:"Official command times"},x:{ar:"يقترب وقت بداية النهائي.",en:"The start time of a Final is approaching."},
+  q:{ar:"متى يُصدر رئيس ضباط الميدان FIVE MINUTES PREPARATION AND SIGHTING TIME … START؟",en:"When does the CRO command FIVE MINUTES PREPARATION AND SIGHTING TIME … START?"},o:[{ar:"قبل وقت البداية بـ 10 دقائق",en:"10 minutes before the start time"},{ar:"قبل وقت البداية بـ 6 دقائق و5 ثوانٍ",en:"6 min 5 s before the start time"},{ar:"قبل وقت البداية بـ 5 دقائق",en:"5 minutes before the start time"},{ar:"قبل وقت البداية بدقيقة و5 ثوانٍ",en:"1 min 5 s before the start time"}],a:1,
+  e:{ar:"قبل وقت البداية بـ 10 دقائق: ATHLETES TO THE LINE. قبل وقت البداية بـ 6 دقائق و35 ثانية: TAKE YOUR POSITIONS. قبل وقت البداية بـ 6 دقائق و5 ثوانٍ: FIVE MINUTES PREPARATION AND SIGHTING TIME … START. قبل وقت البداية بدقيقة و35 ثانية: 30 SECONDS. قبل وقت البداية بدقيقة و5 ثوانٍ: STOP … UNLOAD. قبل وقت البداية بـ 5 ثوانٍ: LOAD. عند وقت البداية: START.",en:"10 minutes before the start time: ATHLETES TO THE LINE. 6 min 35 s before: TAKE YOUR POSITIONS. 6 min 5 s before: FIVE MINUTES PREPARATION AND SIGHTING TIME … START. 1 min 35 s before: 30 SECONDS. 1 min 5 s before: STOP … UNLOAD. 5 s before: LOAD. At the start time: START."},r:"Commands & Announcements 2026"},
  {h:{ar:"السير إلى الخط",en:"Walking to the line"},x:{ar:"عند ATHLETES TO THE LINE سار لاعب بندقية إلى نقطة الرمي وسترته مفتوحة.",en:"At ATHLETES TO THE LINE a rifle finalist walks to the firing point with the jacket open."},
   q:{ar:"ما المطلوب؟",en:"What is required?"},o:[{ar:"مسموح، يغلقها عند الرمي",en:"Allowed, close it to fire"},{ar:"يسير لاعبو البندقية بكامل ملابسهم والسراويل والسترات مغلقة",en:"Rifle finalists walk to the line fully dressed, trousers and jackets closed"},{ar:"يسير بدون سترة",en:"Walk without the jacket"},{ar:"قرار المدرب",en:"The coach decides"}],a:1,
   e:{ar:"عند استدعاء لاعبي البندقية إلى خط الرمي يجب أن يسيروا بكامل ملابسهم والسراويل والسترات مغلقة (انظر القاعدة 7.5.2.3).",en:"When rifle finalists are called to the firing line they must walk fully dressed with trousers and jackets closed (see Rule 7.5.2.3)."},r:"6.17.1.14 c"},
@@ -1238,7 +1291,11 @@ $("seek").oninput=e=>{stopPlay(); $("gate").hidden=true; go(+e.target.value,fals
 [1,2,4,8].forEach(v=>{ $("sp"+v).onclick=()=>{SPEED=v; [1,2,4,8].forEach(w=>$("sp"+w).setAttribute("aria-pressed",SPEED===w));}; });
 $("scen").onchange=e=>newScenario(+e.target.value);
 $("bstart").onclick=()=>{stopPlay(); closeTrainer(); $("gate").hidden=true; go(0,false);};
-$("vmode").onchange=()=>speakStep(); $("vvoice").onchange=e=>{ VOICE_PREF=e.target.value; try{localStorage.setItem("ar10-voice",VOICE_PREF)}catch(x){} speak("START"); }; $("vrate").onchange=()=>speakStep();
+$("vmode").onchange=()=>speakStep(); function sampleVoice(arabic){ const was=SOUND; SOUND=true; speak(arabic?"انتباه. ابدأ.":"ATHLETES TO THE LINE."); SOUND=was; }
+$("vvoice").onchange=e=>{ VOICE_PREF=e.target.value; try{localStorage.setItem("ar10-voice",VOICE_PREF)}catch(x){} sampleVoice(false); };
+$("vvoicear").onchange=e=>{ VOICE_PREF_AR=e.target.value; try{localStorage.setItem("ar10-voicear",VOICE_PREF_AR)}catch(x){} sampleVoice(true); };
+$("vtesten").onclick=()=>sampleVoice(false); $("vtestar").onclick=()=>sampleVoice(true); $("vrate").onchange=()=>speakStep();
+
 function applyNames(){ computeNames(); saveNames(); rebuild(true); render(false); }
 function renderNames(){ const tt=t(); const box=$("names"); box.innerHTML="";
   $("usenames").checked=USE_NAMES; $("usenamesl").textContent=tt.usenames; $("namespanel").hidden=!USE_NAMES;
